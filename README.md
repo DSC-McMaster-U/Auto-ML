@@ -19,7 +19,7 @@ That sounds really hard to develop tho! Do not fear... for python libraries exis
 
 <input type="checkbox" disabled /> ... more features! 
 
-See the [open issues](https://github.com/DSC-McMaster-U/Auto-ML/issues) for a full list of proposed features (and known issues).
+On a week by week basis, we will be tackling this broad roadmap through a list of specific tasks/features each contributer will take on. See the [open issues](https://github.com/DSC-McMaster-U/Auto-ML/issues) for a full list of proposed features (and known issues).
 
 ## Project Challenges 
 - Distinguish our service from Google Cloud's AutoML
@@ -35,9 +35,10 @@ See the [open issues](https://github.com/DSC-McMaster-U/Auto-ML/issues) for a fu
 Hopefully you're already accustomed to working with git, as it we will be hosting our project on here. You should know how to clone a repo, commit changes, push and pull to the remote repository. You should also familiarize yourself with making pull requests! If you've never made a PR, please complete [this](https://github.com/firstcontributions/first-contributions) tutorial. 
 
 ### Other Dependancies
-We'll start off with a fully python project, so if you dont already have python installed on your machine, follow [this]() tutorial. 
+We'll start off with a fully python project, so if you dont already have python installed on your machine, download [here](https://www.python.org/downloads/) and set up a development environment - I recommend VS code, but use what ever you like!
+
 To install the python libraries we'll be using for our MVP, run the below command in the directory:
 
-`pip install requirements.txt`
+`pip install -r requirements.txt`
 
 You're free to add to the requirements.txt file if you run into any new libraries you want to add to the project. On a new line in the file, simply add the install name of the project followed by '==' followed by the version number, like: `pycaret==3.0.4` 
