@@ -8,7 +8,7 @@ jobs:
     name: Update Channel API
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       # - name: Configure gcloud credentials
       #   uses: "google-github-actions/auth@v1"
