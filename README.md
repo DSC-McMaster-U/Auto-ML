@@ -2,12 +2,9 @@
 
 ## About the Project
 <!-- TODO: insert screenshot of application page-->
-Automation has been making its way into all industries and services, including machine learning! 
+Automation has been making its way into all industries and services, including machine learning! AutoML makes machine learning more accessible to user's with little to no background in ML. It takes the user's task, categorizing cat and dog pictures for example, uses a training dataset to fit and tune models to the desired model metrics, and returns a functioning classification model to the user. 
 
-AutoML makes machine learning more accessible to user's with little to no background in ML. It takes the user's task, categorizing cat and dog pictures for example, uses a training dataset to fit and tune models to the desired model metrics, and returns a functioning classification model to the user. 
-
-That sounds really hard to develop tho! Do not fear... for python libraries exist to make everything easier on us. This project does not require you to have background in ML, however be prepared to gain some! We will start of developing a minimum viable product using python libraries to do all the heavy computations for us, and then iterativley build upon the project adding more custom features and tools to the tech stack. 
-###
+That sounds really hard to develop tho! Do not fear... for python libraries exist to make everything easier on us. This project does not require you to have background in ML, however be prepared to gain some! We will start of developing a minimum viable product using python libraries, like streemlit, pandas, and pycaret to do all the heavy lifting for us, and then iterativley build upon the project adding more custom features and tools to the tech stack. 
 
 
 ## Projected Roadmap
@@ -21,9 +18,12 @@ That sounds really hard to develop tho! Do not fear... for python libraries exis
 
 On a week by week basis, we will be tackling this broad roadmap through a list of specific tasks/features each contributer will take on. See the [open issues](https://github.com/DSC-McMaster-U/Auto-ML/issues) for a full list of proposed features (and known issues).
 
+### Agile Development
+We will be mimicking an agile development environment with this project, having weekly(ish) sprints to push out small features. Features will show up as issues, and will each get assigned to an individual at our sprint. Since we are mimicking a professional dev team, we want to follow python style conventions defined [here](https://peps.python.org/pep-0008/), and we'll be using pylint to ensure the code meets these specifications. We also want to implement unit testing, so each time you want to 
+
 ## Project Challenges 
 - Distinguish our service from Google Cloud's AutoML
-    - make the UI so friendly that little to know background in ML is needed to produce a model using our service
+    - make the UI so friendly that little to no background in ML is needed to produce a model using our service
 - Maintain user's data privacy 
     - if cloud training is used, how is the model and the data it was trained on  protected from cloud to customer
     - secure storage of user's inputted dataset
@@ -41,4 +41,7 @@ To install the python libraries we'll be using for our MVP, run the below comman
 
 `pip install -r requirements.txt`
 
-You're free to add to the requirements.txt file if you run into any new libraries you want to add to the project. On a new line in the file, simply add the install name of the project followed by '==' followed by the version number, like: `pycaret==3.0.4` 
+You're free to add to the requirements.txt file if you run into any new libraries you want to add to the project. On a new line in the file, simply add the install name of the project followed by '==' followed by the version number, like: 
+
+`pycaret==3.0.4` 
+
