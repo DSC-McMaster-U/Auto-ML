@@ -2,10 +2,13 @@
 
 ## About the Project
 <!-- TODO: insert screenshot of application page-->
-Automation has been making its way into all industries and services, including machine learning! AutoML makes machine learning more accessible to user's with little to no background in ML. It takes the user's task, categorizing cat and dog pictures for example, uses a training dataset to fit and tune models to the desired model metrics, and returns a functioning classification model to the user. 
+Automation has been making its way into all industries and services, including machine learning! AutoML makes machine learning more accessible to user's with little to no background in ML. It takes the user's task, categorizing cat and dog pictures for example, uses a training dataset to fit and tune models to the desired model metrics, and returns a functioning classification model to the user. Google Cloud provides a service called AutoML, and they define it as below:
+
+> "AutoML enables developers with limited machine learning expertise to train high-quality models specific to their business needs. Build your own custom machine learning model in minutes."
+
+
 
 That sounds really hard to develop tho! Do not fear... for python libraries exist to make everything easier on us. This project does not require you to have background in ML, however be prepared to gain some! We will start of developing a minimum viable product using python libraries, like streemlit, pandas, and pycaret to do all the heavy lifting for us, and then iterativley build upon the project adding more custom features and tools to the tech stack. 
-
 
 ## Projected Roadmap
 <input type="checkbox" disabled /> Minimum Viable Product: Streamlit powered data app
@@ -19,7 +22,7 @@ That sounds really hard to develop tho! Do not fear... for python libraries exis
 On a week by week basis, we will be tackling this broad roadmap through a list of specific tasks/features each contributer will take on. See the [open issues](https://github.com/DSC-McMaster-U/Auto-ML/issues) for a full list of proposed features (and known issues).
 
 ### Agile Development
-We will be mimicking an agile development environment with this project, having weekly(ish) sprints to push out small features. Features will show up as issues, and will each get assigned to an individual at our sprint. Since we are mimicking a professional dev team, we want to follow python style conventions defined [here](https://peps.python.org/pep-0008/), and we'll be using pylint to ensure the code meets these specifications. We also want to implement unit testing, so each time you want to 
+We will be mimicking an agile development environment with this project, having weekly(ish) sprints to push out small features. Features will show up as issues, and will each get assigned to an individual at our sprint. Since we are mimicking a professional dev team, we want to follow python style conventions defined [here](https://peps.python.org/pep-0008/), and we'll be using pylint to ensure the code meets these specifications. We also want to implement unit testing, so each time you want to submit a feature PR, we will require you to implement testing (try to maximize coverage using python's coverage library). We will not require unit testing of PRs were it would be unhelpful/redundant. 
 
 ## Project Challenges 
 - Distinguish our service from Google Cloud's AutoML
