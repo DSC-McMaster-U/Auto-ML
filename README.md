@@ -13,13 +13,12 @@ Automation has been making its way into all industries and services, including m
 That sounds really hard to develop tho! Do not fear... for python libraries exist to make everything easier on us. This project does not require you to have background in ML, however, be prepared to gain some! We will start off developing a minimum viable product using python libraries, like streamlit, pandas, and pycaret to do all the heavy lifting for us, and then iteratively build upon the project adding more custom features and tools to the tech stack. Python will just be our starting point; however, we will expand out into other languages/tools depending on our projects direction and our team member's interest. 
 
 ## Projected Roadmap
-<input type="checkbox" disabled /> Minimum Viable Product: Streamlit powered data app 
-
-<input type="checkbox" disabled /> Improve user interface by swapping our streamlit for JavaScript/HTML/CSS/Flask or other more powerful web dev tools
-
-<input type="checkbox" disabled /> Integrate Google Cloud's Vertex AI AutoML service to provide more accurate models
-
-<input type="checkbox" disabled /> ... more features that we'll come up with as a team! 
+| Sprint Number   | Goals |
+|-----------------|---------|
+|1| Minimum Viable Product: Streamlit powered data app |
+|2-4 | Improve user interface by swapping our streamlit for JavaScript/HTML/CSS/Flask or other more powerful web dev tools
+|2-4|Integrate Google Cloud's Vertex AI AutoML service to provide more accurate models|
+|5 and beyond | More features that we'll come up with as a team! 
 
 On a week-by-week basis, we will be tackling this broad roadmap through a list of specific tasks/features each contributor will take on. See the [open issues](https://github.com/DSC-McMaster-U/Auto-ML/issues) for a full list of proposed features (and known issues).
 
