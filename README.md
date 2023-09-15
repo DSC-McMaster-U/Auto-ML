@@ -1,7 +1,5 @@
 # Auto-ML
-Author: rawanmahdi
 
-Contributors: (TBD)
 <!-- TODO: add in repo badges once project starts-->
 <!-- TODO: move some of the content to a specialized doc for developers, turn this doc into a 'how to use the service' type doc -->
 ## About the Project
