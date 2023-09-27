@@ -5,20 +5,10 @@ on:
       - main
 jobs:
   update:
-    name: Update Channel API
+    name: Update API
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      # - name: Configure gcloud credentials
-      #   uses: "google-github-actions/auth@v1"
-      #   with:
-      #     credentials_json: ${{ secrets.GCS_SA_KEY }}
-
-      # - name: Setup gcloud / gsutil
-      #   uses: google-github-actions/setup-gcloud@v1
-      #   with:
-      #     project_id: ${{ secrets.GCS_PROJECT }}
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -31,10 +21,3 @@ jobs:
 
       - name: Run tests
         run: python -B -m pytest
-
-      # - uses: pulumi/actions@v3
-      #   with:
-      #     command: up
-      #     stack-name: dev
-      #   env:
-      #     PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
