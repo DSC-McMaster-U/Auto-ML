@@ -45,7 +45,10 @@ We'll start off with a fully python project, so if you don’t already have pyth
 
 To install the python libraries we'll be using for our MVP, run the below command in the directory containing this repo on your machine:
 
-`pip install -r requirements.txt`
+```sh
+# Can be py or python3 depending on your system
+python -m pip install -r requirements.txt 
+```
 
 You're free to add to the requirements.txt file if you run into any new libraries you want to add to the project. You're also free to change the version number if you run into conflicts involving the libraries, as some of them may be dated/deprecated. To add to the requirements.txt file, on a new line in the file, simply add the install name of the project followed by '==' followed by the version number, like:
 
