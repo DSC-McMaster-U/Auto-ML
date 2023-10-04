@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 
 with st.sidebar:
     st.image("../../imgs/McMaster_logo.png")
@@ -11,7 +12,11 @@ with st.sidebar:
 
 
 if choice == "Upload":
-    pass
+    st.title("Upload Your Data for Modeling!")
+    file = st.file_uploader("Upload Your Dataset Here")
+    if file :
+        df = pd.read_csv(file)
+        st.dataframe(df)
 
 if choice == "Profiling":
     pass
