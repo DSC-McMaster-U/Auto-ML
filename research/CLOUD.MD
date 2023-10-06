@@ -20,19 +20,19 @@ How can we seamlessly integrate Google Cloud's Vertex AI into our system, and wh
 ## IV. Additional Resources
 
 1. **Cloud Documentation:**
-   Explore Google Cloud's official documentation for comprehensive guides and best practices. Example: [Google Cloud Documentation](link)
+   Explore Google Cloud's official documentation for comprehensive guides and best practices. Example: [Google Cloud Documentation](https://cloud.google.com/docs)
 
 2. **Open Source Projects:**
    Analyze successful integrations on GitHub. For instance:
-   - **TensorFlow Extended (TFX):** Leverages BigQuery, Dataflow, and Cloud ML Engine. [GitHub Repository](link)
-   - **Kubeflow:** Integrates with Kubernetes Engine and AI Platform. [GitHub Repository](link)
-   - **Apache Beam:** Uses Dataflow for seamless execution. [GitHub Repository](link)
-   - **Spinnaker:** Utilizes Container Registry and Kubernetes Engine. [GitHub Repository](link)
-   - **Apache Flink:** Integrates with Bigtable and Cloud Storage. [GitHub Repository](link)
-   - **Deeplearning4j:** Integrates with TensorFlow and AI Platform. [GitHub Repository](link)
+   - **TensorFlow Extended (TFX):** Leverages BigQuery, Dataflow, and Cloud ML Engine. [GitHub Repository](https://github.com/tensorflow/tfx)
+   - **Kubeflow:** Integrates with Kubernetes Engine and AI Platform. [GitHub Repository](https://github.com/kubeflow/kubeflow)
+   - **Apache Beam:** Uses Dataflow for seamless execution. [GitHub Repository](https://github.com/apache/beam)
+   - **Spinnaker:** Utilizes Container Registry and Kubernetes Engine. [GitHub Repository](https://github.com/spinnaker/spinnaker)
+   - **Apache Flink:** Integrates with Bigtable and Cloud Storage. [GitHub Repository](https://github.com/apache/flink)
+   - **Deeplearning4j:** Integrates with TensorFlow and AI Platform. [GitHub Repository](https://github.com/eclipse/deeplearning4j)
 
 3. **Community Forums:**
-   Engage in discussions on Stack Overflow and Google Cloud Community for practical insights. Example: [Stack Overflow Thread](link)
+   Engage in discussions on Stack Overflow and Google Cloud Community for practical insights. Example: [Stack Overflow Thread](https://stackoverflow.com/questions/tagged/google-cloud-platform)
 
 4. **Google Cloud Labs:**
-   Participate in Google Cloud Labs for hands-on experience. Example: [Google Cloud Labs](link)
+   Participate in Google Cloud Labs for hands-on experience. Example: [Google Cloud Labs](https://cloud.google.com/training)
