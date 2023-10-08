@@ -5,3 +5,4 @@ streamlit==1.13.0
 pycaret
 pytest
 pylint
+altair==4.1.0
