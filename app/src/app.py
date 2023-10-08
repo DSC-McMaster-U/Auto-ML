@@ -37,6 +37,7 @@ if choice == "Upload":
         X = pd.DataFrame(wine.data, columns=wine.feature_names)
         Y = pd.Series(wine.target, name='response')
         df = pd.concat([X, Y], axis=1)
+        st.session_state["df"] = df
 
         st.markdown("The Wine dataset is used as the example.")
         st.dataframe(df)
