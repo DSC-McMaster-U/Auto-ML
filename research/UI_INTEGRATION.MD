@@ -33,7 +33,7 @@
 
 - **Django** Very fast, secure, and scalable. However, it it a little hard to setup and is very complex. Its good for large complex applications and relational databases
 - **Flask** Simple set up microframework, good all around, not as good in all the departments as the other options, but extremely easy to setup. Will require other packages as its only a microframework, but this provides flexibility for features based on our needs
-- **FastAPI** Fullstack framework, extremely fast performance, but user friendly dev experience. Many out-of-box features
+- **FastAPI** Fullstack framework, extremely fast performance, user friendly dev experience. Many out-of-box features
 
 ## References
 
