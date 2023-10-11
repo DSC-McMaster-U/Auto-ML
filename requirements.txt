@@ -1,0 +1,17 @@
+# Data Analysis and Visualization
+pandas==1.3.0
+numpy==1.21.2
+altair==4.1.0
+
+# Machine Learning and Model Building
+scikit-learn==1.0.2
+pycaret
+
+# Testing and Code Quality
+pytest
+pylint
+
+# Streamlit and Profiling
+streamlit==1.13.0
+ydata-profiling==4.5.1
+streamlit-pandas-profiling==0.1.3
