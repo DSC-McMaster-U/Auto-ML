@@ -16,7 +16,7 @@ EXPOSE 8501
 CMD ["bash", "-c", "streamlit run src/app.py"]
 
 
-########### How to use ? ###########
+########### How to use ? ############
 
 # 1. cd into the dir where the Dockerfile is located : cd app
 # 2. Build the image using : docker build -t auto-ml .
