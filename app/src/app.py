@@ -8,14 +8,20 @@ import pycaret.regression as pycaret_rg
 # from pycaret.regression import setup, compare_models, pull, save_model, load_model
 import pycaret.classification as pycaret_cl
 
+# for the profiling tab:
+from streamlit_pandas_profiling import st_profile_report
+import plotly.express as px
+import pandas_profiling
+
 with st.sidebar:
-    st.image("../../imgs/McMaster_logo.png")
+    # image paths relative to container!
+    st.image("/app/imgs/McMaster_logo.png")
     st.title("SpawnML")
     choice = st.radio("Navigation", ["Upload", "Profiling", "ML", "Download"])
     st.info(
         "SpawnML enables developers with limited machine learning expertise to train high-quality models specific to their business needs. Build your own custom machine learning model in minutes."
     )
-    st.image("../../imgs/GDSC_logo.png")
+    st.image("/app/imgs/GDSC_logo.png")
 
 # initize session state
 if "df" not in st.session_state:
@@ -42,8 +48,18 @@ if choice == "Upload":
         st.markdown("The Wine dataset is used as the example.")
         st.dataframe(df)
 
-if choice == "Profiling":
-    st.title("Profiling Data")
+if choice == "Profiling": 
+
+    df = st.session_state["df"]
+
+    if df is not None and not df.empty:  # Check if df is defined and not empty
+        
+        st.title("Exploratory Data Analysis")
+        profile_df = df.profile_report()
+        st_profile_report(profile_df)
+
+    else:
+        st.warning("Please upload or select a dataset in the 'Upload' tab.")
 
 if choice == "ML":
     st.title("Start the model generation process!")
