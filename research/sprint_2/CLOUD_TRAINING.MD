@@ -1,38 +1,20 @@
-# Cloud Integration for Improved Model Training
+# Cloud Accelerated ML Training
 
-## I. Introduction
+## Benefits of GPU Training for ML
 
-**Background:**
-This research focuses on integrating Google Cloud, specifically Vertex AI, into our system to enhance model quality, reduce wait times, and ensure transparency in decision-making.
+For heavy computations that can be preformed independant of each other (like matrix multiplication), parallelism can provide significant speed-up. Graphics Processing Units (GPUs) contain thousands of Arithmetic Logic Units (ALUs) to execute additions and multiplications in parallel. In regards to ML, training a neural network requires looped matrix addition and miltiplication, so GPUs can significantly improve our execution time. For our application, GPU training may only be useful for heavier models like the NNs, and image models, but may not be as relevant for 'simpler' models, like decision trees, that require less compute resources. 
 
-## II. Research Question
+### Side Note on TPUs
+Tensor Processing Units are even more specialized for matrix arithmetic (more ALUs!!). They may be a bit too much for our applications since we'll be generating vanilla models that don't require hours to train, but they might be interesting to look into later on. 
 
-**Question:**
-How can we seamlessly integrate Google Cloud's Vertex AI into our system, and what tools are necessary for successful implementation?
+## Steps to Setting up GPU Training
 
-## III. Relevance to the Project
+1. **Create a Virtual Machine (VM) instance** to be hosted on Google's infrastructure through the cloud console, cloud CLI, or the Compute Engine API. Different machine types (Accelerator Optimized Series and N1 General Purpose Series) support GPUs differently
+2. **Add GPUs to the VM instance**. The VM gets direct control over the GPUs and their associated memory. 
 
-**Objectives:**
-1. **Enhance Model Quality:** Use Vertex AI and AutoML for superior model outcomes.
-2. **Reduce Wait Times:** Utilize Google Cloud's GPU resources for faster model training.
-3. **Transparency and Trust:** Integrate Explainable AI tools to provide insights into model decisions.
+- [GPU type availability based on zone](https://cloud.google.com/compute/docs/gpus/gpu-regions-zones)
 
-## IV. Additional Resources
+3. ...
 
-1. **Cloud Documentation:**
-   Explore Google Cloud's official documentation for comprehensive guides and best practices. Example: [Google Cloud Documentation](https://cloud.google.com/docs)
 
-2. **Open Source Projects:**
-   Analyze successful integrations on GitHub. For instance:
-   - **TensorFlow Extended (TFX):** Leverages BigQuery, Dataflow, and Cloud ML Engine. [GitHub Repository](https://github.com/tensorflow/tfx)
-   - **Kubeflow:** Integrates with Kubernetes Engine and AI Platform. [GitHub Repository](https://github.com/kubeflow/kubeflow)
-   - **Apache Beam:** Uses Dataflow for seamless execution. [GitHub Repository](https://github.com/apache/beam)
-   - **Spinnaker:** Utilizes Container Registry and Kubernetes Engine. [GitHub Repository](https://github.com/spinnaker/spinnaker)
-   - **Apache Flink:** Integrates with Bigtable and Cloud Storage. [GitHub Repository](https://github.com/apache/flink)
-   - **Deeplearning4j:** Integrates with TensorFlow and AI Platform. [GitHub Repository](https://github.com/eclipse/deeplearning4j)
 
-3. **Community Forums:**
-   Engage in discussions on Stack Overflow and Google Cloud Community for practical insights. Example: [Stack Overflow Thread](https://stackoverflow.com/questions/tagged/google-cloud-platform)
-
-4. **Google Cloud Labs:**
-   Participate in Google Cloud Labs for hands-on experience. Example: [Google Cloud Labs](https://cloud.google.com/training)
