@@ -15,12 +15,13 @@ import pandas_profiling
 
 with st.sidebar:
     # image paths relative to container!
-    st.image("/app/imgs/McMaster_logo.png")
+    st.image("/app/imgs/AutoMate_logo.png")
     st.title("SpawnML")
     choice = st.radio("Navigation", ["Upload", "Profiling", "ML", "Download"])
     st.info(
         "SpawnML enables developers with limited machine learning expertise to train high-quality models specific to their business needs. Build your own custom machine learning model in minutes."
     )
+    st.image("/app/imgs/McMaster_logo.png")
     st.image("/app/imgs/GDSC_logo.png")
 
 # initize session state
