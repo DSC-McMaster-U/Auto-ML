@@ -140,5 +140,11 @@ Request is received by an http server. This server extracts the prediction reque
 - Sending the request needs:
    - Project Number (different than project ID)
    - Endpoint ID
+ 
+**NOTE:**
+We can configure the tensorflow model so that we can send the unprocessed data (e.g an image) directly to the endpoint without needing to preprocess the data first.
 
 _Video Tutorial:_ https://www.youtube.com/watch?v=-9fU1xwBQYU&t=3s&ab_channel=GoogleCloudTech
+
+## Hyperparameter Tuning and Distributed Training (NEXT)
+_Video Tutorial:_https://www.youtube.com/watch?v=bb1l7hu23jQ&ab_channel=GoogleCloudTech
