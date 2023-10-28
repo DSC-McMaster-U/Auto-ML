@@ -1,4 +1,4 @@
-##Intall the Vertex AI SDK for Python
+## Intall the Vertex AI SDK for Python
 1. Create python environment
 
    This is considered best practice as it helps prevent dependency, version, and premission conflicts
@@ -16,7 +16,7 @@ https://cloud.google.com/vertex-ai/docs/start/install-sdk
 
 
 
-##Vertex AI Compatability With Google Cloud Run
+## Vertex AI Compatability With Google Cloud Run
 
 Vertex AI can be deployed in just one container to Google Cloud Run. The following link provides a tutorial on how to use Vertex AI custom training with pre-build Google Cloud Pipeline Components.
 
