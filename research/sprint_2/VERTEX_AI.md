@@ -75,9 +75,9 @@ Running a custom training job on Vertex AI is done with containers. Containers a
 ## Running a custom training job
 
 - **Create python file containing AI models**
-  -Upload this file to the workbench
-  -This file Read data and write model to cloud storage
-  -Make this file a container with docker
+  - Upload this file to the workbench
+  - This file Read data and write model to cloud storage
+  - Make this file a container with docker
 
 - **Read data from Cloud Storage**
    - data_dir = "/gsc/bucket/folder"
