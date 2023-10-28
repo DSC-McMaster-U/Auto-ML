@@ -56,6 +56,7 @@ https://www.youtube.com/watch?v=_Q1Nf-rgSiE&ab_channel=GoogleCloudTech
 Cloud storage has the concept of a bucket which is what holds your data in a container. Within a bucket you can create folders to hold your data (train,test,val). 
 
 - Create buckets and upload folders in Google Cloud UI _or_ upload files programmatically with the gsutil tool
+
    e.g !gsutil -m cp -r {data_dir} gs://prototype-to-production-bucket
    
 - Each file in cloud storage has a path "gs://bucket-name/path/to/file"
