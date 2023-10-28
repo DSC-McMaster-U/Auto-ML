@@ -81,8 +81,7 @@ Running a custom training job on Vertex AI is done with containers. Containers a
       - Using this tool, training jobs on vertex AI can access cloud storage as files on the local file system. This               provides high throughput for large file sequential reads.
    
 - Write model to Cloud Storage (so it can be run on a different device)
-
-   -model.save("/gsc/bucket/modelname")
+   - model.save("/gsc/bucket/modelname")
 
 - Containerize code with docker (in terminal)
    - mkdir name
