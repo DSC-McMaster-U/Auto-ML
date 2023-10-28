@@ -53,14 +53,16 @@ https://www.youtube.com/watch?v=_Q1Nf-rgSiE&ab_channel=GoogleCloudTech
 
 ## Storing Data in the Cloud for Model Training
 **Bucket**
+
 Cloud storage has the concept of a bucket which is what holds your data in a container. Within a bucket you can create folders to hold your data (train,test,val). 
 
+- Download dataset off internet like a local environment(kaggle,tfds, ect)
 - Create buckets and upload folders in Google Cloud UI _or_ upload files programmatically with the gsutil tool
 
    e.g !gsutil -m cp -r {data_dir} gs://prototype-to-production-bucket
    
 - Each file in cloud storage has a path "gs://bucket-name/path/to/file"
-- Download dataset off internet like a local environment(kaggle,tfds, ect)
+
 
 ## Selecting Container type
 Running a custom training job on Vertex AI is done with containers. Containers are packages of your application code together with dependencies such as specific versions of programming language runtimes and libraries required to run your software services. You can either specify the URI of a prebuilt container image that meets your needs, or create and upload a custom container image. These containers are created with Docker.
