@@ -117,24 +117,28 @@ Put model into the Vertex AI Model Registry. This is a repository where we can m
 - Asynchronous
 - Don't require immediate response
 - For accumulated batches of data
+
 ![image](https://github.com/evan-placenis/Auto-ML/assets/112578037/6bc73e92-ca21-4441-a4a9-e68d9e1f1e0a)
 
 **Online Predictions**
 - Synchronous
 - Low latency
 - For small batches of data
+
 ![image](https://github.com/evan-placenis/Auto-ML/assets/112578037/f2c7b836-7fa0-452b-8c14-fa12bb573aae)
 
 Online predictions need an additional step of deploying the model to an endpoint. This associates the saved model artifacts with physical resources for low latency serving. (Deploying to endpoint shown in video)
 
 **Calling Model**
+
 Once the model is deployed, we can call it like any other REST endpoint. We can call it from a cloud function, web app, ect.
 
-   Sending Request:
-      Request is received by an http server. This server extracts the prediction request. The data passed must be a list of value or members of a JSON Object (preprocessed already).
+**Sending Request:**
 
-Sending the request needs:
-   -Project Number (different than project ID)
-   -Endpoint ID
+Request is received by an http server. This server extracts the prediction request. The data passed must be a list of value or members of a JSON Object (preprocessed already).
+
+- Sending the request needs:
+   - Project Number (different than project ID)
+   - Endpoint ID
 
 _Video Tutorial:_ https://www.youtube.com/watch?v=-9fU1xwBQYU&t=3s&ab_channel=GoogleCloudTech
