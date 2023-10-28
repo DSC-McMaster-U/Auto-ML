@@ -72,18 +72,18 @@ Running a custom training job on Vertex AI is done with containers. Containers a
 
 ## Running a custom training job
 
-- Create python file containing AI models
+- **Create python file containing AI models**
 
-- Read data from Cloud Storage
+- **Read data from Cloud Storage**
    - data_dir = "/gsc/bucket/folder"
    - data_dir = pathlib.Path(data_dir)
    - Cloud Storage Fuse (gcs):
       - Using this tool, training jobs on vertex AI can access cloud storage as files on the local file system. This               provides high throughput for large file sequential reads.
    
-- Write model to Cloud Storage (so it can be run on a different device)
+- **Write model to Cloud Storage** (so it can be run on a different device)
    - model.save("/gsc/bucket/modelname")
 
-- Containerize code with docker (in terminal)
+- **Containerize code with docker** (in terminal)
    - mkdir name
    - mkdir name/trainer
    - mv pyfile.py name/trainer
@@ -99,11 +99,11 @@ Running a custom training job on Vertex AI is done with containers. Containers a
    ![image](https://github.com/evan-placenis/Auto-ML/assets/112578037/3888f95f-84ed-4f35-a31d-6e9e8249b406)
    This executes the "task.py" file when we run the training job
 
-- Push to artifact registry (place for storing containers in google cloud)
+- **Push to artifact registry** (place for storing containers in google cloud)
    - docker build ./ -t $CONTAINER_URI
    - docker push $CONTAINER_URI
  
-- Launch training Job
+- **Launch training Job**
   - launch through google cloud UI
  
 _Video Tutorial_: https://www.youtube.com/watch?v=VRQXIiNLdAk&t=202s&ab_channel=GoogleCloudTech
