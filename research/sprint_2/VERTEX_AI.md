@@ -55,11 +55,11 @@ https://www.youtube.com/watch?v=_Q1Nf-rgSiE&ab_channel=GoogleCloudTech
 **Bucket**
 Cloud storage has the concept of a bucket which is what holds your data in a container. Within a bucket you can create folders to hold your data (train,test,val). 
 
--Create buckets and upload folders in Google Cloud UI _or_ upload files programmatically with the gsutil tool
+- Create buckets and upload folders in Google Cloud UI _or_ upload files programmatically with the gsutil tool
    e.g !gsutil -m cp -r {data_dir} gs://prototype-to-production-bucket
    
--Each file in cloud storage has a path "gs://bucket-name/path/to/file"
--Download dataset off internet like a local environment(kaggle,tfds, ect)
+- Each file in cloud storage has a path "gs://bucket-name/path/to/file"
+- Download dataset off internet like a local environment(kaggle,tfds, ect)
 
 ## Selecting Container type
 Running a custom training job on Vertex AI is done with containers. Containers are packages of your application code together with dependencies such as specific versions of programming language runtimes and libraries required to run your software services. You can either specify the URI of a prebuilt container image that meets your needs, or create and upload a custom container image. These containers are created with Docker.
@@ -69,26 +69,26 @@ Running a custom training job on Vertex AI is done with containers. Containers a
 
 **Running a custom training job**
 
--Create python file containing AI models
+- Create python file containing AI models
 
--Read data from Cloud Storage
-   -data_dir = "/gsc/bucket/folder"
-   -data_dir = pathlib.Path(data_dir)
+- Read data from Cloud Storage
+   - data_dir = "/gsc/bucket/folder"
+   - data_dir = pathlib.Path(data_dir)
    
--Write model to Cloud Storage (so it can be run on a different device)
+- Write model to Cloud Storage (so it can be run on a different device)
    -model.save("/gsc/bucket/modelname")
 
--Containerize code with docker (in terminal)
-   -mkdir name
-   -mkdir name/trainer
-   -mv pyfile.py name/trainer
-   -cd name
-   -touch Dockerfile (different on mac and windows)
+- Containerize code with docker (in terminal)
+   - mkdir name
+   - mkdir name/trainer
+   - mv pyfile.py name/trainer
+   - cd name
+   - touch Dockerfile (different on mac and windows)
 
    These commands make this:
    ![image](https://github.com/evan-placenis/Auto-ML/assets/112578037/c00daac8-60a5-490f-a74f-d6df9b2f94ec)
 
--Launch training **Job**
+- Launch training **Job**
 
 Cloud Storage Fuse:
 Using this tool, training jobs on vertex AI can access cloud storage as files on the local file system. This provides high throughput for large file sequential reads.
