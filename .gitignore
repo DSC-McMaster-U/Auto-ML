@@ -1,4 +1,7 @@
 app/src/logs.log
 app/src/best_model.pkl
 app/src/dataset.csv
+
 .DS_Store
+
+__pycache__/
