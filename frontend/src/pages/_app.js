@@ -11,12 +11,12 @@ export default function App({ Component, pageProps }) {
       <Head>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
-      <ThemeProvider theme={theme}>
-        <Layout>
-          <CssBaseline />
-          <Component {...pageProps} />
-        </Layout>
-      </ThemeProvider>
+      {/* <ThemeProvider theme={theme}> */}
+      <Layout>
+        <CssBaseline />
+        <Component {...pageProps} />
+      </Layout>
+      {/* </ThemeProvider> */}
     </>
   );
 }
