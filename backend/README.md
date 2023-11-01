@@ -29,3 +29,15 @@ uvicorn main:app --reload
 
 
 Your local host on port 8000 should now be running the api
+
+-------------------------------------------------------------------------------------------
+
+docker
+
+cd backend
+
+docker build -t backend . 
+
+docker run -p 8000:8000 backend
+
+Google Kubernetes Engine?
