@@ -56,3 +56,19 @@ ref :
 - next.js frontend running on http://localhost:3000/  
 - fastAPI server runs on http://127.0.0.1:8000/ 
 - front end api requests made from http://localhost:3000/api/python
+
+## Docker
+
+`cd` into backend parent folder
+
+### Building Local Image
+
+`docker build . -t automate-be`
+
+- builds a local docker image of the automate backend tagged "automate-be"
+
+### Running Local Container
+
+`docker run -d -p 8000:8000 automate-be`
+
+- runs the container in detached mode, on port 8000 (default port)
