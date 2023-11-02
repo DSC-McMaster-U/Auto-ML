@@ -25,4 +25,4 @@ jobs:
           run: |
             gcloud auth configure-docker us-central1-docker.pkg.dev
             docker build -t us-central1-docker.pkg.dev/automateml/backend-docker-image/backend:latest ./backend
-            docker push us-central1-docker.pkg.dev/automateml/backend-docker-image/backend:latest ./backend
+            docker push us-central1-docker.pkg.dev/automateml/backend-docker-image/backend:latest 
