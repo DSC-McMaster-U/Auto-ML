@@ -1,6 +1,12 @@
 import React from "react";
+import NavigationBar from "./NavigationBar";
 
 const Layout = ({ children }) => {
-  return <div>{children}</div>;
+  return (
+    <>
+      <NavigationBar />
+      {children}
+    </>
+  );
 };
 export default Layout;
