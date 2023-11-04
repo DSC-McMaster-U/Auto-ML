@@ -1,8 +1,20 @@
-# Auto-ML
-<!-- TODO: add in list of top/active contributors -->
-
+# AutoMate-ML
 <!-- TODO: add in repo badges once project starts-->
-<!-- TODO: move some of the content to a specialized doc for developers, turn this doc into a 'how to use the service' type doc -->
+
+## Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+
+
+
 ## About the Project
 <!-- TODO: insert screenshot of application page-->
 Automation has been making its way into all industries and services, including machine learning! Automating the training and development of models makes machine learning more accessible to user's with little to no background in ML. It takes the user's task, uses a training dataset to fit and tune models to the desired model metrics, and returns a functioning classification model to the user. Google Cloud provides an [AutoML](https://cloud.google.com/vertex-ai/docs/beginner/beginners-guide) service (which we will be taking major inspiration from), and they define it as below:
