@@ -1,6 +1,121 @@
+# Provider and Common Variables 
+variable "project" {
+  default = "automateml"
+}
+variable "region" {
+  default = "us-east1"
+}
+variable "zone" {
+  default = "us-east1-a"
+}
 provider "google" {
-  project = "automateml"
-  region  = "us-east1"
+  project     = var.project
+  region      = var.region
+  credentials = file("credentials.json")
+  zone        = var.zone
+}
+
+# Add GKE Service Account 
+# Minimum roles bc will be the default account used by requests
+resource "google_service_account" "GKE_tf_account" {
+  account_id   = "gke-tf-service-account"
+  display_name = "A Aervice Account  For Terraform To Make GKE Cluster"
+}
+
+# Kubernetes Version
+variable "cluster_version" { 
+  default = "1.26"
+}
+
+# Setup Clusters 
+resource "google_container_cluster" "cluster" {
+  name               = "trail"
+  location           = var.zone
+  min_master_version = var.cluster_version
+  project            = var.project
+
+  # Ignore changes to min-master-version - this is bc version may be different to what TF expects
+  lifecycle {
+    ignore_changes = [
+      min_master_version,
+    ]
+  }
+
+  # Cant create cluster w/o pool defined, create smallest possible pool, delete immediatly 
+  # Use seperately managed pools
+  remove_default_node_pool = true
+  initial_node_count       = 1
+
+  # Enable Workload Identity 
+  # allows workloads in clusters to impersonate IAM service accounts 
+  workload_identity_config {
+    workload_pool = "${var.project}.svc.id.goog"
+  }
+}
+
+# Node Pool Definition
+resource "google_container_node_pool" "primary_preemptible_nodes" {
+  name       = "trial-zero-cluster-node-pool"
+  location   = var.zone
+  project    = var.project
+  cluster    = google_container_cluster.cluster.name
+  node_count = 1
+  
+  # Setup autoscaling with min and max number of nodes
+  autoscaling {
+    min_node_count = 1
+    max_node_count = 5
+  }
+
+  version = var.cluster_version
+
+  # Node configuration definition: 
+  node_config {
+
+    preemptible  = true
+    machine_type = "e2-medium"
+
+    # Google recommends custom service accounts that have cloud-platform scope and 
+    # permissions granted via IAM Roles.
+
+    # Tie nodes to sa created above
+    service_account = google_service_account.GKE_tf_account.email
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform"
+    ]
+
+    # Disable regeneration of node pool everytime we run this file
+    metadata = {
+      disable-legacy-endpoints = "true"
+    }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to node_count, initial_node_count and version
+      # otherwise node pool will be recreated if there is drift between what 
+      # terraform expects and what it sees
+      initial_node_count,
+      node_count,
+      version
+    ]
+  }
+}
+
+
+# Older code: 
+/*
+resource "google_service_account_iam_member" "GKE_account_iam" {
+  service_account_id = google_service_account.GKE_account.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = "user:jane@example.com"
+}
+
+# Allow SA service account use the default GCE account
+resource "google_service_account_iam_member" "gce-default-account-iam" {
+  service_account_id = data.google_compute_default_service_account.default.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${google_service_account.sa.email}"
 }
 
 resource "google_project_service" "run_api" {
@@ -42,43 +157,5 @@ resource "google_cloud_run_service_iam_member" "run_all_users" {
 
 output "service_url" {
   value = google_cloud_run_service.run_service.status.0.url
-}
-
-# Add Service Account 
-resource "google_service_account" "default" {
-  account_id   = "compute-service-account" #changing id causes forces new account
-  display_name = "Service Account for Compute Instance"
-}
-
-# Create new VM, Attach to Service Account - for later 
-/*
-resource "google_compute_instance" "default" {
-  name         = "my-test-vm"
-  machine_type = "n1-standard-1"
-  zone         = "us-central1-a"
-
-  boot_disk {
-    initialize_params {
-      image = "debian-cloud/debian-11"
-    }
-  }
-
-  // Local SSD disk
-  scratch_disk {
-    interface = "SCSI"
-  }
-
-  network_interface {
-    network = "default"
-
-    access_config {
-      // Ephemeral public IP
-    }
-  }
-
-  service_account {
-    email  = google_service_account.default.email
-    scopes = ["cloud-platform"] #  `cloud-platform` is recommended for avoid embedding secret keys or user credentials
-  }
 }
 */
