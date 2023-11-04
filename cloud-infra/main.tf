@@ -11,7 +11,7 @@ variable "zone" {
 provider "google" {
   project     = var.project
   region      = var.region
-  credentials = ${{secrets.DEFAULT_SA_KEY}}
+  credentials = file("credentials.json")
   zone        = var.zone
 }
 
