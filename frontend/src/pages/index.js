@@ -5,9 +5,14 @@ export default function Home() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch("/api/python");
-      const data = await res.json();
-      setMessage(data.message);
+      try {
+        const res = await fetch("/api/python");
+        const data = await res.json();
+        setMessage(data.message);
+      } catch {
+        setMessage("API Endpoint 500")
+      }
+      
     };
 
     fetchData();
