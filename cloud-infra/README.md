@@ -25,7 +25,9 @@ Then run the following command to install terraform:
 Follow [these](https://cloud.google.com/sdk/docs/install) instructions. 
 
 ## Run the terraform file
-First, make sure you're in the directory containing the main.tf file (i.e. the cloud-infra folder). To initialize the working directory with the tf file, run:
+First, make sure you're in the directory containing the main.tf file (i.e. the cloud-infra folder). In order to connect to the correct service account, you'll also need the service account's key to be accessible to the main.tf file. On our discord channel, in our cloud thread, pinned is a **credentials.json** file that you'll need to download and place in this same directory. 
+
+To initialize the working directory with the tf file, run:
 
 `terraform init`
 
