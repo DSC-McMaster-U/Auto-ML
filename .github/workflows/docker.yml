@@ -1,0 +1,46 @@
+name: Deploy Docker Files to Artifact Regitry 
+
+on:
+    push:            
+        branches:
+            - 'main'
+        paths:
+            -'backend/Dockerfile'
+            -'frontend/Dockerfile'
+
+jobs:
+    deploy:
+
+        env:
+          PROJECT_ID:  ${{ secrets.PROJECT_ID }}
+          SA_KEY: ${{ secrets.GCP_SA_KEY }}
+
+        runs-on: ubuntu-20.04
+        steps:
+        - name: Code Checkout
+          uses: actions/checkout@v4
+
+        - id: 'auth'
+          name: Authenticate to Google Cloud
+          uses: google-github-actions/auth@v0
+          with: 
+            credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+        - name: Install GCloud CLI
+          uses: google-github-actions/setup-gcloud@v0
+        
+        - name: Build and Push Backend Docker Image
+          env:
+            GOOGLE_PROJECT: ${{ secrets.PROJECT_ID }}
+          run: |
+            gcloud auth configure-docker us-central1-docker.pkg.dev
+            docker build -t us-central1-docker.pkg.dev/automateml/backend-docker-image/backend:latest ./backend
+            docker push us-central1-docker.pkg.dev/automateml/backend-docker-image/backend:latest 
+
+        # - name: build and push frontend docker image
+        #   env:
+        #     GOOGLE_PROJECT:  ${{ secrets.PROJECT_ID }}
+        #   run: |
+        #     gcloud auth configure-docker us-central1-docker.pkg.dev
+        #     docker build -t us-central1-docker.pkg.dev/automateml/frontend-docker-image/frontend:latest ./frontend
+        #     docker push us-central1-docker.pkg.dev/automateml/frontend-docker-image/frontend:latest 
