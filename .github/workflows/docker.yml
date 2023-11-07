@@ -4,10 +4,10 @@ on:
     push:            
         branches:
             - 'main'
-        paths:
-            -'backend/Dockerfile'
-            -'frontend/Dockerfile'
-            # -'machine-learning/Dockerfile'
+        # paths:
+        #     -'backend/'
+        #     -'frontend/'
+        #     # -'machine-learning/Dockerfile'
 
 
 jobs:
@@ -47,10 +47,10 @@ jobs:
             docker build -t us-central1-docker.pkg.dev/automateml/frontend-docker-image/frontend:latest ./frontend
             docker push us-central1-docker.pkg.dev/automateml/frontend-docker-image/frontend:latest 
 
-        - name: Build and Push ML Docker Image
-          env:
-            GOOGLE_PROJECT:  ${{ secrets.PROJECT_ID }}
-          run: |
-            gcloud auth configure-docker us-central1-docker.pkg.dev
-            docker build -t us-central1-docker.pkg.dev/automateml/ml-docker-image/ml:latest ./machine-learning
-            docker push us-central1-docker.pkg.dev/automateml/ml-docker-image/ml:latest 
+        # - name: Build and Push ML Docker Image
+        #   env:
+        #     GOOGLE_PROJECT:  ${{ secrets.PROJECT_ID }}
+        #   run: |
+        #     gcloud auth configure-docker us-central1-docker.pkg.dev
+        #     docker build -t us-central1-docker.pkg.dev/automateml/ml-docker-image/ml:latest ./machine-learning
+        #     docker push us-central1-docker.pkg.dev/automateml/ml-docker-image/ml:latest 
