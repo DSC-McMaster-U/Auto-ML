@@ -11,7 +11,7 @@ variable "zone" {
 provider "google" {
   project     = var.project
   region      = var.region
-  credentials = file("credentials.json")
+  credentials = jsondecode("${var.GOOGLE_CREDENTIALS}")
   zone        = var.zone
 }
 
