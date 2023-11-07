@@ -9,7 +9,6 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
-import AutoMateLogo from "../../public/Automate_logo.png";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -31,7 +30,12 @@ function NavigationBar() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Box sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}>
-            <Image width={50} alt="AutoMate Logo" src={AutoMateLogo} />
+            <Image
+              width={50}
+              height={50}
+              alt="AutoMate Logo"
+              src="/AutoMate_logo.png"
+            />
           </Box>
           <Typography
             variant="h6"
@@ -94,8 +98,13 @@ function NavigationBar() {
             </Menu>
           </Box>
 
-          <Box sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}>
-            <Image width={50} alt="AutoMate Logo" src={AutoMateLogo} />
+          <Box sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}>
+            <Image
+              width={50}
+              height={50}
+              alt="AutoMate Logo"
+              src="/AutoMate_logo.png"
+            />
           </Box>
           <Typography
             variant="h5"
