@@ -1,7 +1,7 @@
 name: Deploy Docker Files to Artifact Regitry 
 
 on:
-    pull_request:            
+    push:            
         branches:
             - 'main'
         paths:
