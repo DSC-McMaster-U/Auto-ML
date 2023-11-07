@@ -13,17 +13,22 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+      DEFAULT_SA_KEY: ${{ secrets.DEFAULT_SA_KEY }}
+      PROJECT_ID: ${{ secrets.PROJECT_ID}}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set up Terraform credentials
+        run: |
+          echo "GOOGLE_CREDENTIALS=${{ secrets.DEFAULT_SA_KEY }}" >> $GITHUB_ENV
+
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v0.2.1
         with:
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          project_id: ${{ env.GCP_PROJECT }}
+          service_account_key: ${{ secrets.DEFAULT_SA_KEY }}
+          project_id: ${{ secrets.PROJECT_ID }}
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v1
