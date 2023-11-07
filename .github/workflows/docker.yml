@@ -1,4 +1,4 @@
-name: Deploy Docker Files to Artifact Regitry 
+name: Deploy Docker Files to Artifact Registry 
 
 on:
     push:            
