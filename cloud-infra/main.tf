@@ -19,7 +19,7 @@ provider "google" {
 # Minimum roles bc will be the default account used by requests
 resource "google_service_account" "GKE_tf_account" {
   account_id   = "gke-tf-service-account"
-  display_name = "A Aervice Account  For Terraform To Make GKE Cluster"
+  display_name = "A Service Account  For Terraform To Make GKE Cluster"
 }
 
 # Kubernetes Version
