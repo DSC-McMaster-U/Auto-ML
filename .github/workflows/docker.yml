@@ -4,9 +4,9 @@ on:
     push:            
         branches:
             - 'main'
-        # paths:
-        #     -'backend/'
-        #     -'frontend/'
+        paths:
+            -'backend/'
+            -'frontend/'
         #     # -'machine-learning/Dockerfile'
 
 
