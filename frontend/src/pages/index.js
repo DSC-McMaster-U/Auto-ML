@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import "@fontsource/public-sans";
-import AutoMateLogo from "../../public/Automate_logo.png";
+import AutoMateLogo from "public/AutoMate_logo.png";
 import Image from "next/image";
 import Button from "@mui/material/Button";
 import styled from "@emotion/styled";
