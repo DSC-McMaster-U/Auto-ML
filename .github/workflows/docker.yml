@@ -39,13 +39,13 @@ jobs:
             docker build -t us-central1-docker.pkg.dev/automateml/backend-docker-image/backend:latest ./backend
             docker push us-central1-docker.pkg.dev/automateml/backend-docker-image/backend:latest 
 
-        # - name: Build and Push Frontend Docker Image
-        #   env:
-        #     GOOGLE_PROJECT:  ${{ secrets.PROJECT_ID }}
-        #   run: |
-        #     gcloud auth configure-docker us-central1-docker.pkg.dev
-        #     docker build -t us-central1-docker.pkg.dev/automateml/frontend-docker-image/frontend:latest ./frontend
-        #     docker push us-central1-docker.pkg.dev/automateml/frontend-docker-image/frontend:latest 
+        - name: Build and Push Frontend Docker Image
+          env:
+            GOOGLE_PROJECT:  ${{ secrets.PROJECT_ID }}
+          run: |
+            gcloud auth configure-docker us-central1-docker.pkg.dev
+            docker build -t us-central1-docker.pkg.dev/automateml/frontend-docker-image/frontend:latest ./frontend
+            docker push us-central1-docker.pkg.dev/automateml/frontend-docker-image/frontend:latest 
 
         # - name: Build and Push ML Docker Image
         #   env:
