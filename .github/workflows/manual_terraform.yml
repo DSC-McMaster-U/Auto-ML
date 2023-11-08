@@ -1,0 +1,52 @@
+name: 'Manual Terraform Deployment'
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'dev'
+
+jobs:
+  terraform:
+    name: 'Deploy to Environment'
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.event.inputs.environment }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0.2.1
+        with:
+          service_account_key: ${{ secrets.DEFAULT_SA_KEY }}
+          project_id: ${{ secrets.PROJECT_ID }}
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v1
+    
+      - name: Set up Terraform credentials
+        run: |
+          echo "GOOGLE_CREDENTIALS=${{ secrets.DEFAULT_SA_KEY }}" >> $GITHUB_ENV
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+
+      - name: Hold for approval
+        if: github.event_name == 'workflow_dispatch'
+        uses: softprops/turnstyle@v1
+        with:
+          continue-after-seconds: 0 # This will make it wait indefinitely until manually approved
+          poll-interval-seconds: 10
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Terraform Apply
+        if: github.event_name == 'workflow_dispatch'
+        run: terraform apply tfplan

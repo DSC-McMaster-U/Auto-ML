@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import "@fontsource/public-sans";
-import AutoMateLogo from "../../public/Automate_logo.png";
 import Image from "next/image";
 import Button from "@mui/material/Button";
 import styled from "@emotion/styled";
@@ -120,8 +119,13 @@ export default function Home() {
             </Button>
           </Element>
         </Element>
-        <Picture style={{ left: "10" }}>
-          <Image width={500} alt="AutoMate Logo" src={AutoMateLogo} />
+        <Picture>
+          <Image
+            width={500}
+            height={500}
+            alt="AutoMate Logo"
+            src="/AutoMate_logo.png"
+          />
         </Picture>
       </BoxContainer>
     </Container>
