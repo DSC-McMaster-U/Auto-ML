@@ -27,12 +27,25 @@ jobs:
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v1
+    
+      - name: Set up Terraform credentials
+        run: |
+          echo "GOOGLE_CREDENTIALS=${{ secrets.DEFAULT_SA_KEY }}" >> $GITHUB_ENV
 
       - name: Terraform Init
         run: terraform init
 
       - name: Terraform Plan
         run: terraform plan -out=tfplan
+
+      - name: Hold for approval
+        if: github.event_name == 'workflow_dispatch'
+        uses: softprops/turnstyle@v1
+        with:
+          continue-after-seconds: 0 # This will make it wait indefinitely until manually approved
+          poll-interval-seconds: 10
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Terraform Apply
         if: github.event_name == 'workflow_dispatch'
