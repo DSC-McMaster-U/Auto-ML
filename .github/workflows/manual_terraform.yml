@@ -1,19 +1,19 @@
-name: 'Terraform'
+name: 'Manual Terraform Deployment'
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'cloud-infra/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'dev'
 
 jobs:
   terraform:
-    name: 'Terraform'
+    name: 'Deploy to Environment'
     runs-on: ubuntu-latest
-
-    env:
-      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+    environment:
+      name: ${{ github.event.inputs.environment }}
 
     steps:
       - name: Checkout code
@@ -32,8 +32,8 @@ jobs:
         run: terraform init
 
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -out=tfplan
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.event_name == 'workflow_dispatch'
+        run: terraform apply tfplan
