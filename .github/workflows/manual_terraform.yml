@@ -34,11 +34,12 @@ jobs:
         env:
           GCP_SA_KEY_BASE64: ${{ secrets.GCP_SA_KEY_BASE64 }}
 
-      - name: Terraform Init
-        run: terraform init
+      - name: Terraform Init and Plan
+        working-directory: ./cloud-infra
+        run: |
+          terraform init
+          terraform plan -out=tfplan
 
-      - name: Terraform Plan
-        run: terraform plan -out=tfplan
 
       - name: Hold for approval
         if: github.event_name == 'workflow_dispatch'
@@ -50,5 +51,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Terraform Apply
+        working-directory: ./cloud-infra
         if: github.event_name == 'workflow_dispatch'
-        run: terraform apply tfplan
+        run: |
+          terraform apply tfplan
