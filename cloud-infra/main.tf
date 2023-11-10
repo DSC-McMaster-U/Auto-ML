@@ -11,7 +11,7 @@ variable "zone" {
 provider "google" {
   project     = var.project
   region      = var.region
-  credentials = jsondecode("${var.GOOGLE_CREDENTIALS}")
+  credentials = file("${path.module}/automateml-3f20c67d2a0a.json")
   zone        = var.zone
 }
 

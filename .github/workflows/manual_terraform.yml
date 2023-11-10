@@ -28,10 +28,12 @@ jobs:
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v1
     
-      - name: Set up Terraform credentials
+      - name: Decode GCP Credentials
         run: |
-          echo "GOOGLE_CREDENTIALS=$(echo "${{ secrets.DEFAULT_SA_KEY2_BASE64 }}" | base64 -d)" >> $GITHUB_ENV
-      
+          echo '${{ secrets.GCP_SA_KEY_BASE64 }}' | base64 -d > ${{ github.workspace }}/automateml-3f20c67d2a0a.json
+        env:
+          GCP_SA_KEY_BASE64: ${{ secrets.GCP_SA_KEY_BASE64 }}
+
       - name: Terraform Init
         run: terraform init
 
