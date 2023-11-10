@@ -30,7 +30,7 @@ jobs:
     
       - name: Set up Terraform credentials
         run: |
-          echo "GOOGLE_CREDENTIALS=$(echo '${{ secrets.DEFAULT_SA_KEY2_BASE64 }}' | base64 -d)" >> $GITHUB_ENV
+          echo "GOOGLE_CREDENTIALS=$(echo "${{ secrets.DEFAULT_SA_KEY2_BASE64 }}" | base64 -d)" >> $GITHUB_ENV
       
       - name: Terraform Init
         run: terraform init
