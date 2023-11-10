@@ -22,7 +22,7 @@ jobs:
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v0.2.1
         with:
-          service_account_key: ${{ secrets.DEFAULT_SA_KEY }}
+          service_account_key: ${{ secrets.DEFAULT_SA_KEY2 }}
           project_id: ${{ secrets.PROJECT_ID }}
 
       - name: Install Terraform
@@ -30,8 +30,8 @@ jobs:
     
       - name: Set up Terraform credentials
         run: |
-          echo "GOOGLE_CREDENTIALS=${{ secrets.DEFAULT_SA_KEY }}" >> $GITHUB_ENV
-
+          echo "GOOGLE_CREDENTIALS=$(echo '${{ secrets.DEFAULT_SA_KEY2_BASE64 }}' | base64 -d)" >> $GITHUB_ENV
+      
       - name: Terraform Init
         run: terraform init
 
