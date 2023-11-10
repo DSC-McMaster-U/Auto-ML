@@ -30,7 +30,7 @@ jobs:
     
       - name: Decode GCP Credentials
         run: |
-          echo '${{ secrets.GCP_SA_KEY_BASE64 }}' | base64 -d > ${{ github.workspace }}/automateml-3f20c67d2a0a.json
+          echo '${{ secrets.GCP_SA_KEY_BASE64 }}' | base64 -d > ${{ github.workspace }}/cloud-infra/automateml-3f20c67d2a0a.json
         env:
           GCP_SA_KEY_BASE64: ${{ secrets.GCP_SA_KEY_BASE64 }}
 
