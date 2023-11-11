@@ -1,18 +1,13 @@
 variable "project" { default = "automateml" }
 variable "region" { default = "us-east1" }
 variable "zone" { default = "us-east1-a" }
+variable "sa_email" { default = "terraform@private-automl-404820.iam.gserviceaccount.com" }
 
 provider "google" {
   project     = var.project
   region      = var.region
-  credentials = file("${path.module}/credentials.json")
+  credentials = file("credentials.json")
   zone        = var.zone
-}
-
-# Add GKE Service Account 
-resource "google_service_account" "gke_tf_account" {
-  account_id   = "gke-tf-service-account"
-  display_name = "A Service Account For Terraform To Make GKE Cluster"
 }
 
 resource "google_container_cluster" "automl_cluster" {
@@ -28,11 +23,11 @@ resource "google_container_cluster" "automl_cluster" {
 resource "google_container_node_pool" "febe_node_pool" {
   name       = "frontend-backend-node-pool"
   location   = var.region
-  cluster    = google_container_cluster.gke_cluster.name
+  cluster    = google_container_cluster.automl_cluster.name
   node_count = 1
 
   node_config {
-    service_account = google_service_account.gke_tf_account.email
+    service_account = var.sa_email
     machine_type    = "e2-micro"
     disk_size_gb    = 30
     labels = {
@@ -51,11 +46,11 @@ resource "google_container_node_pool" "febe_node_pool" {
 resource "google_container_node_pool" "ml_node_pool" {
   name       = "machine-learning-node-pool"
   location   = var.region
-  cluster    = google_container_cluster.gke_cluster.name
+  cluster    = google_container_cluster.automl_cluster.name
   node_count = 1
 
   node_config {
-    service_account = google_service_account.gke_tf_account.email
+    service_account = var.sa_email
     machine_type    = "e2-micro"
     disk_size_gb    = 30
     labels = {

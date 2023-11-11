@@ -1,0 +1,62 @@
+name: "Manual - Provision Terraform"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    name: "Provision Terraform"
+    runs-on: ubuntu-latest
+
+    # environment:
+    #   name: ${{ github.event.inputs.environment }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          service_account: terraform@private-automl-404820.iam.gserviceaccount.com
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.PROJECT_ID }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: "Setup GCP Credentials"
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+        run: |
+          echo "$GCP_SA_KEY" > ./cloud-infra/credentials.json
+
+      - name: Terraform Init
+        working-directory: ./cloud-infra
+        run: |
+          terraform init
+
+      #   - name: Terraform Format
+      #     working-directory: ./cloud-infra
+      #     run: |
+      #       terraform fmt -check
+
+      - name: Terraform Plan
+        working-directory: ./cloud-infra
+        run: |
+          terraform plan
+
+    #   - name: Hold for approval
+    #     if: github.event_name == 'workflow_dispatch'
+    #     uses: softprops/turnstyle@v1
+    #     with:
+    #       continue-after-seconds: 0 # This will make it wait indefinitely until manually approved
+    #       poll-interval-seconds: 10
+    #     env:
+    #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    #   - name: Terraform Apply
+    #     working-directory: ./cloud-infra
+    #     if: github.event_name == 'workflow_dispatch'
+    #     run: |
+    #       terraform apply -auto-approve
