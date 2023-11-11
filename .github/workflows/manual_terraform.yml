@@ -2,11 +2,6 @@ name: "Manual Terraform Deployment"
 
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        description: "Target environment"
-        required: true
-        default: "dev"
 
 jobs:
   terraform:
@@ -21,7 +16,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@v1
         with:
           service_account_key: ${{ secrets.DEFAULT_SA_KEY2 }}
           project_id: ${{ secrets.PROJECT_ID }}
@@ -42,7 +37,6 @@ jobs:
         working-directory: ./cloud-infra
         run: |
           terraform init
-          terraform plan -out=tfplan
 
       - name: Terraform Format
         working-directory: ./cloud-infra
@@ -52,7 +46,7 @@ jobs:
       - name: Terraform Plan
         working-directory: ./cloud-infra
         run: |
-          terraform plan -out=tfplan
+          terraform plan
 
       - name: Hold for approval
         if: github.event_name == 'workflow_dispatch'
@@ -67,4 +61,4 @@ jobs:
         working-directory: ./cloud-infra
         if: github.event_name == 'workflow_dispatch'
         run: |
-          terraform apply tfplan
+          terraform apply -auto-approve
