@@ -24,6 +24,13 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
 
+      - name: "Setup GCP Credentials"
+        env:
+          GCP_SA_KEY: ${{ secrets.DEFAULT_SA_KEY2 }}
+        run: |
+          echo "$GCP_SA_KEY" > credentials.json
+          echo "$GCP_SA_KEY"
+
       # - name: Decode GCP Credentials
       #   run: |
       #     echo '${{ secrets.GCP_SA_KEY_BASE64 }}' | base64 -d > ${{ github.workspace }}/cloud-infra/automateml-3f20c67d2a0a.json

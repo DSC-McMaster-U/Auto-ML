@@ -5,7 +5,7 @@ variable "zone" { default = "us-east1-a" }
 provider "google" {
   project     = var.project
   region      = var.region
-  credentials = file("${path.module}/automateml-3f20c67d2a0a.json")
+  credentials = file("${path.module}/credentials.json")
   zone        = var.zone
 }
 
