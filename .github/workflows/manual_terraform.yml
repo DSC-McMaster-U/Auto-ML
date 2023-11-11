@@ -34,8 +34,16 @@ jobs:
         env:
           GCP_SA_KEY_BASE64: ${{ secrets.GCP_SA_KEY_BASE64 }}
 
+      - name: List files in cloud-infra directory
+        run: ls -l ${{ github.workspace }}/cloud-infra/
+
+      - name: Check SHA256 of the service account file
+        run: sha256sum ${{ github.workspace }}/cloud-infra/automateml-3f20c67d2a0a.json
+
       - name: Terraform Init and Plan
         working-directory: ./cloud-infra
+        env:
+          TF_LOG: DEBUG
         run: |
           terraform init
           terraform plan -out=tfplan
