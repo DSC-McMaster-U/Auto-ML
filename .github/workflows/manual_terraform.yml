@@ -1,53 +1,43 @@
-name: 'Manual Terraform Deployment'
+name: "Manually Provision Terraform"
 
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Target environment'
-        required: true
-        default: 'dev'
 
 jobs:
   terraform:
-    name: 'Deploy to Environment'
+    name: "Provision Terraform"
     runs-on: ubuntu-latest
-    environment:
-      name: ${{ github.event.inputs.environment }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0.2.1
+      - name: Install Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
         with:
-          service_account_key: ${{ secrets.DEFAULT_SA_KEY2 }}
-          project_id: ${{ secrets.PROJECT_ID }}
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Install Terraform
+      - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
-    
-      - name: Decode GCP Credentials
+
+      - name: "Setup GCP Credentials"
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
         run: |
-          echo '${{ secrets.GCP_SA_KEY_BASE64 }}' | base64 -d > ${{ github.workspace }}/cloud-infra/automateml-3f20c67d2a0a.json
-        env:
-          GCP_SA_KEY_BASE64: ${{ secrets.GCP_SA_KEY_BASE64 }}
+          echo "$GCP_SA_KEY" > ./cloud-infra/credentials.json
 
-      - name: List files in cloud-infra directory
-        run: ls -l ${{ github.workspace }}/cloud-infra/
-
-      - name: Check SHA256 of the service account file
-        run: sha256sum ${{ github.workspace }}/cloud-infra/automateml-3f20c67d2a0a.json
-
-      - name: Terraform Init and Plan
+      - name: Terraform Init
         working-directory: ./cloud-infra
-        env:
-          TF_LOG: DEBUG
         run: |
           terraform init
-          terraform plan -out=tfplan
 
+      - name: Terraform Plan
+        working-directory: ./cloud-infra
+        run: |
+          terraform plan
 
       - name: Hold for approval
         if: github.event_name == 'workflow_dispatch'
@@ -62,4 +52,4 @@ jobs:
         working-directory: ./cloud-infra
         if: github.event_name == 'workflow_dispatch'
         run: |
-          terraform apply tfplan
+          terraform apply -auto-approve
