@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: your-frontend-image:latest
+        image: us-central1-docker.pkg.dev/automateml/frontend-docker-image/frontend:latest 
         ports:
-        - containerPort: 80
+        - containerPort: 3000
