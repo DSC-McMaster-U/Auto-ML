@@ -6,12 +6,12 @@ variable "region" {
   default = "us-east1"
 }
 variable "zone" {
-  default = "us-east1-a"
+  default = "us-east1-b"
 }
 provider "google" {
   project     = var.project
   region      = var.region
-  credentials = file("${path.module}/automateml-3f20c67d2a0a.json")
+  credentials = file("automateml-f4e570d0a95d-owner-sa.json")
   zone        = var.zone
 }
 
@@ -29,7 +29,7 @@ variable "cluster_version" {
 
 # Setup Clusters 
 resource "google_container_cluster" "cluster" {
-  name               = "trail"
+  name               = "tutorial"
   location           = var.zone
   min_master_version = var.cluster_version
   project            = var.project
@@ -100,6 +100,22 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
       version
     ]
   }
+}
+
+resource "google_service_account" "workload-identity-user-sa" {
+  account_id   = "workload-identity-tutorial"
+  display_name = "Service Account For Workload Identity"
+}
+resource "google_project_iam_member" "storage-role" {
+  project = var.project
+  role = "roles/storage.admin"
+  # role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:${google_service_account.workload-identity-user-sa.email}"
+}
+resource "google_project_iam_member" "workload_identity-role" {
+  project = var.project
+  role   = "roles/iam.workloadIdentityUser"
+  member = "serviceAccount:${var.project}.svc.id.goog[workload-identity-test/workload-identity-user]"
 }
 
 
