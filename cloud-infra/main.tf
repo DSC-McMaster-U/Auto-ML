@@ -12,7 +12,7 @@ provider "google" {
 
 resource "google_container_cluster" "automl_cluster" {
   name     = "automl-cluster"
-  location = var.region
+  location = var.zone
   project  = var.project
 
   remove_default_node_pool = true
@@ -22,7 +22,7 @@ resource "google_container_cluster" "automl_cluster" {
 //single node "node pool" for frontend and backend pods
 resource "google_container_node_pool" "febe_node_pool" {
   name       = "frontend-backend-node-pool"
-  location   = var.region
+  location   = var.zone
   cluster    = google_container_cluster.automl_cluster.name
   node_count = 1
 
@@ -45,7 +45,7 @@ resource "google_container_node_pool" "febe_node_pool" {
 //pool for machine learning (allows us to adjust the compute later if needed)
 resource "google_container_node_pool" "ml_node_pool" {
   name       = "machine-learning-node-pool"
-  location   = var.region
+  location   = var.zone
   cluster    = google_container_cluster.automl_cluster.name
   node_count = 1
 
