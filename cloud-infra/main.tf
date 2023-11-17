@@ -1,6 +1,6 @@
 variable "project" { default = "automateml" }
 variable "region" { default = "us-east1" }
-variable "zone" { default = "us-east1-a" }
+variable "zone" { default = "us-east1-b" }
 variable "sa_email" { default = "owner-sa@automateml.iam.gserviceaccount.com" }
 
 provider "google" {
