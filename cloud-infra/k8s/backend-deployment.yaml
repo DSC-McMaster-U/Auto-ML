@@ -19,7 +19,6 @@ spec:
           image: us-central1-docker.pkg.dev/automateml/backend-docker-image/backend:latest
           resources:
             limits:
-              cpu: 100m
               memory: 100Mi
             requests:
               cpu: 20m
