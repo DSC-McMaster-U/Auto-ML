@@ -20,9 +20,19 @@ jobs:
         with:
           credentials_json: ${{ secrets.OWNER_SA_KEY }}
 
-      - name: Get GKE credentials
-        run: |
-          gcloud container clusters get-credentials automl-cluster --region us-east1-b --project automateml
+      
+      - name: Setup GKE Auth
+        uses: simenandre/setup-gke-gcloud-auth-plugin@v1
+
+      - name: Get GKE Credentials
+        uses: google-github-actions/get-gke-credentials@v1
+        with:
+          cluster_name: automl-cluster
+          location: us-east1-b
+
+      # - name: Get GKE credentials
+      #   run: |
+      #     gcloud container clusters get-credentials automl-cluster --region us-east1-b --project automateml
 
       - name: Deploy to GKE
         run: |
