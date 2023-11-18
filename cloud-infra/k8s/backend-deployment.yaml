@@ -17,10 +17,6 @@ spec:
       containers:
         - name: backend
           image: us-central1-docker.pkg.dev/automateml/backend-docker-image/backend:latest
-          resources:
-            requests:
-              cpu: 20m
-              memory: 50Mi
           ports:
             - name: http
               containerPort: 80
