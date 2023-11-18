@@ -11,16 +11,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Install Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
-
+      
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.OWNER_SA_KEY }}
 
-      
+      - name: Install Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+   
       - name: Setup GKE Auth
         uses: simenandre/setup-gke-gcloud-auth-plugin@v1
 
@@ -29,10 +28,6 @@ jobs:
         with:
           cluster_name: automl-cluster
           location: us-east1-b
-
-      # - name: Get GKE credentials
-      #   run: |
-      #     gcloud container clusters get-credentials automl-cluster --region us-east1-b --project automateml
 
       - name: Deploy to GKE
         run: |
