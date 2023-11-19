@@ -7,7 +7,12 @@
 ![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white) ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white) ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
 
 ## Contributors
+|  <div style="width:100px">Name + Headshot </div>| Badges | Notable Contributions | 
+| ----------- | ----------- |----------- |
+| ![Alt text](image.png) Beep Boop| ![Google Cloud](https://img.shields.io/badge/GoogleCloud-%234285F4.svg?style=for-the-badge&logo=google-cloud&logoColor=white) ![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white)| <ul><li>[#130: Developed pipeline for pushing docker images](https://github.com/DSC-McMaster-U/Auto-ML/pull/130)</li><li>[#109: K8s manifest for frontend](https://github.com/DSC-McMaster-U/Auto-ML/pull/130)</li></ul>
 
+
+  
 
 ## About the Project
 <!-- TODO: insert screenshot of application page-->
