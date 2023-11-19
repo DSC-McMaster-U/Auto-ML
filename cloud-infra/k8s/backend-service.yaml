@@ -7,5 +7,6 @@ spec:
     app: backend
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: http
+      port: 8000
+      targetPort: 8000
+  type: LoadBalancer
