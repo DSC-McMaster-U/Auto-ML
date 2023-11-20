@@ -5,18 +5,17 @@ metadata:
   labels:
     app: backend
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: backend
-  replicas: 1
   template:
     metadata:
       labels:
         app: backend
     spec:
       containers:
-        - name: backend
-          image: us-central1-docker.pkg.dev/automateml/backend-docker-image/backend:latest
-          ports:
-            - name: http
-              containerPort: 80
+      - name: backend
+        image: us-central1-docker.pkg.dev/automateml/backend-docker-image/backend:latest
+        ports:
+        - containerPort: 8000
