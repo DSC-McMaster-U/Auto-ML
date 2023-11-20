@@ -12,7 +12,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Image from "next/image";
 import Link from "next/link";
 
-const pages = ["upload", "profiling", "machine learning"];
+const pages = ["upload", "profiling", "automl"];
 
 function NavigationBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
