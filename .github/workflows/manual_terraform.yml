@@ -43,7 +43,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         uses: softprops/turnstyle@v1
         with:
-          continue-after-seconds: 0 # This will make it wait indefinitely until manually approved
+          abort-after-seconds: 180 #will wait for 3 minutes for approval to be given, if not given, will abort
           poll-interval-seconds: 10
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
