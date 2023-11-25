@@ -1,11 +1,30 @@
-import * as React from "react";
+import React, {useEffect, useState} from "react";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import FolderIcon from "@mui/icons-material/Folder";
+import Uploader from "@/components/FileUploader"
 
 function Upload() {
+
+  const [uploads, setUploads] = useState([{name: ""}])
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch("/api/dataset");
+        const data = await res.json();
+        console.log(data)
+        setUploads(data);
+      } catch {
+        console.error("API Endpoint Not Working");
+      }
+    };
+
+    fetchData();
+  }, []);
   return (
     <Container maxWidth="xl" sx={{ textAlign: "center", marginY: 4 }}>
       <Typography variant="h2" sx={{ marginBottom: 2, fontSize: "40px" }}>
@@ -50,6 +69,14 @@ function Upload() {
               justifyContent: "center",
             }}
           > 
+          <Typography color={"black"} variant="h2" sx={{ fontSize: "22px", marginBottom: 2 }}> 
+            
+              {uploads?.map(upload => 
+                <div id={(upload.Id)}>
+                  {upload.name}
+                </div>
+              )}
+            </Typography>
           </Box>  
         </Box>
         <Box
@@ -72,9 +99,10 @@ function Upload() {
             }}
           >
             <Typography variant="h2" sx={{ fontSize: "22px", marginBottom: 2 }}> 
-              Drag Files to Upload
+              Upload files here
             </Typography>
             <CloudUploadIcon sx={{ fontSize: 38, color: "black" }} />
+            <Uploader uploads={uploads} setUploads={setUploads}/>
           </Box>
 
           <Box

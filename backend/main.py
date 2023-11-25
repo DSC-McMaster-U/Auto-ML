@@ -1,10 +1,23 @@
 from fastapi import FastAPI, File, UploadFile
 import csv
 from io import StringIO
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-data = {}
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+
+data = []
 
 @app.get("/")
 async def root():
@@ -31,13 +44,13 @@ def upload(file: UploadFile):  # Initialize data as a dictionary
             csvReader = csv.DictReader(buffer)
 
             for row in csvReader:
-                key = row.get('Id')  # Assuming a column named 'Id' to be the primary key
-                data[key] = row
+                data.append(row)
+
 
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
 
     finally:
         file.file.close()
-
+    print(data)
     return data

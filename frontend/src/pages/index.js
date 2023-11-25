@@ -7,6 +7,8 @@ import styled from "@emotion/styled";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import UploadButton from "@/components/UploadButton";
 import { Modal } from "@mui/material";
+import Uploader from "@/components/FileUploader"
+
 
 
 const Container = styled.div`
@@ -30,7 +32,6 @@ const Element = styled.div`
 
 const Picture = styled.div`
   padding: 10px;
-  background-color: #fff;
 
   text-align: center;
   left: 10;
@@ -38,7 +39,7 @@ const Picture = styled.div`
 
 export default function Home() {
   const [message, setMessage] = useState("Loading...");
-  
+
   const [showModal, setShowModal] = useState(false)
   const handleToggle = useCallback(() => setShowModal(prevShowModal => !prevShowModal),[])
 
@@ -57,8 +58,68 @@ export default function Home() {
   }, []);
 
   return (
-    <Container>
-      {showModal && <div>hello</div>}
+    <>
+    <Modal
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        open={showModal}
+        onClose={handleToggle}
+        style={{width:700, left:550, top:250}}
+      >
+          
+        <div>
+
+        <Element style={{backgroundColor:"white"}}>
+        <Typography
+            variant="h1"
+            sx={{
+              mt: 5,
+              fontFamily: "Public Sans",
+              fontWeight: 700,
+              letterSpacing: ".3rem",
+              color: "blue",
+            }}
+          >
+            Upload your
+          </Typography>
+          <Typography
+            variant="h1"
+            sx={{
+              fontFamily: "Public Sans",
+              fontWeight: 700,
+              letterSpacing: ".3rem",
+              color: "green",
+            }}
+          >
+            csv file
+          </Typography>
+          <Typography
+            variant="h5"
+            mt={3}
+            mb={5}
+            sx={{
+
+              fontFamily: "Public Sans",
+              fontWeight: 100,
+              letterSpacing: ".3rem",
+            }}
+          >
+            To start your data journey
+          </Typography>
+        <Uploader/>
+
+        </Element>
+        
+
+        
+        </div>
+
+
+          
+
+      </Modal>
+    <Container className={(showModal ? "hidden" : "")}>
+
       <BoxContainer>
         <Element>
           <Typography
@@ -124,5 +185,6 @@ export default function Home() {
         </Picture>
       </BoxContainer>
     </Container>
+    </>
   );
 }
