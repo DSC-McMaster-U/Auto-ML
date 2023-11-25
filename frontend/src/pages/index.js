@@ -61,8 +61,8 @@ export default function Home() {
               mt: 5,
               fontFamily: "Public Sans",
               fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "blue",
+              letterSpacing: "0.05rem",
+              color: "#4285f4",
             }}
           >
             Welcome to
@@ -72,8 +72,8 @@ export default function Home() {
             sx={{
               fontFamily: "Public Sans",
               fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "green",
+              letterSpacing: "0.05rem",
+              color: "#34A853",
             }}
           >
             AutoMate!
@@ -84,7 +84,7 @@ export default function Home() {
               mt: 5,
               fontFamily: "Public Sans",
               fontWeight: 100,
-              letterSpacing: ".3rem",
+              letterSpacing: ".05rem",
             }}
           >
             An intuitive platform to streamline your data exploration.
@@ -92,7 +92,7 @@ export default function Home() {
           <Element style={{ marginTop: 10 }}>
             <Button
               style={{
-                "background-color": "blue",
+                "background-color": "#34A853",
                 border: "1px solid #333",
                 width: 150,
                 height: 55,
@@ -111,7 +111,7 @@ export default function Home() {
                 width: 150,
                 height: 55,
                 fontFamily: "Public Sans",
-                color: "blue",
+                color: "#EA4335",
               }}
             >
               <UploadIcon />

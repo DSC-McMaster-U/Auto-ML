@@ -1,8 +1,11 @@
 // Automl.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Checkbox, Radio, FormControlLabel, RadioGroup, Button, IconButton } from '@mui/material';
 import { CheckCircle, PlayArrow } from '@mui/icons-material';
 import LineChartRecharts from './linechartrecharts';
+import Container from "@mui/material/Container";
+import Typography from '@material-ui/core/Typography';
+
 
 const Automl = () => {
   const [chartLoading, setChartLoading] = useState(false);
@@ -47,14 +50,18 @@ const Automl = () => {
             control={
               <Checkbox
                 style={{ borderRadius: '0' }} // Square Checkbox
-                icon={<CheckCircle style={{ color: 'green', fontSize: 24 }} />}
+                icon={<CheckCircle style={{ color: '#34A853', fontSize: 24 }} />}
                 checkedIcon={<CheckCircle style={{ color: 'green', fontSize: 24 }} />}
                 checked={checkbox1}
                 onChange={() => 
                     handleCheckboxChange('checkbox1')}
               />
             }
-            label="Classification"
+            label={
+              <Typography style={{ fontFamily: 'Public Sans, sans-serif' }}>
+                Classification
+              </Typography>
+            }
           />
         </div>
         <div
@@ -71,13 +78,17 @@ const Automl = () => {
             control={
               <Checkbox
                 style={{ borderRadius: '0' }} // Square Checkbox
-                icon={<CheckCircle style={{ color: 'blue', fontSize: 24 }} />}
+                icon={<CheckCircle style={{ color: '#FBBC05', fontSize: 24 }} />}
                 checkedIcon={<CheckCircle style={{ color: 'blue', fontSize: 24 }} />}
                 checked={checkbox2}
                 onChange={() => handleCheckboxChange('checkbox2')}
               />
             }
-            label="Regression"
+            label={
+              <Typography style={{ fontFamily: 'Public Sans, sans-serif' }}>
+                Regression
+              </Typography>
+            }
           />
         </div>
         <div
@@ -94,13 +105,17 @@ const Automl = () => {
             control={
               <Checkbox
                 style={{ borderRadius: '0' }} // Square Checkbox
-                icon={<CheckCircle style={{ color: 'red', fontSize: 24 }} />}
+                icon={<CheckCircle style={{ color: '#EA4335', fontSize: 24 }} />}
                 checkedIcon={<CheckCircle style={{ color: 'red', fontSize: 24 }} />}
                 checked={checkbox2}
                 onChange={() => handleCheckboxChange('checkbox3')}
               />
             }
-            label="Loading"
+            label={
+              <Typography style={{ fontFamily: 'Public Sans, sans-serif' }}>
+                Loading
+              </Typography>
+            }
           />
 </div>
 
@@ -112,11 +127,12 @@ const Automl = () => {
     background: '#ddd',
     padding: '20px',
     borderRadius: '10px',
+    fontFamily: "Public Sans"
   }}
 >
   
   <IconButton color="primary">
-    <PlayArrow style={{ fontSize: 24, color: 'blue' }} />
+    <PlayArrow style={{ fontSize: 24, color: '#4285F4' }} />
   </IconButton> Start AutoML
 </div>
 
