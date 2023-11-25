@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Typography from "@mui/material/Typography";
 import "@fontsource/public-sans";
 import Image from "next/image";
 import Button from "@mui/material/Button";
 import styled from "@emotion/styled";
-import UploadIcon from "@mui/icons-material/Upload";
 import BarChartIcon from "@mui/icons-material/BarChart";
+import UploadButton from "@/components/UploadButton";
+import { Modal } from "@mui/material";
+
 
 const Container = styled.div`
   display: flex;
@@ -36,6 +38,9 @@ const Picture = styled.div`
 
 export default function Home() {
   const [message, setMessage] = useState("Loading...");
+  
+  const [showModal, setShowModal] = useState(false)
+  const handleToggle = useCallback(() => setShowModal(prevShowModal => !prevShowModal),[])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,6 +58,7 @@ export default function Home() {
 
   return (
     <Container>
+      {showModal && <div>hello</div>}
       <BoxContainer>
         <Element>
           <Typography
@@ -103,20 +109,9 @@ export default function Home() {
             >
               <BarChartIcon style={{ border: "black" }} /> Auto-EDA
             </Button>
+            <UploadButton setter = {handleToggle}/>
 
-            <Button
-              style={{
-                "background-color": "white",
-                border: "1px solid #333",
-                width: 150,
-                height: 55,
-                fontFamily: "Public Sans",
-                color: "blue",
-              }}
-            >
-              <UploadIcon />
-              Dataset
-            </Button>
+            
           </Element>
         </Element>
         <Picture>
