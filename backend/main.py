@@ -2,6 +2,7 @@ from fastapi import FastAPI, File, UploadFile
 import csv
 from io import StringIO
 from fastapi.middleware.cors import CORSMiddleware
+import uuid
 
 app = FastAPI()
 
@@ -39,11 +40,14 @@ def upload(file: UploadFile):  # Initialize data as a dictionary
 
     try:
         contents = file.file.read()
+        identifier = str(uuid.uuid4())
 
         with StringIO(contents.decode('utf-8')) as buffer:
             csvReader = csv.DictReader(buffer)
 
             for row in csvReader:
+                row["uuid"] = identifier
+                
                 data.append(row)
 
 
