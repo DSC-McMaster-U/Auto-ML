@@ -97,15 +97,6 @@ function NavigationBar() {
               ))}
             </Menu>
           </Box>
-
-          <Box sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}>
-            <Image
-              width={50}
-              height={50}
-              alt="AutoMate Logo"
-              src="/AutoMate_logo.png"
-            />
-          </Box>
           <Typography
             variant="h5"
             noWrap

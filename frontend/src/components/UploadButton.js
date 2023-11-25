@@ -11,7 +11,7 @@ function UploadButton ({setter}) {
           fontFamily: "Public Sans",
           color: "blue",
         }}
-        onClick={() => {setter(true)}}
+        onClick={setter}
       >
         <UploadIcon />
         Dataset
