@@ -64,3 +64,23 @@ resource "google_container_node_pool" "ml_node_pool" {
     ]
   }
 }
+
+# Create new storage bucket in the US multi-region
+# with standard storage
+resource "google_storage_bucket" "static" {
+  project       = var.project
+  name          = "data-test-automate-ml"
+  location      = "us-east1"
+  storage_class = "standard"
+
+  uniform_bucket_level_access = true
+}
+
+# Upload a text file as an object
+# to the storage bucket
+# resource "google_storage_bucket_object" "default" {
+#   name         = "sample_file.txt"
+#   source       = "./sample_file.txt"
+#   content_type = "text/plain"
+#   bucket       = google_storage_bucket.static.id
+# }
