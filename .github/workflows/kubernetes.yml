@@ -1,4 +1,4 @@
-name: "Provision K8s manifests"
+name: "Manually Provision K8s manifests"
 
 on:
   workflow_dispatch:
