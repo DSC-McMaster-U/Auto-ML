@@ -1,13 +1,14 @@
-name: Deploy Docker Files to Artifact Registry 
+name: "Manually Deploy Docker Files to Artifact Registry"
 
 on:
-    push:            
-        branches:
-            - 'main'
-        paths:
-            -'backend/'
-            -'frontend/'
-        #     # -'machine-learning/Dockerfile'
+  workflow_dispatch:
+    # push:            
+    #     branches:
+    #         - 'main'
+    #     paths:
+    #         -'backend/'
+    #         -'frontend/'
+    #         -'machine-learning/Dockerfile'
 
 
 jobs:
