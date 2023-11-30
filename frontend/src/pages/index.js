@@ -90,6 +90,7 @@ export default function Home() {
             An intuitive platform to streamline your data exploration.
           </Typography>
           <Element style={{ marginTop: 10 }}>
+
           </Element>
         </Element>
         <Picture>
