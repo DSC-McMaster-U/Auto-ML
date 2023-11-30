@@ -11,6 +11,7 @@ import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import Image from "next/image";
 import Link from "next/link";
+import "@fontsource/public-sans";
 
 const pages = ["upload", "profiling", "automl"];
 
@@ -27,7 +28,7 @@ function NavigationBar() {
 
   return (
     <AppBar position="static">
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" >
         <Toolbar disableGutters>
           <Box sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}>
             <Image
@@ -51,6 +52,7 @@ function NavigationBar() {
               letterSpacing: ".3rem",
               color: "inherit",
               textDecoration: "none",
+              fontFamily: "Public Sans"
             }}
           >
             AutoMate
@@ -88,6 +90,7 @@ function NavigationBar() {
               {pages.map((page) => (
                 <MenuItem
                   key={page}
+                  style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 16 }}
                   onClick={handleCloseNavMenu}
                   component={Link}
                   href={page.replace(" ", "-")}
@@ -98,14 +101,6 @@ function NavigationBar() {
             </Menu>
           </Box>
 
-          <Box sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}>
-            <Image
-              width={50}
-              height={50}
-              alt="AutoMate Logo"
-              src="/AutoMate_logo.png"
-            />
-          </Box>
           <Typography
             variant="h5"
             noWrap
@@ -120,6 +115,7 @@ function NavigationBar() {
               letterSpacing: ".3rem",
               color: "inherit",
               textDecoration: "none",
+              fontFamily: "Public Sans"
             }}
           >
             AutoMate
@@ -128,6 +124,7 @@ function NavigationBar() {
             {pages.map((page) => (
               <Button
                 key={page}
+                style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 16 }}
                 LinkComponent={Link}
                 href={page.replace(" ", "-")}
                 sx={{ my: 2, color: "white", display: "block" }}
