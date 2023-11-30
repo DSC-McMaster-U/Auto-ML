@@ -11,7 +11,7 @@ import {
   PreviewOutlined as PreviewOutlinedIcon,
 } from '@mui/icons-material';
 
-const profiling = () => {
+const Profiling = () => {
   // Define your data and fetch or process it as needed
   const [data, setData] = useState([]);
 
@@ -115,7 +115,7 @@ const profiling = () => {
     );
   };
   
-  export default profiling;
+  export default Profiling;
 
 /*
 BUTTONS WE NEED TO ADD, MOVED FROM INDEX PAGE:
