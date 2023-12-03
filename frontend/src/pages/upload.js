@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -6,12 +6,41 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import FolderIcon from "@mui/icons-material/Folder";
 import "@fontsource/public-sans";
 
+
+function handleSubmission(data) {
+
+	fetch("/api/dataset", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+    .then(response => response.json())
+    .then(data => console.log('Response:', data))
+    .catch(error => console.error('Error:', error));
+
+}
+
 function Upload() {
   const [uploadedData, setUploadedData] = useState(null);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch("/api/dataset");
+        const data = await res.json();
+        setUploadedData(data);
+      } catch {
+        console.error("API Endpoint Not Working");
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
-
     if (file) {
       const reader = new FileReader();
 
@@ -37,7 +66,8 @@ function Upload() {
 
         });
 
-        setUploadedData(parsedData);
+        handleSubmission(parsedData)
+        setUploadedData([...uploadedData,...parsedData]);
       };
 
       reader.readAsText(file);
