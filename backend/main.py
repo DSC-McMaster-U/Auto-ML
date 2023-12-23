@@ -71,7 +71,7 @@ async def uploadSet(file: UploadFile):
         storage_client = storage.Client.from_service_account_json("../credentials.json")
 
         bucket = storage_client.get_bucket("data-test-automate-ml")
-        blob = bucket.blob("data.csv")
+        blob = bucket.blob(file.filename)
         content = await file.read()
         blob.upload_from_string(content)
 
