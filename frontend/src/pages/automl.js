@@ -24,7 +24,7 @@ const Automl = () => {
     } if (checkbox === 'checkbox2') {
       setCheckbox2(!checkbox2);
     } if (checkbox === 'checkbox3') {
-    setCheckbox2(!checkbox2);
+    setCheckbox3(!checkbox3);
   }
   };
 
@@ -51,7 +51,7 @@ const Automl = () => {
               <Checkbox
                 style={{ borderRadius: '0' }} // Square Checkbox
                 icon={<CheckCircle style={{ color: '#34A853', fontSize: 24 }} />}
-                checkedIcon={<CheckCircle style={{ color: 'green', fontSize: 24 }} />}
+                checkedIcon={<CheckCircle style={{ color: '#288140', fontSize: 24 }} />}
                 checked={checkbox1}
                 onChange={() => 
                     handleCheckboxChange('checkbox1')}
@@ -79,7 +79,7 @@ const Automl = () => {
               <Checkbox
                 style={{ borderRadius: '0' }} // Square Checkbox
                 icon={<CheckCircle style={{ color: '#FBBC05', fontSize: 24 }} />}
-                checkedIcon={<CheckCircle style={{ color: 'blue', fontSize: 24 }} />}
+                checkedIcon={<CheckCircle style={{ color: '#e3aa04', fontSize: 24 }} />}
                 checked={checkbox2}
                 onChange={() => handleCheckboxChange('checkbox2')}
               />
@@ -106,8 +106,8 @@ const Automl = () => {
               <Checkbox
                 style={{ borderRadius: '0' }} // Square Checkbox
                 icon={<CheckCircle style={{ color: '#EA4335', fontSize: 24 }} />}
-                checkedIcon={<CheckCircle style={{ color: 'red', fontSize: 24 }} />}
-                checked={checkbox2}
+                checkedIcon={<CheckCircle style={{ color: '#d62516', fontSize: 24 }} />}
+                checked={checkbox3}
                 onChange={() => handleCheckboxChange('checkbox3')}
               />
             }

@@ -90,33 +90,7 @@ export default function Home() {
             An intuitive platform to streamline your data exploration.
           </Typography>
           <Element style={{ marginTop: 10 }}>
-            <Button
-              style={{
-                "background-color": "#34A853",
-                border: "1px solid #333",
-                width: 150,
-                height: 55,
-                fontFamily: "Public Sans",
-                color: "white",
-                marginRight: 10,
-              }}
-            >
-              <BarChartIcon style={{ border: "black" }} /> Auto-EDA
-            </Button>
 
-            <Button
-              style={{
-                "background-color": "white",
-                border: "1px solid #333",
-                width: 150,
-                height: 55,
-                fontFamily: "Public Sans",
-                color: "#EA4335",
-              }}
-            >
-              <UploadIcon />
-              Dataset
-            </Button>
           </Element>
         </Element>
         <Picture>

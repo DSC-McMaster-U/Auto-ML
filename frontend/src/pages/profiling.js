@@ -11,7 +11,7 @@ import {
   PreviewOutlined as PreviewOutlinedIcon,
 } from '@mui/icons-material';
 
-const profiling = () => {
+const Profiling = () => {
   // Define your data and fetch or process it as needed
   const [data, setData] = useState([]);
 
@@ -101,6 +101,7 @@ const profiling = () => {
               </Box>
               {/* Display correlation matrix here */}
             </Grid>
+            
           </Grid>
           
           {/* Display DataGrid or other profiling results here */}
@@ -114,7 +115,40 @@ const profiling = () => {
     );
   };
   
-  export default profiling;
+  export default Profiling;
+
+/*
+BUTTONS WE NEED TO ADD, MOVED FROM INDEX PAGE:
+          <Element style={{ marginTop: 10 }}>
+            <Button
+              style={{
+                "background-color": "#34A853",
+                border: "1px solid #333",
+                width: 150,
+                height: 55,
+                fontFamily: "Public Sans",
+                color: "white",
+                marginRight: 10,
+              }}
+            >
+              <BarChartIcon style={{ border: "black" }} /> Auto-EDA
+            </Button>
+
+            <Button
+              style={{
+                "background-color": "white",
+                border: "1px solid #333",
+                width: 150,
+                height: 55,
+                fontFamily: "Public Sans",
+                color: "#EA4335",
+              }}
+            >
+              <UploadIcon />
+              Dataset
+            </Button>
+          </Element>
+          */
 
 /*
 
