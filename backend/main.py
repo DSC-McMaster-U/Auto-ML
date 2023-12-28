@@ -1,9 +1,10 @@
 from fastapi import FastAPI, File, UploadFile
 from typing import Dict, Any, List
-import csv
-from io import StringIO
+from io import BytesIO
 from google.cloud import storage
 from fastapi.middleware.cors import CORSMiddleware
+import pandas as pd
+from compute.h2oRFE import automl
 
 app = FastAPI()
 
@@ -113,3 +114,20 @@ async def retrieveSet():
         return {"error": f"An error occurred: {str(e)}"}
 
     return {"data": dataSetLines}
+
+@app.get("/api/automl")
+async def getModel(): 
+    try:
+        storage_client = storage.Client.from_service_account_json("../credentials.json")
+        bucket = storage_client.get_bucket("data-test-automate-ml")
+        blob = bucket.blob("fish_data.csv")
+        byte_stream = BytesIO()
+        blob.download_to_file(byte_stream)
+        byte_stream.seek(0)
+        df = pd.read_csv(byte_stream)
+        model_path = automl(df)
+
+    except Exception as e:
+        return {"error": f"An error occurred: {str(e)}"}
+
+    return {"model saved to": model_path}
