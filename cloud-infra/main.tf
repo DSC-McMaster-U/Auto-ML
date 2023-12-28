@@ -6,7 +6,7 @@ variable "sa_email" { default = "owner-sa@automateml.iam.gserviceaccount.com" }
 provider "google" {
   project     = var.project
   region      = var.region
-  credentials = file("credentials.json") //github actions creates ./cloud-infra/credentials.json
+  credentials = file("credentials.json") // github actions creates ./cloud-infra/credentials.json
   zone        = var.zone
 }
 
@@ -19,7 +19,7 @@ resource "google_container_cluster" "automl_cluster" {
   initial_node_count       = 2
 }
 
-//single node "node pool" for frontend and backend pods
+// single node "node pool" for frontend and backend pods
 resource "google_container_node_pool" "febe_node_pool" {
   name       = "frontend-backend-node-pool"
   location   = var.zone
@@ -42,7 +42,7 @@ resource "google_container_node_pool" "febe_node_pool" {
   }
 }
 
-//pool for machine learning (allows us to adjust the compute later if needed)
+// pool for machine learning (allows us to adjust the compute later if needed)
 resource "google_container_node_pool" "ml_node_pool" {
   name       = "machine-learning-node-pool"
   location   = var.zone
@@ -65,8 +65,7 @@ resource "google_container_node_pool" "ml_node_pool" {
   }
 }
 
-# Create new storage bucket in the US multi-region
-# with standard storage
+// Create new storage bucket in the US multi-region with standard storage
 resource "google_storage_bucket" "static" {
   project       = var.project
   name          = "data-test-automate-ml"
@@ -76,11 +75,3 @@ resource "google_storage_bucket" "static" {
   uniform_bucket_level_access = true
 }
 
-# Upload a text file as an object
-# to the storage bucket
-# resource "google_storage_bucket_object" "default" {
-#   name         = "sample_file.txt"
-#   source       = "./sample_file.txt"
-#   content_type = "text/plain"
-#   bucket       = google_storage_bucket.static.id
-# }
