@@ -5,3 +5,7 @@ app/src/dataset.csv
 .DS_Store
 
 __pycache__/
+
+/package-lock.json
+
+credentials.json
