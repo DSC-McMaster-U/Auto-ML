@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Container from '@mui/material/Container';
-import { Paper, Typography, Grid, Box } from '@material-ui/core';
+import { Paper, Typography, Grid, Box } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import {
   InfoOutlined as InfoOutlinedIcon,
@@ -28,94 +28,110 @@ const Profiling = () => {
   ];
 
   return (
-    <Container maxWidth="xl" sx={{ fontFamily: "Public Sans", textAlign: "center", marginY: 4 }}>
-      <Typography variant="h4" style={{ fontFamily: "Public Sans" }} gutterBottom>
+    <Container
+      maxWidth='xl'
+      sx={{ fontFamily: 'Public Sans', textAlign: 'center', marginY: 4 }}
+    >
+      <Typography
+        variant='h4'
+        style={{ fontFamily: 'Public Sans' }}
+        gutterBottom
+      >
         Data Profiling
       </Typography>
 
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          margin: "0 20px",
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          margin: '0 20px',
         }}
       >
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={4} lg={3}>
-            <Box display="flex" alignItems="center">
-            <InfoOutlinedIcon style={{ color: '#4285F4' }} fontSize="large" />
-              <Typography variant="h6" style={{ marginLeft: 8 }}>
+            <Box display='flex' alignItems='center'>
+              <InfoOutlinedIcon style={{ color: '#4285F4' }} fontSize='large' />
+              <Typography variant='h6' style={{ marginLeft: 8 }}>
                 Overview
               </Typography>
             </Box>
-            {/*Display basic information here*/ }
-            </Grid>
-
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <Box display="flex" alignItems="center">
-                <DescriptionOutlinedIcon style={{ color: '#34A853' }} fontSize="large" />
-                <Typography variant="h6" style={{ marginLeft: 8 }}>
-                  Variables
-                </Typography>
-              </Box>
-              {/*Display summary statistics here*/ }
-            </Grid>
-  
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <Box display="flex" alignItems="center">
-                <BarChartOutlinedIcon style={{ color: '#FBBC05' }} fontSize="large" />
-                <Typography variant="h6" style={{ marginLeft: 8 }}>
-                  Interactions
-                </Typography>
-              </Box>
-              {/*Display data distribution here*/ }
-            </Grid>
-  
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <Box display="flex" alignItems="center">
-                <QueryStatsOutlinedIcon style={{ color: '#4285F4' }} fontSize="large" />
-                <Typography variant="h6" style={{ marginLeft: 8 }}>
-                  Correlations
-                </Typography>
-              </Box>
-              {/*Display correlation matrix here*/ }
-            </Grid>
-  
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <Box display="flex" alignItems="center">
-                <PriorityHighIcon style={{ color: '#EA4335' }} fontSize="large" />
-                <Typography variant="h6" style={{ marginLeft: 8 }}>
-                  Missing Values
-                </Typography>
-              </Box>
-              {/* Display correlation matrix here */}
-            </Grid>
-  
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <Box display="flex" alignItems="center">
-                <PreviewOutlinedIcon style={{ color: '#34A853' }} fontSize="large" />
-                <Typography variant="h6" style={{ marginLeft: 8 }}>
-                  Samples
-                </Typography>
-              </Box>
-              {/* Display correlation matrix here */}
-            </Grid>
-            
+            {/*Display basic information here*/}
           </Grid>
-          
-          {/* Display DataGrid or other profiling results here */}
-          <div style={{ height: 400, width: '100%' }}>
-            <DataGrid rows={data} columns={columns} />
-          </div>
-      
-          
-        </Box>
-      </Container>
-    );
-  };
-  
-  export default Profiling;
+
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <Box display='flex' alignItems='center'>
+              <DescriptionOutlinedIcon
+                style={{ color: '#34A853' }}
+                fontSize='large'
+              />
+              <Typography variant='h6' style={{ marginLeft: 8 }}>
+                Variables
+              </Typography>
+            </Box>
+            {/*Display summary statistics here*/}
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <Box display='flex' alignItems='center'>
+              <BarChartOutlinedIcon
+                style={{ color: '#FBBC05' }}
+                fontSize='large'
+              />
+              <Typography variant='h6' style={{ marginLeft: 8 }}>
+                Interactions
+              </Typography>
+            </Box>
+            {/*Display data distribution here*/}
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <Box display='flex' alignItems='center'>
+              <QueryStatsOutlinedIcon
+                style={{ color: '#4285F4' }}
+                fontSize='large'
+              />
+              <Typography variant='h6' style={{ marginLeft: 8 }}>
+                Correlations
+              </Typography>
+            </Box>
+            {/*Display correlation matrix here*/}
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <Box display='flex' alignItems='center'>
+              <PriorityHighIcon style={{ color: '#EA4335' }} fontSize='large' />
+              <Typography variant='h6' style={{ marginLeft: 8 }}>
+                Missing Values
+              </Typography>
+            </Box>
+            {/* Display correlation matrix here */}
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <Box display='flex' alignItems='center'>
+              <PreviewOutlinedIcon
+                style={{ color: '#34A853' }}
+                fontSize='large'
+              />
+              <Typography variant='h6' style={{ marginLeft: 8 }}>
+                Samples
+              </Typography>
+            </Box>
+            {/* Display correlation matrix here */}
+          </Grid>
+        </Grid>
+
+        {/* Display DataGrid or other profiling results here */}
+        <div style={{ height: 400, width: '100%' }}>
+          <DataGrid rows={data} columns={columns} />
+        </div>
+      </Box>
+    </Container>
+  );
+};
+
+export default Profiling;
 
 /*
 BUTTONS WE NEED TO ADD, MOVED FROM INDEX PAGE:
