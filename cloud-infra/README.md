@@ -40,3 +40,6 @@ This will output everything that will be created/destroyed/replaced upon applyin
 `terraform apply tfplan`
 
 It may take some time to finish applying the infrastructure changes, but you should be able to see it active on our projects console under Kubernetes Engine > Clusters. 
+
+>[!NOTE]
+> you might have to setup some gcloud configurations to get this to work.

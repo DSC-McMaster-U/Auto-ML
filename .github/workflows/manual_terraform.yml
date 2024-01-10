@@ -1,3 +1,5 @@
+# uses the terraform files from /cloud-infra dir to provision the infrastructure
+
 name: "Manually Provision Terraform"
 
 on:
