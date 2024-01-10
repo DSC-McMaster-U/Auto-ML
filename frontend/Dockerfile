@@ -29,7 +29,7 @@ COPY --from=builder /app/package.json package.json
 EXPOSE 3000
 
 # Set environment to production to avoid including unnecessary files
-ENV NODE_ENV production
+# ENV NODE_ENV development
 
 # Start the app
 CMD ["npm", "start"]

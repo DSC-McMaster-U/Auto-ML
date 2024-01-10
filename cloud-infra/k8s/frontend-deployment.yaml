@@ -1,3 +1,7 @@
+# This file is used to deploy a single running instance (a pod/container) of the front-end application.
+# This application is built from the frontend Docker image stored in the Artifact Registry
+# The application listens on port 3000 for incoming network traffic.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,6 +20,11 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: us-central1-docker.pkg.dev/automateml/frontend-docker-image/frontend:latest 
+        # uses the front-end image from the artifact registry
+        image: us-central1-docker.pkg.dev/automateml/frontend-docker-image/frontend:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 3000
+        env:
+        - name: APP_ENV
+          value: "production"

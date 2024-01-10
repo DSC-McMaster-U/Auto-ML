@@ -1,3 +1,7 @@
+# This file is used to create a single running instance (a pod/container) of the back-end application in the GKE cluster. 
+# This application is built from the backend Docker image stored in the Artifact Registry. 
+# The application listens on port 8000 for incoming network traffic.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,6 +20,7 @@ spec:
     spec:
       containers:
       - name: backend
+        # uses the back-end image from the artifact registry 
         image: us-central1-docker.pkg.dev/automateml/backend-docker-image/backend:latest
         ports:
         - containerPort: 8000
