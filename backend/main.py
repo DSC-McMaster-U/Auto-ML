@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-data = []
+DATA_BUCKET = "data-test-automate-ml"
 origins = ["*"]
 
 app.add_middleware(
@@ -24,54 +24,13 @@ async def root():
     return {"message": "Hello World"}
 
 
-@app.get("/api/python")
-async def root():
-    return {"message": "Hello from fastAPI backend"}
-
-
-@app.get("/api/dataset")
-async def getData():
-    return data
-
-
-@app.post("/api/dataset")
-def upload(json_data: List[Dict[Any, Any]]):
-    for i in json_data:
-        data.append(i)
-
-
-# def upload(file: UploadFile):  # Initialize data as a dictionary
-
-#     if not file:
-#         return {"message": "No upload file sent"}
-#     try:
-#         contents = file.file.read()
-#         print(contents)
-
-#         # with StringIO(contents.decode('utf-8')) as buffer:
-#         #     csvReader = csv.DictReader(buffer)
-
-#         #     for row in  csvReader:
-#         #         # key = row.get('Id')  # Assuming a column named 'Id' to be the primary key
-#         #         data.append(row)
-
-#     except Exception as e:
-#         return {"error": f"An error occurred: {str(e)}"}
-
-#     finally:
-#         file.file.close()
-
-#     print(data)
-#     return data
-
-
-@app.put("/api/uploadset")
-async def uploadSet(file: UploadFile):
+@app.put("/api/upload")
+async def upload(file: UploadFile, fileName):
     try:
         storage_client = storage.Client.from_service_account_json("../credentials.json")
 
-        bucket = storage_client.get_bucket("data-test-automate-ml")
-        blob = bucket.blob("data.csv")
+        bucket = storage_client.get_bucket(DATA_BUCKET)
+        blob = bucket.blob(f"{fileName}.csv")
         content = await file.read()
         blob.upload_from_string(content)
 
@@ -81,13 +40,13 @@ async def uploadSet(file: UploadFile):
     return {"message": "Data uploaded to Gcloud successfuly"}
 
 
-@app.get("/api/getsets")
-async def retrieveSets():
+@app.get("/api/datasets")
+async def getDataSets():
     dataSetNames = []
     try:
         storage_client = storage.Client.from_service_account_json("../credentials.json")
 
-        blobs = storage_client.list_blobs("data-test-automate-ml")
+        blobs = storage_client.list_blobs(DATA_BUCKET)
         for blob in blobs:
             dataSetNames.append(blob.name)
 
@@ -97,14 +56,14 @@ async def retrieveSets():
     return {"names": dataSetNames}
 
 
-@app.get("/api/getset")
-async def retrieveSet():
+@app.get("/api/data")
+async def getData(fileName):
     dataSetLines = ""
     try:
         storage_client = storage.Client.from_service_account_json("../credentials.json")
 
-        bucket = storage_client.get_bucket("data-test-automate-ml")
-        blob = bucket.blob("data.csv")
+        bucket = storage_client.get_bucket(DATA_BUCKET)
+        blob = bucket.blob(f"{fileName}.csv")
 
         with blob.open("r") as f:
             dataSetLines = f.read()
