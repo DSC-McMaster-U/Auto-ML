@@ -16,7 +16,7 @@ jobs:
 
         env:
           PROJECT_ID:  ${{ secrets.PROJECT_ID }}
-          SA_KEY: ${{ secrets.GCP_SA_KEY }}
+          SA_KEY: ${{ secrets.OWNER_SA_KEY }}
 
         runs-on: ubuntu-20.04
         steps:
@@ -27,7 +27,7 @@ jobs:
           name: Authenticate to Google Cloud
           uses: google-github-actions/auth@v0
           with: 
-            credentials_json: ${{ secrets.GCP_SA_KEY }}
+            credentials_json: ${{ secrets.OWNER_SA_KEY }}
 
         - name: Install GCloud CLI
           uses: google-github-actions/setup-gcloud@v0

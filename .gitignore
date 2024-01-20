@@ -6,4 +6,6 @@ app/src/dataset.csv
 
 __pycache__/
 
+/package-lock.json
+
 credentials.json
