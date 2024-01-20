@@ -24,16 +24,16 @@ This will set up poetry. check installation using `poetry --version`
 <summary><strong>Note (click to open)</strong></summary>
 <br>
 
->(Read **only** if you have added a new import to `main.py` that requires a package not currently listed in `pyproject.toml` file)
-
+(Read **only** if you have added a new import to `main.py` that requires a package not currently listed in `pyproject.toml` file)
+﻿
 - `pyproject.toml` file will not be automatically updated when you modify your `.py` files. 
-
 - The `pyproject.toml` file is a configuration file that specifies the dependencies and other settings for your Python project. It doesn't automatically track the imports or other changes in your Python files.
-
 - If you add a new import to your Python files that requires a package not currently listed in your `pyproject.toml` file, you need to manually add that package to the `[tool.poetry.dependencies]` section of your `pyproject.toml` file.
+- This can be done by running `poetry add package-name` which will add the package to the  `[tool.poetry.dependencies]` section and update the `poetry.lock` file to include the new package and its dependencies.
+- No need to run `poetry lock` or `poetry install` after this because `poetry add` already does the equivalent of both commands.
 
-- After adding a new dependency, you should run `poetry lock` to update your `.lock` file, and then `poetry install` to install the new dependency. If you're using Docker, you should also rebuild your Docker image to include the new dependency.
-
+So, when u add a new dependancy to the code u do `poetry add package-name` 
+when u just wanna run u do `poetry install`
 </details>
 
 Next, to install the dependencies, run: `poetry install`
