@@ -10,7 +10,7 @@ To deploy the application locally using Docker Compose, follow these steps:
 3. Open the terminal and run the following command to start the application:
 
    ```bash
-   docker-compose up
+   docker-compose up --build
    ```
 
 4. The application will be deployed locally and accessible at `http://localhost:3000` which is the default port for the frontend application. The backend application will be accessible at `http://localhost:8000`.
