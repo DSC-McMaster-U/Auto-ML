@@ -13,7 +13,6 @@ on:
 
 jobs:
     deploy:
-
         env:
           PROJECT_ID:  ${{ secrets.PROJECT_ID }}
           SA_KEY: ${{ secrets.OWNER_SA_KEY }}
