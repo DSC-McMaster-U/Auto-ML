@@ -20,6 +20,10 @@ app.add_middleware(
 async def root():
     return {"message": "Hello World"}
 
+# please don't remove this endpoint, it can be used to check if the fe connection with be is working
+@app.get("/api/python")
+async def root():
+    return {"message": "Hello from fastAPI backend"}
 
 @app.put("/api/upload")
 async def upload(file: UploadFile, fileName):
