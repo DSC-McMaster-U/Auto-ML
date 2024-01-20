@@ -1,7 +1,7 @@
-variable "project" { default = "automateml" }
+variable "project" { default = "automate-411812" }
 variable "region" { default = "us-east1" }
 variable "zone" { default = "us-east1-b" }
-variable "sa_email" { default = "owner-sa@automateml.iam.gserviceaccount.com" }
+variable "sa_email" { default = "owner-sa@automate-411812.iam.gserviceaccount.com" }
 
 provider "google" {
   project     = var.project
@@ -14,7 +14,6 @@ resource "google_container_cluster" "automl_cluster" {
   name     = "automl-cluster"
   location = var.zone
   project  = var.project
-
   remove_default_node_pool = true
   initial_node_count       = 2
 }
