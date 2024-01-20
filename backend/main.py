@@ -1,7 +1,5 @@
 from fastapi import FastAPI, UploadFile
-from typing import Dict, Any, List
 from io import BytesIO
-
 from google.cloud import storage
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
