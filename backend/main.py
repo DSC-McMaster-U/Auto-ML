@@ -1,6 +1,8 @@
+from io import BytesIO
 from fastapi import FastAPI, UploadFile
 from google.cloud import storage
 from fastapi.middleware.cors import CORSMiddleware
+from compute.autoEDA import generate_corr_matrix
 
 app = FastAPI()
 
@@ -20,10 +22,12 @@ app.add_middleware(
 async def root():
     return {"message": "Hello World"}
 
+
 # please don't remove this endpoint, it can be used to check if the fe connection with be is working
 @app.get("/api/python")
 async def root():
     return {"message": "Hello from fastAPI backend"}
+
 
 @app.put("/api/upload")
 async def upload(file: UploadFile, fileName):
@@ -73,3 +77,23 @@ async def getData(fileName):
         return {"error": f"An error occurred: {str(e)}"}
 
     return {"data": dataSetLines}
+
+
+@app.get("/api/eda")
+async def getData(fileName):
+    corrMatrix = ""
+    try:
+        storage_client = storage.Client.from_service_account_json("../credentials.json")
+
+        bucket = storage_client.get_bucket(DATA_BUCKET)
+        blob = bucket.blob(f"{fileName}.csv")
+
+        byte_stream = BytesIO()
+        blob.download_to_file(byte_stream)
+        byte_stream.seek(0)
+        corrMatrix = generate_corr_matrix(byte_stream)
+
+    except Exception as e:
+        return {"error": f"An error occurred: {str(e)}"}
+
+    return {"data": corrMatrix}
