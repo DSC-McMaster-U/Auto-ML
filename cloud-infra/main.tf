@@ -1,7 +1,7 @@
-variable "project" { default = "automate-411812" }
+variable "project" { default = "automate-gdsc" }
 variable "region" { default = "us-east1" }
 variable "zone" { default = "us-east1-b" }
-variable "sa_email" { default = "owner-sa@automate-411812.iam.gserviceaccount.com" }
+variable "sa_email" { default = "owner-sa@automate-gdsc.iam.gserviceaccount.com" }
 
 provider "google" {
   project     = var.project
