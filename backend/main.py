@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-DATA_BUCKET = "data-test-automate-ml"
+DATA_BUCKET = "automate-ml-datasets"
 origins = ["*"]
 
 app.add_middleware(
