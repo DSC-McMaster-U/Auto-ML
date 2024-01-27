@@ -28,15 +28,9 @@ def analyze_csv_and_plot(file_path):
 def generate_corr_matrix(file_path):
     df = pd.read_csv(file_path)
 
-    corr_matrix = df.corr()
+    corr_matrix = df.corr().to_dict()
 
-    # Assuming corr_matrix is a pandas DataFrame
-    corr_matrix_dict = corr_matrix.to_dict()
-
-    # Convert the dictionary to a JSON string
-    corr_matrix_json = json.dumps(corr_matrix_dict)
-
-    return corr_matrix_json
+    return corr_matrix
 
 
 # # Example: Provide the path to your CSV file

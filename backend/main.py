@@ -1,4 +1,5 @@
 from io import BytesIO
+import json
 from fastapi import FastAPI, UploadFile
 from google.cloud import storage
 from fastapi.middleware.cors import CORSMiddleware
@@ -6,7 +7,7 @@ from compute.autoEDA import generate_corr_matrix
 
 app = FastAPI()
 
-DATA_BUCKET = "data-test-automate-ml"
+DATA_BUCKET = "automate-ml-datasets"
 origins = ["*"]
 
 app.add_middleware(
@@ -30,12 +31,12 @@ async def root():
 
 
 @app.put("/api/upload")
-async def upload(file: UploadFile, fileName):
+async def upload(file: UploadFile, filename):
     try:
         storage_client = storage.Client.from_service_account_json("../credentials.json")
 
         bucket = storage_client.get_bucket(DATA_BUCKET)
-        blob = bucket.blob(f"{fileName}.csv")
+        blob = bucket.blob(f"{filename}.csv")
         content = await file.read()
         blob.upload_from_string(content)
 
@@ -62,13 +63,13 @@ async def getDataSets():
 
 
 @app.get("/api/data")
-async def getData(fileName):
+async def getData(filename):
     dataSetLines = ""
     try:
         storage_client = storage.Client.from_service_account_json("../credentials.json")
 
         bucket = storage_client.get_bucket(DATA_BUCKET)
-        blob = bucket.blob(f"{fileName}.csv")
+        blob = bucket.blob(f"{filename}.csv")
 
         with blob.open("r") as f:
             dataSetLines = f.read()
@@ -80,17 +81,18 @@ async def getData(fileName):
 
 
 @app.get("/api/eda")
-async def getData(fileName):
+async def eda(filename):
     corrMatrix = ""
     try:
         storage_client = storage.Client.from_service_account_json("../credentials.json")
 
         bucket = storage_client.get_bucket(DATA_BUCKET)
-        blob = bucket.blob(f"{fileName}.csv")
+        blob = bucket.blob(f"{filename}.csv")
 
         byte_stream = BytesIO()
         blob.download_to_file(byte_stream)
         byte_stream.seek(0)
+
         corrMatrix = generate_corr_matrix(byte_stream)
 
     except Exception as e:
