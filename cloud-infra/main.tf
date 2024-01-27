@@ -67,7 +67,7 @@ resource "google_container_node_pool" "ml_node_pool" {
 // Create new storage bucket in the US multi-region with standard storage
 resource "google_storage_bucket" "static" {
   project       = var.project
-  name          = "data-test-automate-ml"
+  name          = "data-automate-ml"
   location      = "us-east1"
   storage_class = "standard"
 
