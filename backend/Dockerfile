@@ -19,7 +19,7 @@ COPY pyproject.toml poetry.lock ./
 RUN poetry config virtualenvs.create false && poetry install --no-dev
 
 # Copy the FastAPI application into the container
-COPY main.py ./
+COPY . .
 
 # Specify the command to run the FastAPI application using uvicorn
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
