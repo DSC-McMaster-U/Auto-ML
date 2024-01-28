@@ -8,6 +8,9 @@
 
 ![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white) ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white) ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
 
+## The AutoMate Architecture
+![image](developers/diagrams/excal_architechture.png)
+
 ## Contributors
 
 | <div style="width:100px"> Contributor </div>                                                    | Most Used Frameworks/Tools                                                                                                                                                                                                                                                                                                   | Notable Contributions                                                                                                                                                                                                                                                                                                                           |
