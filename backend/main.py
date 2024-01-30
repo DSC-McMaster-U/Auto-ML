@@ -2,6 +2,9 @@ from fastapi import FastAPI, UploadFile
 from google.cloud import storage
 from fastapi.middleware.cors import CORSMiddleware
 
+import csv
+from io import StringIO
+
 app = FastAPI()
 
 DATA_BUCKET = "automate-ml-datasets"
@@ -91,7 +94,14 @@ async def getData(fileName):
         with blob.open("r") as f:
             dataSetLines = f.read()
 
+        # convert csv string -> json (for frontend)
+        csv_reader = csv.DictReader(StringIO(dataSetLines))
+        json_data = [row for row in csv_reader]
+
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
 
-    return {"data": dataSetLines}
+    return {
+        "data": dataSetLines,
+        "json": json_data
+    }
