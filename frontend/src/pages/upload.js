@@ -48,10 +48,9 @@ const DataSetListComponent = ({ onSelectDataSet }) => {
   );
 };
 
-//perhaps have small viewer window that shows the header of the data list? on a window on the right?
-//out of scope tbh, this is an march extra
 const DataSetDisplayComponent = ({ selectedDataSet }) => {
   const [data, setData] = useState([{}]);
+  const [csvString, setCsvString] = useState("");
 
   useEffect(() => {
     // Simulate fetching data
@@ -66,6 +65,7 @@ const DataSetDisplayComponent = ({ selectedDataSet }) => {
         const data = await res.json();
         const jsonObject = data.json;
 
+        setCsvString(data.data)
         setData(jsonObject);
         
       } catch (error) {
@@ -75,6 +75,19 @@ const DataSetDisplayComponent = ({ selectedDataSet }) => {
     };
     fetchData();
 }, [selectedDataSet]);
+
+  const handleDownload = () => {
+    const blob = new Blob([csvString], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${selectedDataSet}`;
+    link.style.display = 'none'; // Hide the link
+    document.body.appendChild(link); // Append to the document
+    link.click(); // Programmatically click the link to trigger the download
+    URL.revokeObjectURL(url); // Free up memory by releasing the object URL
+    link.remove(); // Remove the link from the document
+  }
 
   const headers = data[0] ? Object.keys(data[0]) : [];
   return (
@@ -100,7 +113,7 @@ const DataSetDisplayComponent = ({ selectedDataSet }) => {
                 </TableBody>
             </Table>
         </TableContainer>
-        <Button variant="contained" color="primary">
+        <Button variant="contained" color="primary" onClick={handleDownload}>
             Download
         </Button>
     </div>
