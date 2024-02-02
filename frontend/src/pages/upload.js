@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-        Paper, Button, ListItemText, ListItemButton, Box, Container
+        Paper, Button, ListItemText, ListItemButton, Box, Container, Typography
       } from "@mui/material"
 
+import {CloudUploadIcon, CloudDownloadIcon, FolderIcon} from "@mui/icons-material/";
 
-const FileUploadComponent = ({ onUpload }) => {
-  // Implement file upload logic and button (should be in existing)
-};
-
-const DataSetListComponent = ({ onSelectDataSet }) => {
+const DataSetListComponent = ({ onSelectDataSet, uploadTrigger }) => {
   const [dataSets, setDataSets] = useState([]);
   const [selectedDataSet, setSelectedDataSet] = useState(null);
 
@@ -24,7 +21,7 @@ const DataSetListComponent = ({ onSelectDataSet }) => {
         }
       };
       fetchData();
-  }, []);
+  }, [uploadTrigger]);
 
   const handleSelectDataSet = (dataSet) => {
     setSelectedDataSet(dataSet);
@@ -121,37 +118,95 @@ const DataSetDisplayComponent = ({ selectedDataSet }) => {
 };
 
 const MainComponent = () => {
-  const [selectedFile, setSelectedFile] = useState(null);
   const [selectedDataSet, setSelectedDataSet] = useState(null);
+  const [uploadTrigger, setUploadTrigger] = useState(0);
 
-  const handleUpload = (file) => {
-    // Upload logic
-  };
+  
+  const handleUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) {
+        console.error("No file selected.");
+        return;
+    }
 
+    // Prepare FormData
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("fileName", file.name); // Adjust according to how you want to name files on the backend
+
+    // Log FormData contents for debugging
+    for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+    }
+
+    try {
+        // Make an asynchronous PUT request to your backend
+        const response = await fetch("/api/upload", {
+            method: "PUT",
+            body: formData, // FormData will be correctly interpreted by your backend
+        });
+
+        // Assuming your backend responds with JSON
+        const data = await response.json(); 
+
+        // Handle response
+        if (response.ok) {
+            console.log("Upload successful:", data.message);
+            setUploadTrigger(trigger => trigger + 1);
+
+        } else {
+            console.error("Upload failed:", data.error);
+        }
+    } catch (error) {
+        console.error("Error during upload:", error);
+    }
+};
+
+  
   const handleSelectDataSet = (dataSet) => {
     setSelectedDataSet(dataSet);
   };
 
+  const triggerFileInput = () => {
+    // Trigger the hidden file input click event
+    document.getElementById('file-upload-input').click();
+  };
+
   return (
-    <div>
-      <h1>Upload / Download Your Datasets Here!</h1>
+    <Container maxWidth="xl" sx={{ textAlign: "center", marginY: 4 }}>
+      <Typography
+        variant="h2"
+        sx={{
+          marginBottom: 2,
+          fontFamily: "Public Sans",
+          fontSize: "40px",
+        }}
+      >
+        Upload Your Datasets Here!
+      </Typography>
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div style={{ flex: 1, textAlign: 'center', margin: '10px' }}>
-                {/* Container for Upload Button and DataSetListComponent */}
-                <DataSetListComponent onSelectDataSet={handleSelectDataSet} />
+                <DataSetListComponent onSelectDataSet={handleSelectDataSet} uploadTrigger={uploadTrigger}/>
                 <div style={{ marginTop: '20px' }}>
-                    <Button variant="contained" color="primary" onClick={handleUpload}>Upload</Button>
+                    <Button variant="contained" color="primary" onClick={triggerFileInput}>Upload</Button>
+                    <input
+                      id="file-upload-input"
+                      type="file"
+                      accept=".csv"
+                      style={{ display: "none" }}
+                      onChange={handleUpload}
+                    />
                 </div>
+
             </div>
 
             {selectedDataSet && (
                 <div style={{ flex: 2, margin: '10px' }}>
-                    {/* DataSetDisplayComponent with margin */}
                     <DataSetDisplayComponent selectedDataSet={selectedDataSet} />
                 </div>
             )}
       </div>
-    </div>
+    </Container>
   );
 };
 
