@@ -1,4 +1,5 @@
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, File, UploadFile, Form
+from fastapi.responses import JSONResponse
 from google.cloud import storage
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -55,23 +56,23 @@ async def root():
 
 
 @app.put("/api/upload")
-async def upload(file: UploadFile, fileName):
+async def upload(file: UploadFile = File(...), fileName: str = Form(...)):
     try:
         storage_client = storage.Client.from_service_account_json(
             "../credentials.json")
-
         bucket = storage_client.get_bucket(DATA_BUCKET)
-        blob = bucket.blob(f"{fileName}.csv")
-        content = await file.read()
-        blob.upload_from_string(content)
+        # Assuming fileName includes '.csv' extension
+        blob = bucket.blob(f"{fileName}")
 
-        # update state list after successful upload
-        await refreshDataSets()
+        content = await file.read()
+        blob.upload_from_string(content, content_type=file.content_type)
+
+        await refreshDataSets()  # Make sure this function is defined if you want to use it
+
+        return JSONResponse(status_code=200, content={"message": "Data uploaded to GCloud successfully"})
 
     except Exception as e:
-        return {"error": f"An error occurred: {str(e)}"}
-
-    return {"message": "Data uploaded to Gcloud successfuly"}
+        return JSONResponse(status_code=500, content={"error": f"An error occurred: {str(e)}"})
 
 
 @app.get("/api/datasets")
@@ -89,7 +90,7 @@ async def getData(fileName):
             "../credentials.json")
 
         bucket = storage_client.get_bucket(DATA_BUCKET)
-        blob = bucket.blob(f"{fileName}.csv")
+        blob = bucket.blob(f"{fileName}")
 
         with blob.open("r") as f:
             dataSetLines = f.read()
