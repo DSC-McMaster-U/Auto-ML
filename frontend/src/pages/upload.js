@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
         Paper, Button, ListItemText, ListItemButton, Box, Container, Typography
       } from "@mui/material"
 
-import {CloudUploadIcon, CloudDownloadIcon, FolderIcon} from "@mui/icons-material/";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
 const DataSetListComponent = ({ onSelectDataSet, uploadTrigger }) => {
   const [dataSets, setDataSets] = useState([]);
@@ -110,7 +112,7 @@ const DataSetDisplayComponent = ({ selectedDataSet }) => {
                 </TableBody>
             </Table>
         </TableContainer>
-        <Button variant="contained" color="primary" onClick={handleDownload}>
+        <Button variant="contained" color="primary" onClick={handleDownload} startIcon={<CloudDownloadIcon />}>
             Download
         </Button>
     </div>
@@ -188,7 +190,7 @@ const MainComponent = () => {
             <div style={{ flex: 1, textAlign: 'center', margin: '10px' }}>
                 <DataSetListComponent onSelectDataSet={handleSelectDataSet} uploadTrigger={uploadTrigger}/>
                 <div style={{ marginTop: '20px' }}>
-                    <Button variant="contained" color="primary" onClick={triggerFileInput}>Upload</Button>
+                    <Button variant="contained" color="primary" onClick={triggerFileInput} startIcon={<CloudUploadIcon />}>Upload</Button>
                     <input
                       id="file-upload-input"
                       type="file"
