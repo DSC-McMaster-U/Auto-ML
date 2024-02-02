@@ -1,0 +1,28 @@
+# Download vscode REST Client extension and press "send request" under each commented header
+# make sure you have the up to data credentials.json in the root of your whole repo
+
+#### Root test
+GET http://127.0.0.1:8000/
+
+#### Python test
+GET http://127.0.0.1:8000/api/python
+
+#### Get Datasets
+GET http://127.0.0.1:8000/api/datasets
+
+#### Get Data
+GET http://127.0.0.1:8000/api/data?filename=test
+
+#### Upload data set
+PUT http://127.0.0.1:8000/api/upload?filename=test-data
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="file"; filename="data.csv"
+Content-Type: text/csv
+
+< @./data.csv
+--MyBoundary--
+
+#### Get eda
+GET http://127.0.0.1:8000/api/eda?filename=test

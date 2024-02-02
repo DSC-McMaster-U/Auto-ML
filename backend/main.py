@@ -1,7 +1,10 @@
+from io import BytesIO
+import json
 from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import JSONResponse
 from google.cloud import storage
 from fastapi.middleware.cors import CORSMiddleware
+from compute.autoEDA import generate_corr_matrix
 
 import csv
 from io import StringIO
@@ -55,6 +58,12 @@ async def root():
     return {"message": "Hello World"}
 
 
+# please don't remove this endpoint, it can be used to check if the fe connection with be is working
+@app.get("/api/python")
+async def root():
+    return {"message": "Hello from fastAPI backend"}
+
+
 @app.put("/api/upload")
 async def upload(file: UploadFile = File(...), fileName: str = Form(...)):
     try:
@@ -63,7 +72,6 @@ async def upload(file: UploadFile = File(...), fileName: str = Form(...)):
         bucket = storage_client.get_bucket(DATA_BUCKET)
         # Assuming fileName includes '.csv' extension
         blob = bucket.blob(f"{fileName}")
-
         content = await file.read()
         blob.upload_from_string(content, content_type=file.content_type)
 
@@ -83,7 +91,7 @@ async def getDataSets():
 
 
 @app.get("/api/data")
-async def getData(fileName):
+async def getData(filename):
     dataSetLines = ""
     try:
         storage_client = storage.Client.from_service_account_json(
@@ -106,3 +114,25 @@ async def getData(fileName):
         "data": dataSetLines,
         "json": json_data
     }
+
+
+
+@app.get("/api/eda")
+async def eda(filename):
+    corrMatrix = ""
+    try:
+        storage_client = storage.Client.from_service_account_json("../credentials.json")
+
+        bucket = storage_client.get_bucket(DATA_BUCKET)
+        blob = bucket.blob(f"{filename}.csv")
+
+        byte_stream = BytesIO()
+        blob.download_to_file(byte_stream)
+        byte_stream.seek(0)
+
+        corrMatrix = generate_corr_matrix(byte_stream)
+
+    except Exception as e:
+        return {"error": f"An error occurred: {str(e)}"}
+
+    return {"data": corrMatrix}

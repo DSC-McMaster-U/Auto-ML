@@ -21,6 +21,6 @@ spec:
       containers:
       - name: backend
         # uses the back-end image from the artifact registry 
-        image: us-central1-docker.pkg.dev/automateml/backend-docker-image/backend:latest
+        image: us-central1-docker.pkg.dev/automate-gdsc/backend-images/backend:latest
         ports:
         - containerPort: 8000

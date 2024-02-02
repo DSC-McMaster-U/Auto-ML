@@ -1,7 +1,7 @@
-variable "project" { default = "automate-411812" }
+variable "project" { default = "automate-gdsc" }
 variable "region" { default = "us-east1" }
 variable "zone" { default = "us-east1-b" }
-variable "sa_email" { default = "owner-sa@automate-411812.iam.gserviceaccount.com" }
+variable "sa_email" { default = "owner-sa@automate-gdsc.iam.gserviceaccount.com" }
 
 provider "google" {
   project     = var.project
@@ -67,7 +67,7 @@ resource "google_container_node_pool" "ml_node_pool" {
 // Create new storage bucket in the US multi-region with standard storage
 resource "google_storage_bucket" "static" {
   project       = var.project
-  name          = "data-test-automate-ml"
+  name          = "automate-ml-datasets"
   location      = "us-east1"
   storage_class = "standard"
 

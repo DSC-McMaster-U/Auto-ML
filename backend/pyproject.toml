@@ -9,6 +9,10 @@ readme = "README.md"
 python = "^3.11"
 fastapi = "^0.104.0"
 uvicorn = {extras = ["standard"], version = "^0.23.2"}
+google-cloud-storage = "*"
+python-multipart = "*"
+pandas = "^2.2.0"
+seaborn = "^0.13.2"
 
 [build-system]
 requires = ["poetry-core"]

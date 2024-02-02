@@ -21,7 +21,7 @@ spec:
       containers:
       - name: frontend
         # uses the front-end image from the artifact registry
-        image: us-central1-docker.pkg.dev/automateml/frontend-docker-image/frontend:latest
+        image: us-central1-docker.pkg.dev/automate-gdsc/frontend-images/frontend:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
