@@ -13,6 +13,9 @@ GET http://127.0.0.1:8000/api/datasets
 #### Get Data
 GET http://127.0.0.1:8000/api/data?filename=test
 
+#### Get AutoML
+GET http://127.0.0.1:8000/api/automl
+
 #### Upload data set
 PUT http://127.0.0.1:8000/api/upload?filename=test-data
 Content-Type: multipart/form-data; boundary=MyBoundary

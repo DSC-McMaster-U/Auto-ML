@@ -1,9 +1,12 @@
 from io import BytesIO
 import json
 from fastapi import FastAPI, UploadFile
+from starlette.responses import FileResponse
+from io import BytesIO
 from google.cloud import storage
 from fastapi.middleware.cors import CORSMiddleware
 from compute.autoEDA import generate_corr_matrix
+import pandas as pd
 
 app = FastAPI()
 
@@ -33,7 +36,8 @@ async def root():
 @app.put("/api/upload")
 async def upload(file: UploadFile, filename):
     try:
-        storage_client = storage.Client.from_service_account_json("../credentials.json")
+        storage_client = storage.Client.from_service_account_json(
+            "../credentials.json")
 
         bucket = storage_client.get_bucket(DATA_BUCKET)
         blob = bucket.blob(f"{filename}.csv")
@@ -50,7 +54,8 @@ async def upload(file: UploadFile, filename):
 async def getDataSets():
     dataSetNames = []
     try:
-        storage_client = storage.Client.from_service_account_json("../credentials.json")
+        storage_client = storage.Client.from_service_account_json(
+            "../credentials.json")
 
         blobs = storage_client.list_blobs(DATA_BUCKET)
         for blob in blobs:
@@ -66,7 +71,8 @@ async def getDataSets():
 async def getData(filename):
     dataSetLines = ""
     try:
-        storage_client = storage.Client.from_service_account_json("../credentials.json")
+        storage_client = storage.Client.from_service_account_json(
+            "../credentials.json")
 
         bucket = storage_client.get_bucket(DATA_BUCKET)
         blob = bucket.blob(f"{filename}.csv")
@@ -84,7 +90,8 @@ async def getData(filename):
 async def eda(filename):
     corrMatrix = ""
     try:
-        storage_client = storage.Client.from_service_account_json("../credentials.json")
+        storage_client = storage.Client.from_service_account_json(
+            "../credentials.json")
 
         bucket = storage_client.get_bucket(DATA_BUCKET)
         blob = bucket.blob(f"{filename}.csv")
@@ -99,3 +106,29 @@ async def eda(filename):
         return {"error": f"An error occurred: {str(e)}"}
 
     return {"data": corrMatrix}
+
+@app.get("/api/automl")
+async def getModel():
+    try:
+        #From #172 rawan/pandas-read-bucket
+
+        # storage_client = storage.Client.from_service_account_json(
+        #     "../credentials.json")
+        # bucket = storage_client.get_bucket("data-test-automate-ml")
+        # blob = bucket.blob("fish_data.csv")
+        # byte_stream = BytesIO()
+        # blob.download_to_file(byte_stream)
+        # byte_stream.seek(0)
+        # df = pd.read_csv(byte_stream)
+        # model_path = automl(df)
+
+
+        # Use a placeholder file for testing download
+        placeholder_model_path = "./download_test_random_data.pickle"
+
+    except Exception as e:
+        return {"error": f"An error occurred: {str(e)}"}
+
+    # Return the placeholder file
+    return FileResponse(path=placeholder_model_path, filename=placeholder_model_path.split("/")[-1], media_type='application/octet-stream')
+
