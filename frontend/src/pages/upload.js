@@ -9,7 +9,7 @@ import "@fontsource/public-sans";
 
 function handleSubmission(data) {
 
-	fetch("/api/dataset", {
+	fetch("/api/datasets", {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -28,7 +28,7 @@ function Upload() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch("/api/dataset");
+        const res = await fetch("/api/datasets");
         const data = await res.json();
         setUploadedData(data);
       } catch {
