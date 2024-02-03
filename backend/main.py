@@ -1,13 +1,15 @@
 from io import BytesIO
 import json
+import os
 from fastapi import FastAPI, UploadFile
 from google.cloud import storage
 from fastapi.middleware.cors import CORSMiddleware
-from compute.autoEDA import generate_corr_matrix
+from compute.autoEDA import generate_eda
 
 app = FastAPI()
 
 DATA_BUCKET = "automate-ml-datasets"
+GRAPH_BUCKET = "automate_ml_graphs"
 origins = ["*"]
 
 app.add_middleware(
@@ -37,7 +39,9 @@ async def upload(file: UploadFile, filename):
 
         bucket = storage_client.get_bucket(DATA_BUCKET)
         blob = bucket.blob(f"{filename}.csv")
+        print(file)
         content = await file.read()
+        print(content)
         blob.upload_from_string(content)
 
     except Exception as e:
@@ -93,9 +97,24 @@ async def eda(filename):
         blob.download_to_file(byte_stream)
         byte_stream.seek(0)
 
-        corrMatrix = generate_corr_matrix(byte_stream)
+        corrMatrix, uniqueFilename = generate_eda(byte_stream)
+
+        # Upload the PNG file to GCS
+        bucket = storage_client.get_bucket(GRAPH_BUCKET)
+        graph_blob = bucket.blob(uniqueFilename)
+        graph_blob.upload_from_filename(f"tempImages/{uniqueFilename}")
+
+        # Get the public URL
+        public_url = graph_blob.public_url
 
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
 
-    return {"data": corrMatrix}
+    finally:
+        # Delete the temporary file
+        print("deleting")
+        if os.path.exists(f"tempImages/{uniqueFilename}"):
+            print("in")
+            os.remove(f"tempImages/{uniqueFilename}")
+
+    return {"data": corrMatrix, "graph_url": public_url}
