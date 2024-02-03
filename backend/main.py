@@ -39,9 +39,7 @@ async def upload(file: UploadFile, filename):
 
         bucket = storage_client.get_bucket(DATA_BUCKET)
         blob = bucket.blob(f"{filename}.csv")
-        print(file)
         content = await file.read()
-        print(content)
         blob.upload_from_string(content)
 
     except Exception as e:
@@ -112,9 +110,7 @@ async def eda(filename):
 
     finally:
         # Delete the temporary file
-        print("deleting")
         if os.path.exists(f"tempImages/{uniqueFilename}"):
-            print("in")
             os.remove(f"tempImages/{uniqueFilename}")
 
     return {"data": corrMatrix, "graph_url": public_url}
