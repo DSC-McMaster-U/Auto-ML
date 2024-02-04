@@ -14,7 +14,7 @@ resource "google_container_cluster" "automl_cluster" {
   name     = "automl-cluster"
   location = var.zone
   project  = var.project
-  remove_default_node_pool = true
+  remove_default_node_pool = false
   initial_node_count       = 2
 }
 
