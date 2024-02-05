@@ -1,14 +1,16 @@
 from io import BytesIO
 import json
+from starlette.responses import FileResponse
+from io import BytesIO, StringIO
+import pandas as pd
 import os
 from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import JSONResponse
 from google.cloud import storage
 from fastapi.middleware.cors import CORSMiddleware
 from compute.autoEDA import generate_eda
-
 import csv
-from io import StringIO
+from io import 
 
 app = FastAPI()
 
@@ -71,6 +73,7 @@ async def upload(file: UploadFile = File(...), fileName: str = Form(...)):
     try:
         storage_client = storage.Client.from_service_account_json(
             "../credentials.json")
+
         bucket = storage_client.get_bucket(DATA_BUCKET)
         # Assuming fileName includes '.csv' extension
         blob = bucket.blob(f"{fileName}")
@@ -123,7 +126,8 @@ async def getData(filename):
 async def eda(filename):
     corrMatrix = ""
     try:
-        storage_client = storage.Client.from_service_account_json("../credentials.json")
+        storage_client = storage.Client.from_service_account_json(
+            "../credentials.json")
 
         bucket = storage_client.get_bucket(DATA_BUCKET)
         blob = bucket.blob(f"{filename}.csv")
@@ -144,10 +148,36 @@ async def eda(filename):
 
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
-
+      
     finally:
         # Delete the temporary file
         if os.path.exists(f"tempImages/{uniqueFilename}"):
             os.remove(f"tempImages/{uniqueFilename}")
 
     return {"data": corrMatrix, "graph_url": public_url}
+
+@app.get("/api/automl")
+async def getModel():
+    try:
+        #From #172 rawan/pandas-read-bucket
+
+        # storage_client = storage.Client.from_service_account_json(
+        #     "../credentials.json")
+        # bucket = storage_client.get_bucket("data-test-automate-ml")
+        # blob = bucket.blob("fish_data.csv")
+        # byte_stream = BytesIO()
+        # blob.download_to_file(byte_stream)
+        # byte_stream.seek(0)
+        # df = pd.read_csv(byte_stream)
+        # model_path = automl(df)
+
+
+        # Use a placeholder file for testing download
+        placeholder_model_path = "./download_test_random_data.pickle"
+
+    except Exception as e:
+        return {"error": f"An error occurred: {str(e)}"}
+
+    # Return the placeholder file
+    return FileResponse(path=placeholder_model_path, filename=placeholder_model_path.split("/")[-1], media_type='application/octet-stream')
+
