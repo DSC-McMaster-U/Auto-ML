@@ -18,8 +18,12 @@ COPY pyproject.toml poetry.lock ./
 # Install the dependencies
 RUN poetry config virtualenvs.create false && poetry install --no-dev
 
+# Copy the credentials.json file and compute dir into the container
+COPY credentials.json ./
+COPY compute ./compute
+
 # Copy the FastAPI application into the container
-COPY . .
+COPY main.py ./
 
 # Specify the command to run the FastAPI application using uvicorn
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

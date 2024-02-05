@@ -10,8 +10,11 @@ GET http://127.0.0.1:8000/api/python
 #### Get Datasets
 GET http://127.0.0.1:8000/api/datasets
 
+#### BigQuery test
+GET http://127.0.0.1:8000/api/bq?filename=sample_contacts
+
 #### Get Data
-GET http://127.0.0.1:8000/api/data?filename=test
+GET http://127.0.0.1:8000/api/data?filename=data
 
 #### Upload data set
 PUT http://127.0.0.1:8000/api/upload?filename=test-data
@@ -25,4 +28,4 @@ Content-Type: text/csv
 --MyBoundary--
 
 #### Get eda
-GET http://127.0.0.1:8000/api/eda?filename=test
+GET http://127.0.0.1:8000/api/eda?filename=data
