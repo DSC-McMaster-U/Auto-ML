@@ -1,77 +1,177 @@
-import React, { useState, useEffect} from "react";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import FolderIcon from "@mui/icons-material/Folder";
-import "@fontsource/public-sans";
+import React, { useState, useEffect } from 'react';
 
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+        Paper, Button, ListItemText, ListItemButton, Box, Container, Typography
+      } from "@mui/material"
 
-function handleSubmission(data) {
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
-	fetch("/api/datasets", {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  })
-    .then(response => response.json())
-    .then(data => console.log('Response:', data))
-    .catch(error => console.error('Error:', error));
-
-}
-
-function Upload() {
-  const [uploadedData, setUploadedData] = useState(null);
+const DataSetListComponent = ({ onSelectDataSet, uploadTrigger }) => {
+  const [dataSets, setDataSets] = useState([]);
+  const [selectedDataSet, setSelectedDataSet] = useState(null);
 
   useEffect(() => {
+    // Fetch datasets from /api/datasets and update state
+    const fetchData = async () => {
+        try {
+          const res = await fetch("/api/datasets");
+          const data = await res.json();
+          setDataSets(data.names);
+        } catch {
+          console.error("API Endpoint Not Working");
+        }
+      };
+      fetchData();
+  }, [uploadTrigger]);
+
+  const handleSelectDataSet = (dataSet) => {
+    setSelectedDataSet(dataSet);
+    onSelectDataSet(dataSet); // This will pass the selected dataset to the parent component
+  };
+
+  return ( //render the list of selectable datasets
+  <Paper elevation={3} style={{ padding: '10px', margin: '10px' }}>
+    <Box>
+        {dataSets.map((dataSet, idx) => (
+            <ListItemButton 
+                key={idx} 
+                selected={dataSet === selectedDataSet} 
+                onClick={() => handleSelectDataSet(dataSet)}
+            >
+                <ListItemText primary={dataSet} />
+            </ListItemButton>
+        ))}
+    </Box>
+  </Paper>
+  );
+};
+
+const DataSetDisplayComponent = ({ selectedDataSet }) => {
+  const [data, setData] = useState([{}]);
+  const [csvString, setCsvString] = useState("");
+
+  useEffect(() => {
+    // Simulate fetching data
+    console.log("FETCHING DATA FOR", selectedDataSet)
     const fetchData = async () => {
       try {
-        const res = await fetch("/api/datasets");
+        const res = await fetch(`/api/data?fileName=${encodeURIComponent(selectedDataSet)}`)
+        if (!res.ok) {
+          throw new Error(`Error: ${res.status}`);
+        }
+
         const data = await res.json();
-        setUploadedData(data);
-      } catch {
-        console.error("API Endpoint Not Working");
+        const jsonObject = data.json;
+
+        setCsvString(data.data)
+        setData(jsonObject);
+        
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+        return null;
       }
     };
-
     fetchData();
-  }, []);
+}, [selectedDataSet]);
 
-  const handleFileUpload = (event) => {
+  const handleDownload = () => {
+    const blob = new Blob([csvString], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${selectedDataSet}`;
+    link.style.display = 'none'; // Hide the link
+    document.body.appendChild(link); // Append to the document
+    link.click(); // Programmatically click the link to trigger the download
+    URL.revokeObjectURL(url); // Free up memory by releasing the object URL
+    link.remove(); // Remove the link from the document
+  }
+
+  const headers = data[0] ? Object.keys(data[0]) : [];
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
+       
+        <TableContainer component={Paper} style={{ marginBottom: '20px' }}>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        {headers.map((header, index) => (
+                            <TableCell key={index}>{header}</TableCell>
+                        ))}
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {data.slice(0, 10).map((item, rowIndex) => (
+                        <TableRow key={rowIndex}>
+                            {Object.values(item).map((value, colIndex) => (
+                                <TableCell key={colIndex}>{value}</TableCell>
+                            ))}
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
+        <Button variant="contained" color="primary" onClick={handleDownload} startIcon={<CloudDownloadIcon />}>
+            Download
+        </Button>
+    </div>
+  );
+};
+
+const MainComponent = () => {
+  const [selectedDataSet, setSelectedDataSet] = useState(null);
+  const [uploadTrigger, setUploadTrigger] = useState(0);
+
+  
+  const handleUpload = async (event) => {
     const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
+    if (!file) {
+        console.error("No file selected.");
+        return;
+    }
 
-      reader.onload = (e) => {
-        const data = e.target.result;
-        const rows = data.split('\n');
-        const headers = rows[0].split(',');
+    // Prepare FormData
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("fileName", file.name); // Adjust according to how you want to name files on the backend
 
-        const parsedData = rows.slice(1).map((row) => {
-          const values = row.split(',');
+    // Log FormData contents for debugging
+    for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+    }
 
-          if (headers.length !== values.length) {
-            console.error('Mismatched header and value count:', headers, values);
-            return {}; // or handle the mismatch in a way that makes sense for your application
-          }
-
-          return headers.reduce((obj, header, index) => {
-            const trimmedHeader = header.trim();
-            const trimmedValue = values[index].trim();
-            obj[trimmedHeader] = trimmedValue;
-            return obj;
-          }, {});
-
+    try {
+        // Make an asynchronous PUT request to your backend
+        const response = await fetch("/api/upload", {
+            method: "PUT",
+            body: formData, // FormData will be correctly interpreted by your backend
         });
 
-        handleSubmission(parsedData)
-        setUploadedData([...uploadedData,...parsedData]);
-      };
+        // Assuming your backend responds with JSON
+        const data = await response.json(); 
 
-      reader.readAsText(file);
+        // Handle response
+        if (response.ok) {
+            console.log("Upload successful:", data.message);
+            setUploadTrigger(trigger => trigger + 1);
+
+        } else {
+            console.error("Upload failed:", data.error);
+        }
+    } catch (error) {
+        console.error("Error during upload:", error);
     }
+};
+
+  
+  const handleSelectDataSet = (dataSet) => {
+    setSelectedDataSet(dataSet);
+  };
+
+  const triggerFileInput = () => {
+    // Trigger the hidden file input click event
+    document.getElementById('file-upload-input').click();
   };
 
   return (
@@ -86,161 +186,30 @@ function Upload() {
       >
         Upload Your Datasets Here!
       </Typography>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          margin: "0 20px",
-        }}
-      >
-        <Box
-          sx={{
-            width: "100%",
-            height: 350,
-            backgroundColor: "#EA4335",
-            marginBottom: 2,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            justifyContent: "center",
-            borderRadius: 5,
-            color: "black", // Change the text color to black
-            padding: "20px",
-          }}
-        >
-          <Typography
-            variant="h2"
-            sx={{
-              fontFamily: "Public Sans",
-              fontSize: "24px",
-              fontWeight: "bold",
-              textAlign: "left",
-              marginLeft: 2,
-              color: "white", // Keep the title text color as white
-            }}
-          >
-            Your Datasets
-          </Typography>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div style={{ flex: 1, textAlign: 'center', margin: '10px' }}>
+                <DataSetListComponent onSelectDataSet={handleSelectDataSet} uploadTrigger={uploadTrigger}/>
+                <div style={{ marginTop: '20px' }}>
+                    <Button variant="contained" color="primary" onClick={triggerFileInput} startIcon={<CloudUploadIcon />}>Upload</Button>
+                    <input
+                      id="file-upload-input"
+                      type="file"
+                      accept=".csv"
+                      style={{ display: "none" }}
+                      onChange={handleUpload}
+                    />
+                </div>
 
-          <Box
-            sx={{
-              width: "96%",
-              height: 200,
-              backgroundColor: "white",
-              margin: "16px",
-              borderRadius: 0.5,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              overflow: "auto",
-            }}
-          >
-            {uploadedData && (
-              <pre
-                style={{
-                  whiteSpace: "pre-wrap",
-                  margin: 0,
-                  textAlign: "left",
-                  color: "black", // Change the text color to black
-                }}
-              >
-                {uploadedData.map((row, rowIndex) => {
-                  return Object.values(row)
-                    .map((value) => `${value},`)
-                    .join('')
-                    .slice(0, -1) + '\n';
-                })}
-              </pre>
-            )}
-          </Box>
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            gap: 2,
-            width: "100%",
-          }}
-        >
-          <Box
-            sx={{
-              width: "50%",
-              height: 200,
-              backgroundColor: "#4285f4",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 5,
-            }}
-          >
-            <Typography
-              variant="h2"
-              sx={{
-                fontFamily: "Public Sans",
-                fontSize: "22px",
-                marginBottom: 2,
-                fontWeight: "bold",
-                color: "white",
-              }}
-            >
-              Click to Upload Files
-            </Typography>
-            <label htmlFor="file-upload" style={{ cursor: "pointer" }}>
-              <CloudUploadIcon sx={{ fontSize: 60, color: "white" }} />
-            </label>
-            <input
-              id="file-upload"
-              type="file"
-              accept=".csv"
-              style={{ display: "none" }}
-              onChange={handleFileUpload}
-            />
-          </Box>
-
-          <Box
-            sx={{
-              width: "50%",
-              height: 200,
-              backgroundColor: "#34A853",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-start",
-              borderRadius: 5,
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <FolderIcon
-                sx={{ fontSize: 35, color: "white", marginRight: 2, marginLeft: 2, marginTop: 1 }}
-              />
-
-              <Typography
-                variant="h2"
-                sx={{
-                  fontFamily: "Public Sans",
-                  fontSize: "20px",
-                  fontWeight: "bold",
-                  color: "white",
-                  marginTop: 1,
-                }}
-              >
-                Select Example Datasets
-              </Typography>
             </div>
 
-            <div
-              style={{
-                width: "100%",
-                height: 1,
-                backgroundColor: "white",
-                margin: "5px 0",
-              }}
-            ></div>
-          </Box>
-        </Box>
-      </Box>
+            {selectedDataSet && (
+                <div style={{ flex: 2, margin: '10px' }}>
+                    <DataSetDisplayComponent selectedDataSet={selectedDataSet} />
+                </div>
+            )}
+      </div>
     </Container>
   );
-}
+};
 
-export default Upload;
+export default MainComponent;

@@ -1,16 +1,21 @@
 from io import BytesIO
 import json
-from fastapi import FastAPI, UploadFile
 from starlette.responses import FileResponse
-from io import BytesIO
+from io import BytesIO, StringIO
+import pandas as pd
+import os
+from fastapi import FastAPI, File, UploadFile, Form
+from fastapi.responses import JSONResponse
 from google.cloud import storage
 from fastapi.middleware.cors import CORSMiddleware
-from compute.autoEDA import generate_corr_matrix
-import pandas as pd
+from compute.autoEDA import generate_eda
+import csv
+from io import 
 
 app = FastAPI()
 
 DATA_BUCKET = "automate-ml-datasets"
+GRAPH_BUCKET = "automate_ml_graphs"
 origins = ["*"]
 
 app.add_middleware(
@@ -20,6 +25,36 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+""" state variable that stores all the current dataSets in bucket
+    - this should reduce the number of gcp api calls for getting data
+    - data is preloaded, so speeds up data retrieval as it doesn't have to wait for gcp
+"""
+dataSetNames = []
+
+
+async def refreshDataSets():
+    global dataSetNames
+    try:
+        storage_client = storage.Client.from_service_account_json(
+            "../credentials.json")
+
+        blobs = storage_client.list_blobs(DATA_BUCKET)
+        dataSetNames = [blob.name for blob in blobs]
+
+    except Exception as e:
+        error = {"error": f"An error occurred: {str(e)}"}
+        print(error)
+        return error
+
+
+@app.on_event("startup")
+async def startup():
+
+    # will fetch the state of the bucket
+    await refreshDataSets()
+    print("Fetched Data Sets:", dataSetNames)
 
 
 @app.get("/")
@@ -34,36 +69,29 @@ async def root():
 
 
 @app.put("/api/upload")
-async def upload(file: UploadFile, filename):
+async def upload(file: UploadFile = File(...), fileName: str = Form(...)):
     try:
         storage_client = storage.Client.from_service_account_json(
             "../credentials.json")
 
         bucket = storage_client.get_bucket(DATA_BUCKET)
-        blob = bucket.blob(f"{filename}.csv")
+        # Assuming fileName includes '.csv' extension
+        blob = bucket.blob(f"{fileName}")
         content = await file.read()
-        blob.upload_from_string(content)
+        blob.upload_from_string(content, content_type=file.content_type)
+
+        await refreshDataSets()  # Make sure this function is defined if you want to use it
+
+        return JSONResponse(status_code=200, content={"message": "Data uploaded to GCloud successfully"})
 
     except Exception as e:
-        return {"error": f"An error occurred: {str(e)}"}
-
-    return {"message": "Data uploaded to Gcloud successfuly"}
+        return JSONResponse(status_code=500, content={"error": f"An error occurred: {str(e)}"})
 
 
 @app.get("/api/datasets")
 async def getDataSets():
-    dataSetNames = []
-    try:
-        storage_client = storage.Client.from_service_account_json(
-            "../credentials.json")
-
-        blobs = storage_client.list_blobs(DATA_BUCKET)
-        for blob in blobs:
-            dataSetNames.append(blob.name)
-
-    except Exception as e:
-        return {"error": f"An error occurred: {str(e)}"}
-
+    if not dataSetNames:
+        return {"error": f"No DataSets in Bucket"}
     return {"names": dataSetNames}
 
 
@@ -75,15 +103,23 @@ async def getData(filename):
             "../credentials.json")
 
         bucket = storage_client.get_bucket(DATA_BUCKET)
-        blob = bucket.blob(f"{filename}.csv")
+        blob = bucket.blob(f"{fileName}")
 
         with blob.open("r") as f:
             dataSetLines = f.read()
 
+        # convert csv string -> json (for frontend)
+        csv_reader = csv.DictReader(StringIO(dataSetLines))
+        json_data = [row for row in csv_reader]
+
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
 
-    return {"data": dataSetLines}
+    return {
+        "data": dataSetLines,
+        "json": json_data
+    }
+
 
 
 @app.get("/api/eda")
@@ -100,12 +136,25 @@ async def eda(filename):
         blob.download_to_file(byte_stream)
         byte_stream.seek(0)
 
-        corrMatrix = generate_corr_matrix(byte_stream)
+        corrMatrix, uniqueFilename = generate_eda(byte_stream)
+
+        # Upload the PNG file to GCS
+        bucket = storage_client.get_bucket(GRAPH_BUCKET)
+        graph_blob = bucket.blob(uniqueFilename)
+        graph_blob.upload_from_filename(f"tempImages/{uniqueFilename}")
+
+        # Get the public URL
+        public_url = graph_blob.public_url
 
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
+      
+    finally:
+        # Delete the temporary file
+        if os.path.exists(f"tempImages/{uniqueFilename}"):
+            os.remove(f"tempImages/{uniqueFilename}")
 
-    return {"data": corrMatrix}
+    return {"data": corrMatrix, "graph_url": public_url}
 
 @app.get("/api/automl")
 async def getModel():
