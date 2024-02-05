@@ -25,4 +25,4 @@ Content-Type: text/csv
 --MyBoundary--
 
 #### Get eda
-GET http://127.0.0.1:8000/api/eda?filename=test
+GET http://127.0.0.1:8000/api/eda?filename=data
