@@ -10,7 +10,6 @@ from google.cloud import storage
 from fastapi.middleware.cors import CORSMiddleware
 from compute.autoEDA import generate_eda
 import csv
-from io import 
 
 app = FastAPI()
 
@@ -103,7 +102,7 @@ async def getData(filename):
             "../credentials.json")
 
         bucket = storage_client.get_bucket(DATA_BUCKET)
-        blob = bucket.blob(f"{fileName}")
+        blob = bucket.blob(f"{filename}")
 
         with blob.open("r") as f:
             dataSetLines = f.read()
