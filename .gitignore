@@ -1,3 +1,5 @@
+.vscode/
+
 app/src/logs.log
 app/src/best_model.pkl
 app/src/dataset.csv
@@ -8,4 +10,7 @@ __pycache__/
 
 /package-lock.json
 
-credentials.json
+# ignore in all directories
+**/credentials.json
+
+backend/big_query.py
