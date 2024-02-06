@@ -70,7 +70,7 @@ async def root_py():
 async def upload(file: UploadFile = File(...), fileName: str = Form(...)):
     try:
         storage_client = storage.Client.from_service_account_json(
-            "../credentials.json")
+            "./credentials.json")
 
         bucket = storage_client.get_bucket(DATA_BUCKET)
         # Assuming fileName includes '.csv' extension
