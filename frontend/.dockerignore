@@ -1,0 +1,2 @@
+# this file is only rerquired for local development and not within the container
+.env.local

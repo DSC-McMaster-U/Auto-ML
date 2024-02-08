@@ -10,8 +10,11 @@ GET http://127.0.0.1:8000/api/python
 #### Get Datasets
 GET http://127.0.0.1:8000/api/datasets
 
+#### BigQuery test
+GET http://127.0.0.1:8000/api/bq?filename=sample_contacts
+
 #### Get Data
-GET http://127.0.0.1:8000/api/data?filename=test
+GET http://127.0.0.1:8000/api/data?filename=data
 
 #### Get AutoML
 GET http://127.0.0.1:8000/api/automl
