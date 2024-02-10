@@ -8,10 +8,46 @@ import {
   Button,
   IconButton,
 } from '@mui/material';
-import { CheckCircle, PlayArrow } from '@mui/icons-material';
+import { CheckCircle, PlayArrow, CloudDownload } from '@mui/icons-material';
 import LineChartRecharts from './linechartrecharts';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+
+function get_model() {
+  fetch("/api/automl")
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Error response');
+    }
+    return response.blob(); 
+  })
+  .then(blob => {
+    //const model = new File([blob], {type: 'application/octet-stream'});
+    return {'model':blob}
+  })
+  .catch(error => console.error('Error:', error));
+}
+
+function downloading_model(model) {
+  fetch("/api/automl")
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Error response');
+    }
+    return response.blob(); 
+  })
+  .then(blob => {
+    const url = window.URL.createObjectURL(blob);
+    const x = document.createElement('x');
+    x.href = url;
+    a.download = 'model.pickle'; 
+    document.body.appendChild(x);
+    x.click();
+    document.body.removeChild(x);
+    window.URL.revokeObjectURL(url);
+  })
+  .catch(error => console.error('Error:', error));
+}
 
 const Automl = () => {
   const [chartLoading, setChartLoading] = useState(false);
@@ -39,6 +75,10 @@ const Automl = () => {
   const handleRadioChange = (event) => {
     setRadioValue(event.target.value);
   };
+
+  const handleDownloadModel = () => {
+    get_model();
+  }
 
   return (
     <div
@@ -167,6 +207,17 @@ const Automl = () => {
         style={{ width: '50%', backgroundColor: '#e0e0e0', padding: '20px' }}
       >
         <LineChartRecharts />
+
+        {/* Button to download model */}
+        <Button
+          variant="contained"
+          color="primary"
+          style={{ marginTop: '20px' }}
+          onClick={handleDownloadModel}
+          startIcon={<CloudDownload />}
+        >
+          Download Model
+        </Button>
       </div>
     </div>
   );
