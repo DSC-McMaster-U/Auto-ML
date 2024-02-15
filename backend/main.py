@@ -9,12 +9,14 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from compute.autoEDA import generate_eda
 import csv
+import asyncio
 
 app = FastAPI()
 
 DATA_BUCKET = "automate-ml-datasets"
 BQ_DATASET = "automl_dataset_1"
 GRAPH_BUCKET = "automate_ml_graphs"
+MODEL_BUCKET = "automl_models"
 origins = ["*"]
 
 app.add_middleware(
@@ -155,34 +157,60 @@ async def eda(filename):
 
     return {"data": corrMatrix, "graph_url": public_url}
 
-# return the model as a file
-@app.get("/api/automl")
+#start the automl process
+@app.get("/api/generateModel")
 async def getModel():
+    model_uniqueFilename = "./download_test_random_data.pickle"
     try:
-        #From #172 rawan/pandas-read-bucket
+        #action
+        storage_client = storage.Client.from_service_account_json("./credentials.json")
 
-        # storage_client = storage.Client.from_service_account_json(
-        #     "./credentials.json")
-        # bucket = storage_client.get_bucket("data-test-automate-ml")
-        # blob = bucket.blob("fish_data.csv")
-        # byte_stream = BytesIO()
-        # blob.download_to_file(byte_stream)
-        # byte_stream.seek(0)
-        # df = pd.read_csv(byte_stream)
-        # model_path = automl(df)
+        bucket = storage_client.get_bucket(DATA_BUCKET)
+        blob = bucket.blob(model_uniqueFilename)
+
+        byte_stream = BytesIO()
+        blob.download_to_file(byte_stream)
+        byte_stream.seek(0)
+
+        #upload model to bucket?
+        bucket = storage_client.get_bukct(MODEL_BUCKET)
+        model_blob = bucket.blob(model_uniqueFilename)
+        model_blob.upload_from_filename(byte_stream)
+
+        #get the public url
+        public_url = model_blob.public_url
+
+        #temp = "in the generating model endpoint"
+
+        await asyncio.sleep(5)
+    except Exception as e:
+        return {"error": f"An error occurred: {str(e)}"}
+    
+    finally :
+        #delete temporary file
+        if os.path.exists(f"./{model_uniqueFilename}") :
+            os.remove(f"./{model_uniqueFilename}")
+
+    return {"model": model_uniqueFilename, "model_url": public_url}
 
 
-        # Use a placeholder file for testing download
-        placeholder_model_path = "./download_test_random_data.pickle"
+#retreive the model and download it
+@app.get("/api/downloadModel")
+async def downloadModel():
+    try:
+        #action
+        storage_client = storage.Client.from_service_account_json("./credentials.json")
+
+        #upload model to bucket?
+        bucket = storage_client.get_bukct(MODEL_BUCKET)
+        model_blob = bucket.blob("download_test_random_data.pickle")
+        file_path = "./random_model.pickle"
+        model_blob.upload_from_filename(file_path)
 
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
 
-    # Return the placeholder file
-    return FileResponse(path=placeholder_model_path, filename=placeholder_model_path.split("/")[-1], media_type='application/octet-stream')
-
-
-    return {"data": corrMatrix}
+    return {"file path": file_path}
 
 
 # get file from bucket, load it to big query as a table & display the rows

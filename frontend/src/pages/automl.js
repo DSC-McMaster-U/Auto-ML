@@ -7,13 +7,27 @@ import {
   RadioGroup,
   Button,
   IconButton,
+  CircularProgress,
 } from '@mui/material';
-import { CheckCircle, PlayArrow } from '@mui/icons-material';
+import { CheckCircle, PlayArrow, CloudDownload } from '@mui/icons-material';
 import LineChartRecharts from './linechartrecharts';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
+//function generate_model() {
+  
+//}
+
+
+//function download_model() {
+
+//}
+
 const Automl = () => {
+  const [modelGenerated, setModelGenerated] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const [chartLoading, setChartLoading] = useState(false);
   const [checkbox1, setCheckbox1] = useState(false);
   const [checkbox2, setCheckbox2] = useState(false);
@@ -39,6 +53,55 @@ const Automl = () => {
   const handleRadioChange = (event) => {
     setRadioValue(event.target.value);
   };
+
+  const generate_model = () => {
+    setLoading(true);
+    setModelGenerated(false);
+    fetch("/api/generateModel")
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error response');
+      }
+      //model is generated so set to true
+      setModelGenerated(true);
+      return response.blob(); 
+    })
+    .then(blob => {
+      return blob;
+    })
+    .catch(error =>{
+      console.error('Error:', error)
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+  };
+
+  const download_model= () => {
+    setDownloading(true);
+    fetch("/api/downloadModel")
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error response');
+      }
+      return response.blob(); 
+    })
+    .then(blob => {
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'model.pickle'); 
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+
+      //done downloading
+      setDownloading(false);
+      return blob;
+    })
+    .catch(error => console.error('Error:', error));
+  };
+
 
   return (
     <div
@@ -155,8 +218,8 @@ const Automl = () => {
             fontFamily: 'Public Sans',
           }}
         >
-          <IconButton color='primary'>
-            <PlayArrow style={{ fontSize: 24, color: '#4285F4' }} />
+          <IconButton color='primary' onClick={generate_model}>
+            <PlayArrow style={{ fontSize: 24, color: '#4285F4'}}/>
           </IconButton>{' '}
           Start AutoML
         </div>
@@ -167,6 +230,31 @@ const Automl = () => {
         style={{ width: '50%', backgroundColor: '#e0e0e0', padding: '20px' }}
       >
         <LineChartRecharts />
+        {loading && (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+            <CircularProgress />
+          </div>
+          )}
+          {modelGenerated && (
+            <div>
+              {/* Button to download model only if model has been created*/}
+              <Button
+                variant="contained"
+                disabled={downloading}
+                color="primary"
+                style={{ marginTop: '20px' }}
+                onClick={download_model}
+              >
+                {downloading ? (
+                  <CircularProgress size={24} />
+                ) : (
+                  <CloudDownload />
+                )}
+                Download Model
+              </Button>
+            </div>
+          )}
+
       </div>
     </div>
   );
