@@ -1,12 +1,14 @@
 pipeline {
     agent any
     environment {
+        // Path for homebrew installed Poetry
         PATH = "/opt/homebrew/bin:$PATH"
     }
 
     stages {
         stage('Checkout') {
             steps {
+                // Make sure it is the correct branch
                 git branch: 'main', url: 'https://github.com/DSC-McMaster-U/Auto-ML.git'
             }
         }
