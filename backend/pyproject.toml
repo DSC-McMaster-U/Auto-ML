@@ -14,6 +14,7 @@ google-cloud-bigquery = "*"
 python-multipart = "*"
 pandas = "^2.2.0"
 seaborn = "^0.13.2"
+pytest = "^6.2.5"
 
 [build-system]
 requires = ["poetry-core"]

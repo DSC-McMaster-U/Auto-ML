@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+    environment {
+        PATH = "/opt/homebrew/bin:$PATH"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/DSC-McMaster-U/Auto-ML.git'
+            }
+        }
+
+        stage('Set Up Backend Environment') {
+            steps {
+                dir('backend') {
+                    sh 'poetry install'
+                }
+            }
+        }
+
+        stage('Start FastAPI Server') {
+            steps {
+                dir('backend') {
+                    // Start FastAPI server
+                    sh 'poetry run uvicorn main:app --reload --host 0.0.0.0 --port 8000 &'
+                    // Add a sleep command to give the server time to start
+                    sh 'sleep 10'
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                dir('backend') {
+                    sh 'poetry run pytest tests/api_test.py'
+                }
+            }
+        }
+    }
+    post {
+        always {
+            // Commands to clean up, stop server, etc.
+            sh 'kill $(lsof -t -i:8000)'
+        }
+    }
+}
