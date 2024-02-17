@@ -8,6 +8,8 @@ from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from compute.autoEDA import generate_eda
+from compute.autoML import generate_model
+
 import csv
 
 app = FastAPI()
@@ -169,20 +171,18 @@ async def getModel():
         # blob.download_to_file(byte_stream)
         # byte_stream.seek(0)
         # df = pd.read_csv(byte_stream)
-        # model_path = automl(df)
-
+        model, model_path = generate_model("fish_data.csv","Species", "C")
 
         # Use a placeholder file for testing download
-        placeholder_model_path = "./download_test_random_data.pickle"
+        # placeholder_model_path = "./download_test_random_data.pickle"
 
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
 
     # Return the placeholder file
-    return FileResponse(path=placeholder_model_path, filename=placeholder_model_path.split("/")[-1], media_type='application/octet-stream')
+    # return FileResponse(path=placeholder_model_path, filename=placeholder_model_path.split("/")[-1], media_type='application/octet-stream')
+    return FileResponse(path=model_path, filename=model_path.split("/")[-1], media_type='application/octet-stream')
 
-
-    return {"data": corrMatrix}
 
 
 # get file from bucket, load it to big query as a table & display the rows

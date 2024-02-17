@@ -14,3 +14,8 @@ __pycache__/
 **/credentials.json
 
 backend/big_query.py
+
+*.pkl
+backend/bash.exe.stackdump
+*.log
+fish_data.csv
