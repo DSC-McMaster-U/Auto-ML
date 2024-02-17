@@ -30,12 +30,12 @@ function NavigationBar() {
     <AppBar position="static">
       <Container maxWidth="xl" >
         <Toolbar disableGutters>
-          <Box sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}>
+          <Box sx={{ display: { xs: "none", md: "flex" }, mr: 2, p: 1 }}>
             <Image
               width={50}
               height={50}
               alt="AutoMate Logo"
-              src="/AutoMate_logo.png"
+              src="/automate-icon-navbar.png"
             />
           </Box>
           <Typography
@@ -47,12 +47,11 @@ function NavigationBar() {
               ml: 2,
               mr: 2,
               display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
+              fontFamily: "Public Sans, sans-serif",
               fontWeight: 700,
               letterSpacing: ".3rem",
               color: "inherit",
               textDecoration: "none",
-              fontFamily: "Public Sans"
             }}
           >
             AutoMate
