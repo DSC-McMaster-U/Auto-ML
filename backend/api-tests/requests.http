@@ -20,9 +20,13 @@ GET http://127.0.0.1:8000/api/data?filename=data
 GET http://127.0.0.1:8000/api/automl
 
 #### Upload data set
-PUT http://127.0.0.1:8000/api/upload?filename=test
+PUT http://127.0.0.1:8000/api/upload
 Content-Type: multipart/form-data; boundary=yourBoundary
 
+--yourBoundary
+Content-Disposition: form-data; name="fileName"
+
+mo11.csv
 --yourBoundary
 Content-Disposition: form-data; name="file"; filename="data.csv"
 Content-Type: text/csv

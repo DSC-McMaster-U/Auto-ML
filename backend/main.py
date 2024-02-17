@@ -68,7 +68,7 @@ async def root_py():
 
 # add a new dataset to the bucket
 @app.put("/api/upload")
-async def upload(fileName: str, file: UploadFile = File(...)):
+async def upload(fileName: str = Form(...), file: UploadFile = File(...)):
     try:
         # Validate file type
         if not file.filename.endswith(".csv"):
