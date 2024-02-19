@@ -18,7 +18,7 @@ COPY pyproject.toml poetry.lock ./
 # Install the dependencies
 RUN poetry config virtualenvs.create false && poetry install --no-dev
 
-# Copy the credentials.json file and compute dir into the container
+# Copy the creds file and compute dir into the container
 COPY credentials.json ./
 COPY compute ./compute
 

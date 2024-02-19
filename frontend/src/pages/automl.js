@@ -1,5 +1,6 @@
 // Automl.js
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import {
   Checkbox,
   Radio,
@@ -19,6 +20,7 @@ const Automl = () => {
   const [checkbox2, setCheckbox2] = useState(false);
   const [checkbox3, setCheckbox3] = useState(false);
   const [radioValue, setRadioValue] = useState('option1');
+  const redux_dataset = useSelector((state) => state.dataset.value);
 
   const toggleChartLoading = () => {
     setChartLoading(!chartLoading);
@@ -50,6 +52,20 @@ const Automl = () => {
     >
       {/* Left Column */}
       <div style={{ width: '50%', padding: '20px' }}>
+        <Typography
+          variant="h2"
+          sx={{
+            marginBottom: 2,
+            fontFamily: "Public Sans",
+            fontSize: "40px",
+          }}
+        >
+          EDA and AutoML
+        </Typography>
+        
+        <p style={{fontFamily: "Public Sans"}} >
+          Current dataset: {redux_dataset}
+        </p>
         <div
           style={{
             marginBottom: '10px',

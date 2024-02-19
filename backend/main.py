@@ -100,6 +100,8 @@ async def upload(fileName: str = Form(...), file: UploadFile = File(...)):
 # list all the datasets in the bucket
 @app.get("/api/datasets")
 async def getDataSets():
+    # have to refresh the state of the bucket since it may have changed
+    await refreshDataSets()
     if not dataSetNames:
         return {"error": f"No DataSets in Bucket"}
     return {"names": dataSetNames}
@@ -107,13 +109,13 @@ async def getDataSets():
 
 # get the data from the bucket and return it as a string
 @app.get("/api/data")
-async def getData(filename):
+async def getData(fileName):
     dataSetLines = ""
     try:
         storage_client = storage.Client.from_service_account_json("./credentials.json")
 
         bucket = storage_client.get_bucket(DATA_BUCKET)
-        blob = bucket.blob(f"{filename}.csv")
+        blob = bucket.blob(fileName)
 
         with blob.open("r") as f:
             dataSetLines = f.read()
@@ -133,13 +135,13 @@ async def getData(filename):
 
 # Exploratory Data Analysis
 @app.get("/api/eda")
-async def eda(filename):
+async def eda(fileName):
     corrMatrix = ""
     try:
         storage_client = storage.Client.from_service_account_json("./credentials.json")
 
         bucket = storage_client.get_bucket(DATA_BUCKET)
-        blob = bucket.blob(f"{filename}.csv")
+        blob = bucket.blob(f"{fileName}.csv")
 
         byte_stream = BytesIO()
         blob.download_to_file(byte_stream)
@@ -197,39 +199,62 @@ async def getModel():
 
 # get file from bucket, load it to big query as a table & display the rows
 @app.get("/api/bq")
-async def bq(filename):
+async def bq(fileName, query=None):
+    
     # construct client objects (authorized with the service account json file)
     bq_client = bigquery.Client.from_service_account_json("./credentials.json")
     storage_client = storage.Client.from_service_account_json("./credentials.json")
-
-    uri = f"gs://{DATA_BUCKET}/{filename}.csv"
-    table_id = f"{BQ_DATASET}.{filename}_table"
-
+    
+    # check if the file name has .csv extension, if not, add it
+    # if not fileName.endswith('.csv'):
+    #     fileName += '.csv'
+    
+    uri = f"gs://{DATA_BUCKET}/{fileName}"
+    
     # if file does not exist in the bucket, return an error
-    blob = storage_client.get_bucket(DATA_BUCKET).blob(filename + ".csv")
+    blob = storage_client.get_bucket(DATA_BUCKET).blob(fileName)
     if not blob.exists():
-        return {"error": f"File {filename}.csv does not exist in the bucket."}
-
+        return {"error": f"File {fileName} does not exist in the bucket."}
+    
+    fileName = fileName.replace('.csv', '')
+    table_id = f"{BQ_DATASET}.{fileName}_table"
+    
     # if table does not exist, load it
-    try:
-        bq_client.get_table(table_id)
-    except:
-        job_config = bigquery.LoadJobConfig(
-            autodetect=True,  # Automatically infer the schema.
-            source_format=bigquery.SourceFormat.CSV,
-            skip_leading_rows=1,  # column headers
-            write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,  # Overwrite the table
-        )
+    # try:
+    #     bq_client.get_table(table_id)
+    # except:
+    job_config = bigquery.LoadJobConfig(
+        autodetect=True,  # Automatically infer the schema.
+        source_format=bigquery.SourceFormat.CSV,
+        skip_leading_rows=1,  # column headers
+        write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,  # Overwrite the table
+    )
+    # Make an API request
+    load_job = bq_client.load_table_from_uri(
+        uri, table_id, job_config=job_config
+    )
+    # Waits for the job to complete.
+    load_job.result() 
+    
+    #------------------------------------------ Query ops ----------------------------------------#
+    
+    query = query.upper() if query else None
+    
+    # List of potentially harmful operations
+    harmful_ops = ['DROP', 'DELETE', 'INSERT', 'UPDATE']
 
-        load_job = bq_client.load_table_from_uri(
-            uri, table_id, job_config=job_config
-        )  # Make an API request.
-
-        load_job.result()  # Waits for the job to complete.
-
-    # Query all rows from the table
-    query = f"SELECT * FROM `{table_id}`"
-    query_job = bq_client.query(query)
+    # Check if the query contains any harmful operations
+    if query and any(op in query.upper() for op in harmful_ops):
+        print("\nQuery contains harmful operations!\nusing default query.\n")
+        final_query = f"SELECT * FROM `{table_id}`"
+    else:
+        print("\nQuery is safe to be passed.\n")
+        # remove everything before the `SELECT` keyword from the received query
+        query = query[query.find("SELECT"):] if query else None
+        final_query = query.replace("FROM TABLE", f"FROM `{table_id}`") if query else f"SELECT * FROM `{table_id}`"
+    print("Final Query:\n", final_query, "\n")
+    
+    query_job = bq_client.query(final_query)
     rows = query_job.result()
 
     # display the rows

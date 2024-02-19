@@ -17,5 +17,6 @@ backend/big_query.py
 
 *.pkl
 backend/bash.exe.stackdump
+backend/.python-version
 *.log
 fish_data.csv

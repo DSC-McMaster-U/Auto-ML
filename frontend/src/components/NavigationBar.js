@@ -13,9 +13,9 @@ import Image from "next/image";
 import Link from "next/link";
 import "@fontsource/public-sans";
 
-const pages = ["upload", "profiling", "automl"];
+const pages = ["upload", "profiling", "automl", "query"];
 
-function NavigationBar() {
+const NavigationBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
 
   const handleOpenNavMenu = (event) => {

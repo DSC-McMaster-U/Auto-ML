@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
-import fileReducer from './fileSlice';
+import datasetReducer from './datasetSlice';
 
 export default configureStore({
   reducer: {
-    file: fileReducer,
+    dataset: datasetReducer,
   },
 });
