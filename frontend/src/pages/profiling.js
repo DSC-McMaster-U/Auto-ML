@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import Container from '@mui/material/Container';
 import { Paper, Typography, Grid, Box } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
@@ -14,7 +15,8 @@ import {
 const Profiling = () => {
   // Define your data and fetch or process it as needed
   const [data, setData] = useState([]);
-
+  const redux_dataset = useSelector((state) => state.dataset.value);
+  
   useEffect(() => {
     // Fetch or process your data here and set it in the state
     // Example: const fetchData = async () => { ... }
@@ -39,6 +41,10 @@ const Profiling = () => {
       >
         Data Profiling
       </Typography>
+      
+      <p style={{fontFamily: "Public Sans"}} >
+        Current dataset: {redux_dataset}
+      </p>
 
       <Box
         sx={{

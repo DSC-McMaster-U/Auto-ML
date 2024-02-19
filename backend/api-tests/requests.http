@@ -11,10 +11,10 @@ GET http://127.0.0.1:8000/api/python
 GET http://127.0.0.1:8000/api/datasets
 
 #### BigQuery test
-GET http://127.0.0.1:8000/api/bq?filename=sample_contacts
+GET http://127.0.0.1:8000/api/bq?fileName=sample_contacts
 
 #### Get Data
-GET http://127.0.0.1:8000/api/data?filename=data
+GET http://127.0.0.1:8000/api/data?fileName=data.csv
 
 #### Get AutoML
 GET http://127.0.0.1:8000/api/automl
@@ -35,4 +35,4 @@ Content-Type: text/csv
 --yourBoundary--
 
 #### Get eda
-GET http://127.0.0.1:8000/api/eda?filename=data
+GET http://127.0.0.1:8000/api/eda?fileName=data

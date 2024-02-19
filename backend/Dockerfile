@@ -4,6 +4,9 @@ FROM python:3.11.6-slim
 # Set the working directory in the container
 WORKDIR /app
 
+# Install build dependencies
+RUN apt-get update && apt-get install -y gcc musl-dev python3-dev
+
 # Install and cleanup
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
@@ -18,7 +21,7 @@ COPY pyproject.toml poetry.lock ./
 # Install the dependencies
 RUN poetry config virtualenvs.create false && poetry install --no-dev
 
-# Copy the credentials.json file and compute dir into the container
+# Copy the creds file and compute dir into the container
 COPY credentials.json ./
 COPY compute ./compute
 
