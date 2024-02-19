@@ -4,6 +4,9 @@ FROM python:3.11.6-slim
 # Set the working directory in the container
 WORKDIR /app
 
+# Install build dependencies
+RUN apt-get update && apt-get install -y gcc musl-dev python3-dev
+
 # Install and cleanup
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
