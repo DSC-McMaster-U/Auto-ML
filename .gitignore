@@ -4,6 +4,8 @@ app/src/logs.log
 app/src/best_model.pkl
 app/src/dataset.csv
 
+frontend/.eslintrc.json
+
 .DS_Store
 
 __pycache__/
@@ -13,4 +15,9 @@ __pycache__/
 # ignore in all directories
 **/credentials.json
 
+*.pkl
+backend/bash.exe.stackdump
+backend/.python-version
 backend/big_query.py
+*.log
+fish_data.csv

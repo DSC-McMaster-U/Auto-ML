@@ -1,3 +1,4 @@
+from http.client import HTTPException
 from google.cloud import storage
 from google.cloud import bigquery
 from starlette.responses import FileResponse
@@ -8,6 +9,8 @@ from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from compute.autoEDA import generate_eda
+from compute.autoML import generate_model
+
 import csv
 
 app = FastAPI()
@@ -36,8 +39,7 @@ dataSetNames = []
 async def refreshDataSets():
     global dataSetNames
     try:
-        storage_client = storage.Client.from_service_account_json(
-            "./credentials.json")
+        storage_client = storage.Client.from_service_account_json("./credentials.json")
 
         blobs = storage_client.list_blobs(DATA_BUCKET)
         dataSetNames = [blob.name for blob in blobs]
@@ -65,48 +67,61 @@ async def root():
 async def root_py():
     return {"message": "Hello from fastAPI backend"}
 
+
 # add a new dataset to the bucket
 @app.put("/api/upload")
-async def upload(file: UploadFile = File(...), fileName: str = Form(...)):
+async def upload(fileName: str = Form(...), file: UploadFile = File(...)):
     try:
-        storage_client = storage.Client.from_service_account_json(
-            "./credentials.json")
+        # Validate file type
+        if not file.filename.endswith(".csv"):
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid file type. Only CSV files are accepted.",
+            )
+
+        storage_client = storage.Client.from_service_account_json("./credentials.json")
 
         bucket = storage_client.get_bucket(DATA_BUCKET)
-        # Assuming fileName includes '.csv' extension
         blob = bucket.blob(f"{fileName}")
-        content = await file.read()
-        blob.upload_from_string(content, content_type=file.content_type)
+        blob.upload_from_file(file.file, content_type="text/csv")
 
         await refreshDataSets()  # Make sure this function is defined if you want to use it
 
-        return JSONResponse(status_code=200, content={"message": "Data uploaded to GCloud successfully"})
+        return JSONResponse(
+            status_code=200, content={"message": "Data uploaded to GCloud successfully"}
+        )
 
     except Exception as e:
-        return JSONResponse(status_code=500, content={"error": f"An error occurred: {str(e)}"})
+        return JSONResponse(
+            status_code=500, content={"error": f"An error occurred: {str(e)}"}
+        )
+
 
 # list all the datasets in the bucket
 @app.get("/api/datasets")
 async def getDataSets():
+    # have to refresh the state of the bucket since it may have changed
+    await refreshDataSets()
     if not dataSetNames:
         return {"error": f"No DataSets in Bucket"}
     return {"names": dataSetNames}
 
+
 # get the data from the bucket and return it as a string
 @app.get("/api/data")
-async def getData(filename):
+async def getData(fileName):
     dataSetLines = ""
     try:
         storage_client = storage.Client.from_service_account_json("./credentials.json")
 
         bucket = storage_client.get_bucket(DATA_BUCKET)
-        blob = bucket.blob(f"{filename}.csv")
+        blob = bucket.blob(fileName)
 
         with blob.open("r") as f:
             dataSetLines = f.read()
-            
+
         # convert dataSetLines to be of type str | None (#TODO - check if this is necessary)
-        dataSetLines = str(dataSetLines) if dataSetLines else None 
+        dataSetLines = str(dataSetLines) if dataSetLines else None
 
         # convert csv string -> json (for frontend)
         csv_reader = csv.DictReader(StringIO(dataSetLines))
@@ -115,21 +130,18 @@ async def getData(filename):
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
 
-    return {
-        "data": dataSetLines,
-        "json": json_data
-    }
+    return {"data": dataSetLines, "json": json_data}
 
 
 # Exploratory Data Analysis
 @app.get("/api/eda")
-async def eda(filename):
+async def eda(fileName):
     corrMatrix = ""
     try:
         storage_client = storage.Client.from_service_account_json("./credentials.json")
 
         bucket = storage_client.get_bucket(DATA_BUCKET)
-        blob = bucket.blob(f"{filename}.csv")
+        blob = bucket.blob(f"{fileName}.csv")
 
         byte_stream = BytesIO()
         blob.download_to_file(byte_stream)
@@ -147,7 +159,7 @@ async def eda(filename):
 
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
-      
+
     finally:
         # Delete the temporary file
         if os.path.exists(f"tempImages/{uniqueFilename}"):
@@ -155,11 +167,12 @@ async def eda(filename):
 
     return {"data": corrMatrix, "graph_url": public_url}
 
+
 # return the model as a file
 @app.get("/api/automl")
 async def getModel():
     try:
-        #From #172 rawan/pandas-read-bucket
+        # From #172 rawan/pandas-read-bucket
 
         # storage_client = storage.Client.from_service_account_json(
         #     "./credentials.json")
@@ -169,59 +182,81 @@ async def getModel():
         # blob.download_to_file(byte_stream)
         # byte_stream.seek(0)
         # df = pd.read_csv(byte_stream)
-        # model_path = automl(df)
 
+        model, model_path = generate_model("fish_data.csv","Species", "C")
 
         # Use a placeholder file for testing download
-        placeholder_model_path = "./download_test_random_data.pickle"
+        # placeholder_model_path = "./download_test_random_data.pickle"
 
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
 
     # Return the placeholder file
-    return FileResponse(path=placeholder_model_path, filename=placeholder_model_path.split("/")[-1], media_type='application/octet-stream')
 
-
-    return {"data": corrMatrix}
+    # return FileResponse(path=placeholder_model_path, filename=placeholder_model_path.split("/")[-1], media_type='application/octet-stream')
+    return FileResponse(path=model_path, filename=model_path.split("/")[-1], media_type='application/octet-stream')
 
 
 # get file from bucket, load it to big query as a table & display the rows
 @app.get("/api/bq")
-async def bq(filename):
+async def bq(fileName, query=None):
+    
     # construct client objects (authorized with the service account json file)
     bq_client = bigquery.Client.from_service_account_json("./credentials.json")
     storage_client = storage.Client.from_service_account_json("./credentials.json")
     
-    uri = f"gs://{DATA_BUCKET}/{filename}.csv"
-    table_id = f"{BQ_DATASET}.{filename}_table"
+    # check if the file name has .csv extension, if not, add it
+    # if not fileName.endswith('.csv'):
+    #     fileName += '.csv'
+    
+    uri = f"gs://{DATA_BUCKET}/{fileName}"
     
     # if file does not exist in the bucket, return an error
-    blob = storage_client.get_bucket(DATA_BUCKET).blob(filename + ".csv")
+    blob = storage_client.get_bucket(DATA_BUCKET).blob(fileName)
     if not blob.exists():
-        return {"error": f"File {filename}.csv does not exist in the bucket."}
+        return {"error": f"File {fileName} does not exist in the bucket."}
+    
+    fileName = fileName.replace('.csv', '')
+    table_id = f"{BQ_DATASET}.{fileName}_table"
     
     # if table does not exist, load it
-    try:
-        bq_client.get_table(table_id)
-    except:
-        job_config = bigquery.LoadJobConfig(
-            autodetect=True,  # Automatically infer the schema.
-            source_format=bigquery.SourceFormat.CSV,
-            skip_leading_rows=1,  # column headers
-            write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,  # Overwrite the table
-        )
-        
-        load_job = bq_client.load_table_from_uri(
-            uri, table_id, job_config=job_config
-        ) # Make an API request.
-        
-        load_job.result()  # Waits for the job to complete.
+    # try:
+    #     bq_client.get_table(table_id)
+    # except:
+    job_config = bigquery.LoadJobConfig(
+        autodetect=True,  # Automatically infer the schema.
+        source_format=bigquery.SourceFormat.CSV,
+        skip_leading_rows=1,  # column headers
+        write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,  # Overwrite the table
+    )
+    # Make an API request
+    load_job = bq_client.load_table_from_uri(
+        uri, table_id, job_config=job_config
+    )
+    # Waits for the job to complete.
+    load_job.result() 
     
-    # Query all rows from the table
-    query = f"SELECT * FROM `{table_id}`"
-    query_job = bq_client.query(query)
+    #------------------------------------------ Query ops ----------------------------------------#
+    
+    query = query.upper() if query else None
+    
+    # List of potentially harmful operations
+    harmful_ops = ['DROP', 'DELETE', 'INSERT', 'UPDATE']
+
+    # Check if the query contains any harmful operations
+    if query and any(op in query.upper() for op in harmful_ops):
+        print("\nQuery contains harmful operations!\nusing default query.\n")
+        final_query = f"SELECT * FROM `{table_id}`"
+    else:
+        print("\nQuery is safe to be passed.\n")
+        # remove everything before the `SELECT` keyword from the received query
+        query = query[query.find("SELECT"):] if query else None
+        final_query = query.replace("FROM TABLE", f"FROM `{table_id}`") if query else f"SELECT * FROM `{table_id}`"
+    print("Final Query:\n", final_query, "\n")
+    
+    query_job = bq_client.query(final_query)
     rows = query_job.result()
-    
+
     # display the rows
     data = []
     for row in rows:
