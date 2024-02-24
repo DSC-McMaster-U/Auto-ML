@@ -1,3 +1,5 @@
+ARG CREDENTIALS_JSON
+
 # Use the official Python 3.11 image from Docker Hub
 FROM python:3.11.6-slim
 
@@ -22,7 +24,8 @@ COPY pyproject.toml poetry.lock ./
 RUN poetry config virtualenvs.create false && poetry install --no-dev
 
 # Copy the creds file and compute dir into the container
-COPY credentials.json ./
+# COPY credentials.json ./
+COPY  ${CREDENTIALS_JSON} ./credentials.json
 COPY compute ./compute
 
 # Copy the FastAPI application into the container
