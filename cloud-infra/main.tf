@@ -10,6 +10,13 @@ provider "google" {
   zone        = var.zone
 }
 
+terraform {
+ backend "gcs" {
+   bucket  = "automate_terraform_state"
+   prefix  = "terraform/state"
+ }
+}
+
 resource "google_container_cluster" "automl_cluster" {
   name     = "automl-cluster"
   location = var.zone
