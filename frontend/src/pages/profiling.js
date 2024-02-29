@@ -15,13 +15,32 @@ import {
 const Profiling = () => {
   // Define your data and fetch or process it as needed
   const [data, setData] = useState([]);
+  const [eda, setEda] = useState({});
+
   const redux_dataset = useSelector((state) => state.dataset.value);
-  
+
   useEffect(() => {
-    // Fetch or process your data here and set it in the state
-    // Example: const fetchData = async () => { ... }
-    // fetchData().then((result) => setData(result));
-  }, []);
+    // Define the async function to fetch EDA data
+    const fileName = redux_dataset.replace(/\.csv$/, ''); //remove .csv suffix for endpoint
+    const fetchEda = async () => {
+      try {
+        // Encode fileName to ensure the URL is correctly formed
+        const response = await fetch(`/api/eda?fileName=${encodeURIComponent(fileName)}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("eda:", data)
+        setEda(data); // Set the EDA data to state
+      } catch (error) {
+        console.error('Fetching EDA data failed:', error);
+        // Handle the error or set some error state to show an error message
+      }
+    };
+
+    fetchEda(); // Execute the fetch operation
+
+  }, [redux_dataset]);
 
   // Define columns for the DataGrid
   const columns = [
@@ -41,8 +60,8 @@ const Profiling = () => {
       >
         Data Profiling
       </Typography>
-      
-      <p style={{fontFamily: "Public Sans"}} >
+
+      <p style={{ fontFamily: "Public Sans" }} >
         Current dataset: {redux_dataset}
       </p>
 
