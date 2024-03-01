@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Container from '@mui/material/Container';
-import { Paper, Typography, Grid, Box } from '@mui/material';
+import { Button, Typography, Grid, Box } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import {
   InfoOutlined as InfoOutlinedIcon,
@@ -10,14 +10,19 @@ import {
   QueryStatsOutlined as QueryStatsOutlinedIcon,
   PriorityHigh as PriorityHighIcon,
   PreviewOutlined as PreviewOutlinedIcon,
+  ArrowDropDown as ArrowDropDownIcon,
+  ArrowDropUp as ArrowDropUpIcon,
 } from '@mui/icons-material';
+import CorrelationMatrix from '@/components/CorrelationMatrix';
 
 const Profiling = () => {
   // Define your data and fetch or process it as needed
   const [data, setData] = useState([]);
-  const [eda, setEda] = useState({});
-
+  const [edaData, setEda] = useState({});
   const redux_dataset = useSelector((state) => state.dataset.value);
+
+  const [isCMOpen, setCM] = useState(false); //visibility of correlation matrix
+  const toggleCMPoppover = () => setCM(!isCMOpen);
 
   useEffect(() => {
     // Define the async function to fetch EDA data
@@ -111,16 +116,17 @@ const Profiling = () => {
           </Grid>
 
           <Grid item xs={12} sm={6} md={4} lg={3}>
-            <Box display='flex' alignItems='center'>
-              <QueryStatsOutlinedIcon
-                style={{ color: '#4285F4' }}
-                fontSize='large'
-              />
+
+            <Button variant="text" display='flex' alignItems='center' onClick={toggleCMPoppover}>
+              <QueryStatsOutlinedIcon style={{ color: '#4285F4' }} fontSize='large' />
               <Typography variant='h6' style={{ marginLeft: 8 }}>
                 Correlations
               </Typography>
-            </Box>
+              {isCMOpen && (<ArrowDropUpIcon style={{ marginLeft: 8 }} />)}
+              {!isCMOpen && (<ArrowDropDownIcon style={{ marginLeft: 8 }} />)}
+            </Button>
             {/*Display correlation matrix here*/}
+            <CorrelationMatrix data="SOME CONTENT" isOpen={isCMOpen} onClose={toggleCMPoppover} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={4} lg={3}>
