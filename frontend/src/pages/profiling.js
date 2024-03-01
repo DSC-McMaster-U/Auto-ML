@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Container from '@mui/material/Container';
-import { Button, Typography, Grid, Box } from '@mui/material';
+import { Alert, Button, Typography, Grid, Box } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import {
   InfoOutlined as InfoOutlinedIcon,
@@ -35,8 +35,8 @@ const Profiling = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("eda:", data)
-        setEda(data); // Set the EDA data to state
+        console.log("eda:", data.data)
+        setEda(data.data); // Set the EDA data to state
       } catch (error) {
         console.error('Fetching EDA data failed:', error);
         // Handle the error or set some error state to show an error message
@@ -58,6 +58,9 @@ const Profiling = () => {
       maxWidth='xl'
       sx={{ fontFamily: 'Public Sans', textAlign: 'center', marginY: 4 }}
     >
+      {!redux_dataset && (
+        < Alert severity='error' sx={{ marginY: 2 }}>No dataset selected, please go to upload page.</Alert>
+      )}
       <Typography
         variant='h4'
         style={{ fontFamily: 'Public Sans' }}
@@ -126,7 +129,7 @@ const Profiling = () => {
               {!isCMOpen && (<ArrowDropDownIcon style={{ marginLeft: 8 }} />)}
             </Button>
             {/*Display correlation matrix here*/}
-            <CorrelationMatrix data="SOME CONTENT" isOpen={isCMOpen} onClose={toggleCMPoppover} />
+            <CorrelationMatrix data={edaData} isOpen={isCMOpen} onClose={toggleCMPoppover} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={4} lg={3}>
