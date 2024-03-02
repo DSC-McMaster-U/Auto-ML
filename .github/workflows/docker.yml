@@ -3,7 +3,6 @@ name: "Manually Deploy Docker Files to Artifact Registry"
 on:
   workflow_dispatch:
 
-
 jobs:
     deploy:
         env:
@@ -22,7 +21,7 @@ jobs:
             credentials_json: ${{ secrets.OWNER_SA_KEY }}
 
         - name: Decode credentials.json
-          run: echo "${{ secrets.B64_ENCODED_KEY }}" | base64 --decode > docker_credentials.json
+          run: echo "${{ secrets.B64_ENCODED_KEY }}" | base64 --decode > credentials.json
     
         - name: Install GCloud CLI
           uses: google-github-actions/setup-gcloud@v0
@@ -33,7 +32,7 @@ jobs:
             CREDENTIALS_JSON: ${{ secrets.B64_ENCODED_KEY }}
           run: |
             gcloud auth configure-docker us-central1-docker.pkg.dev
-            docker build --build-arg CREDENTIALS_JSON=./docker_credentials.json -t us-central1-docker.pkg.dev/automate-gdsc/backend-images/backend:latest ./backend
+            docker build --build-arg CREDENTIALS_JSON=./credentials.json -t us-central1-docker.pkg.dev/automate-gdsc/backend-images/backend:latest ./backend
             docker push us-central1-docker.pkg.dev/automate-gdsc/backend-images/backend:latest 
 
         - name: Build and Push Frontend Docker Image

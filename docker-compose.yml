@@ -2,8 +2,8 @@ version: '3'
 services:
   frontend-service:
     build: ./frontend
-    environment:
-      - APP_ENV=development
+    # environment:
+    #   - APP_ENV=development
     ports:
       - '3000:3000'
   backend-service:
