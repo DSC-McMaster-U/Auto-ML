@@ -25,6 +25,6 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
-        env:
-        - name: APP_ENV
-          value: "production"
+        # env:
+        # - name: APP_ENV
+        #   value: "production"

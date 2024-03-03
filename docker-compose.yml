@@ -2,11 +2,14 @@ version: '3'
 services:
   frontend-service:
     build: ./frontend
-    environment:
-      - APP_ENV=development
+    # environment:
+    #   - APP_ENV=development
     ports:
       - '3000:3000'
   backend-service:
-    build: ./backend
+    build:
+      context: ./backend
+      args:
+        - CREDENTIALS_JSON=./backend/credentials.json
     ports:
       - '8000:8000'
