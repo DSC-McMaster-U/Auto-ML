@@ -1,5 +1,6 @@
 // Automl.js
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import {
   Button,
   CircularProgress,
@@ -43,6 +44,7 @@ const Automl = () => {
   const [checkbox2, setCheckbox2] = useState(false);
   const [checkbox3, setCheckbox3] = useState(false);
   const [radioValue, setRadioValue] = useState('option1');
+  const redux_dataset = useSelector((state) => state.dataset.value);
 
   const toggleChartLoading = () => {
     setChartLoading(!chartLoading);

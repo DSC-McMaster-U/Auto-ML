@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { setDataset } from '../store/datasetSlice';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
         Paper, Button, ListItemText, ListItemButton, Box, Container, Typography
       } from "@mui/material"
@@ -7,10 +8,13 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
-const DataSetListComponent = ({ onSelectDataSet, uploadTrigger }) => {
+const DataSetListComponent = ({ uploadTrigger }) => 
+{
   const [dataSets, setDataSets] = useState([]);
-  const [selectedDataSet, setSelectedDataSet] = useState(null);
-
+  
+  const redux_dataset = useSelector(state => state.dataset.value);
+  const dispatch = useDispatch();
+  
   useEffect(() => {
     // Fetch datasets from /api/datasets and update state
     const fetchData = async () => {
@@ -25,9 +29,9 @@ const DataSetListComponent = ({ onSelectDataSet, uploadTrigger }) => {
       fetchData();
   }, [uploadTrigger]);
 
-  const handleSelectDataSet = (dataSet) => {
-    setSelectedDataSet(dataSet);
-    onSelectDataSet(dataSet); // This will pass the selected dataset to the parent component
+  const handleSelectDataSet = (dataSet) => 
+  {
+    dispatch(setDataset(dataSet));
   };
 
   return ( //render the list of selectable datasets
@@ -36,7 +40,7 @@ const DataSetListComponent = ({ onSelectDataSet, uploadTrigger }) => {
         {dataSets.map((dataSet, idx) => (
             <ListItemButton 
                 key={idx} 
-                selected={dataSet === selectedDataSet} 
+                selected={dataSet === redux_dataset} 
                 onClick={() => handleSelectDataSet(dataSet)}
             >
                 <ListItemText primary={dataSet} />
@@ -47,16 +51,19 @@ const DataSetListComponent = ({ onSelectDataSet, uploadTrigger }) => {
   );
 };
 
-const DataSetDisplayComponent = ({ selectedDataSet }) => {
+const DataSetDisplayComponent = () => 
+{
   const [data, setData] = useState([{}]);
   const [csvString, setCsvString] = useState("");
+  
+  const redux_dataset = useSelector(state => state.dataset.value);
 
   useEffect(() => {
     // Simulate fetching data
-    console.log("FETCHING DATA FOR", selectedDataSet)
+    console.log("Fetching data for", redux_dataset)
     const fetchData = async () => {
       try {
-        const res = await fetch(`/api/data?fileName=${encodeURIComponent(selectedDataSet)}`)
+        const res = await fetch(`/api/data?fileName=${encodeURIComponent(redux_dataset)}`)
         if (!res.ok) {
           throw new Error(`Error: ${res.status}`);
         }
@@ -73,14 +80,14 @@ const DataSetDisplayComponent = ({ selectedDataSet }) => {
       }
     };
     fetchData();
-}, [selectedDataSet]);
+}, [redux_dataset]);
 
   const handleDownload = () => {
     const blob = new Blob([csvString], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${selectedDataSet}`;
+    link.download = `${redux_dataset}`;
     link.style.display = 'none'; // Hide the link
     document.body.appendChild(link); // Append to the document
     link.click(); // Programmatically click the link to trigger the download
@@ -88,7 +95,7 @@ const DataSetDisplayComponent = ({ selectedDataSet }) => {
     link.remove(); // Remove the link from the document
   }
 
-  const headers = data[0] ? Object.keys(data[0]) : [];
+  const headers = (data && data.length > 0) ? Object.keys(data[0]) : [];
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
        
@@ -119,11 +126,10 @@ const DataSetDisplayComponent = ({ selectedDataSet }) => {
   );
 };
 
-const MainComponent = () => {
-  const [selectedDataSet, setSelectedDataSet] = useState(null);
+const MainComponent = () => 
+{
   const [uploadTrigger, setUploadTrigger] = useState(0);
-
-  
+   
   const handleUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) {
@@ -164,15 +170,12 @@ const MainComponent = () => {
     }
 };
 
-  
-  const handleSelectDataSet = (dataSet) => {
-    setSelectedDataSet(dataSet);
-  };
-
   const triggerFileInput = () => {
     // Trigger the hidden file input click event
     document.getElementById('file-upload-input').click();
   };
+  
+  const redux_dataset = useSelector(state => state.dataset.value);
 
   return (
     <Container maxWidth="xl" sx={{ textAlign: "center", marginY: 4 }}>
@@ -186,9 +189,15 @@ const MainComponent = () => {
       >
         Upload Your Datasets Here!
       </Typography>
+      
+      { redux_dataset &&     
+      <p style={{fontFamily: "Public Sans"}} >
+        Current dataset: {redux_dataset}
+      </p>}
+      
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div style={{ flex: 1, textAlign: 'center', margin: '10px' }}>
-                <DataSetListComponent onSelectDataSet={handleSelectDataSet} uploadTrigger={uploadTrigger}/>
+                <DataSetListComponent uploadTrigger={uploadTrigger}/>
                 <div style={{ marginTop: '20px' }}>
                     <Button variant="contained" color="primary" onClick={triggerFileInput} startIcon={<CloudUploadIcon />}>Upload</Button>
                     <input
@@ -202,9 +211,9 @@ const MainComponent = () => {
 
             </div>
 
-            {selectedDataSet && (
+            {redux_dataset && (
                 <div style={{ flex: 2, margin: '10px' }}>
-                    <DataSetDisplayComponent selectedDataSet={selectedDataSet} />
+                    <DataSetDisplayComponent/>
                 </div>
             )}
       </div>
