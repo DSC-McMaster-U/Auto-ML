@@ -35,8 +35,8 @@ const Profiling = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("eda:", data.data)
-        setEda(data.data); // Set the EDA data to state
+        console.log("eda:", data)
+        setEda(data); // Set the EDA data to state
       } catch (error) {
         console.error('Fetching EDA data failed:', error);
         // Handle the error or set some error state to show an error message
@@ -129,7 +129,7 @@ const Profiling = () => {
               {!isCMOpen && (<ArrowDropDownIcon style={{ marginLeft: 8 }} />)}
             </Button>
             {/*Display correlation matrix here*/}
-            <CorrelationMatrix data={edaData} isOpen={isCMOpen} onClose={toggleCMPoppover} />
+            <CorrelationMatrix eda={edaData} isOpen={isCMOpen} onClose={toggleCMPoppover} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={4} lg={3}>
