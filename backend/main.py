@@ -11,12 +11,10 @@ from fastapi.middleware.cors import CORSMiddleware
 # custom functions for EDA and AutoML
 from compute.autoEDA import generate_eda
 from compute.autoML import generate_model
-from big_query import bq_ops
+#from big_query import bq_ops
 
 
 import csv
-import asyncio
-from compute.autoML import generate_model
 
 app = FastAPI()
 
@@ -172,15 +170,16 @@ async def eda(fileName):
 
     return {"data": corrMatrix, "graph_url": public_url}
 
+
 #start the automl process
 @app.get("/api/generateModel")
-async def getModel(dataName: str = Form(...), file: UploadFile = File(...), column: str = Form(...), task: str = Form(...)):
+async def getModel(fileName, query=None, column: str = Form(...), task: str = Form(...)):
     try:
         
         storage_client = storage.Client.from_service_account_json("./credentials.json")
         #retreiving the data
         bucket = storage_client.get_bucket(DATA_BUCKET)
-        blob = bucket.blob(f"{dataName}")
+        blob = bucket.blob(f"{fileName}")
 
         byte_stream = BytesIO()
         blob.download_to_file(byte_stream)
@@ -198,19 +197,18 @@ async def getModel(dataName: str = Form(...), file: UploadFile = File(...), colu
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
     
-    return model_path
-
+    return "model generated successfully!"
 
 #retreive the model and download it
 @app.get("/api/downloadModel")
-async def downloadModel(modelName: GetFile = File(...), model_path: str = Form(...)):
+async def downloadModel(fileName, query=None):
     try:
         #action
         storage_client = storage.Client.from_service_account_json("./credentials.json")
 
         #retreiving the data from bucket
         bucket = storage_client.get_bucket(MODEL_BUCKET)
-        blob = bucket.blob(f"{modelName}")
+        blob = bucket.blob(f"{fileName}")
 
         byte_stream = BytesIO()
         blob.download_to_file(byte_stream)
@@ -219,18 +217,13 @@ async def downloadModel(modelName: GetFile = File(...), model_path: str = Form(.
 
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
-    
-
-    finally :
-        #delete temporary file
-        if os.path.exists(f"./{modelName}") :
-            os.remove(f"./{modelName}")
-
     #return model
-    return FileResponse(path=model_path, filename=model_path.split("/")[-1], media_type='application/octet-stream')
+    return {"model:", df}
+
 
 
 # big query operations
+'''
 @app.get("/api/bq")
 async def bq(fileName, query=None):
     try:
@@ -238,3 +231,4 @@ async def bq(fileName, query=None):
         return result
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
+'''
