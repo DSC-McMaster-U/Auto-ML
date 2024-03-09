@@ -18,6 +18,5 @@ __pycache__/
 *.pkl
 backend/bash.exe.stackdump
 backend/.python-version
-backend/big_query.py
 *.log
 fish_data.csv
