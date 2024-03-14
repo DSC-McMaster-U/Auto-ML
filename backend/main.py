@@ -7,6 +7,11 @@ import os
 from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import Request
+import joblib
+from fastapi import HTTPException
+from fastapi.responses import StreamingResponse
+
 
 # custom functions for EDA and AutoML
 from compute.autoEDA import generate_eda
@@ -171,54 +176,59 @@ async def eda(fileName):
     return {"data": corrMatrix, "graph_url": public_url}
 
 
+
 #start the automl process
 @app.get("/api/generateModel")
-async def getModel(fileName, query=None, column: str = Form(...), task: str = Form(...)):
+async def getModel(fileName, column, task):
     try:
         
         storage_client = storage.Client.from_service_account_json("./credentials.json")
-        #retreiving the data
-        bucket = storage_client.get_bucket(DATA_BUCKET)
-        blob = bucket.blob(f"{fileName}")
+
+        data_bucket = storage_client.get_bucket(DATA_BUCKET)
+        blob = data_bucket.blob(f"{fileName}.csv")
 
         byte_stream = BytesIO()
         blob.download_to_file(byte_stream)
         byte_stream.seek(0)
-        df = pd.read_csv(byte_stream)
 
         #producing model
-        model, model_path = generate_model(df, column, task)
+        model, model_file_path = generate_model(byte_stream, column, task)
 
         #upload model to model bucket
-        bucket = storage_client.get_bucket(MODEL_BUCKET)
-        blob = bucket.blob(f"{model}")
-        blob.upload_from_file(file.file, content_type="pkl")
+        model_bucket = storage_client.get_bucket(MODEL_BUCKET)
+        model_blob = model_bucket.blob(f"{fileName}.pkl")
+        with open(model_file_path, "rb") as model_file:
+            model_blob.upload_from_file(model_file, content_type="application/octet-stream")
+
+        return fileName, column, task
 
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
     
-    return "model generated successfully!"
 
 #retreive the model and download it
 @app.get("/api/downloadModel")
-async def downloadModel(fileName, query=None):
+async def downloadModel():
     try:
         #action
         storage_client = storage.Client.from_service_account_json("./credentials.json")
 
         #retreiving the data from bucket
         bucket = storage_client.get_bucket(MODEL_BUCKET)
-        blob = bucket.blob(f"{fileName}")
+        blobs = list(bucket.list_blobs())
+        blob = blobs[0]
 
         byte_stream = BytesIO()
         blob.download_to_file(byte_stream)
         byte_stream.seek(0)
-        df = pd.read_csv(byte_stream)
+        
+        blob.delete()
+
+        return StreamingResponse(byte_stream, media_type="application/octet-stream")
+
 
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
-    #return model
-    return {"model:", df}
 
 
 

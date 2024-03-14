@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Container from '@mui/material/Container';
-import { Paper, Typography, Grid, Box } from '@mui/material';
+import { Alert, Button, Typography, Grid, Box } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import {
   InfoOutlined as InfoOutlinedIcon,
@@ -10,18 +10,42 @@ import {
   QueryStatsOutlined as QueryStatsOutlinedIcon,
   PriorityHigh as PriorityHighIcon,
   PreviewOutlined as PreviewOutlinedIcon,
+  ArrowDropDown as ArrowDropDownIcon,
+  ArrowDropUp as ArrowDropUpIcon,
 } from '@mui/icons-material';
+import CorrelationMatrix from '@/components/CorrelationMatrix';
 
 const Profiling = () => {
   // Define your data and fetch or process it as needed
   const [data, setData] = useState([]);
+  const [edaData, setEda] = useState({});
   const redux_dataset = useSelector((state) => state.dataset.value);
-  
+
+  const [isCMOpen, setCM] = useState(false); //visibility of correlation matrix
+  const toggleCMPoppover = () => setCM(!isCMOpen);
+
   useEffect(() => {
-    // Fetch or process your data here and set it in the state
-    // Example: const fetchData = async () => { ... }
-    // fetchData().then((result) => setData(result));
-  }, []);
+    // Define the async function to fetch EDA data
+    const fileName = redux_dataset.replace(/\.csv$/, ''); //remove .csv suffix for endpoint
+    const fetchEda = async () => {
+      try {
+        // Encode fileName to ensure the URL is correctly formed
+        const response = await fetch(`/api/eda?fileName=${encodeURIComponent(fileName)}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("eda:", data)
+        setEda(data); // Set the EDA data to state
+      } catch (error) {
+        console.error('Fetching EDA data failed:', error);
+        // Handle the error or set some error state to show an error message
+      }
+    };
+
+    fetchEda(); // Execute the fetch operation
+
+  }, [redux_dataset]);
 
   // Define columns for the DataGrid
   const columns = [
@@ -34,6 +58,9 @@ const Profiling = () => {
       maxWidth='xl'
       sx={{ fontFamily: 'Public Sans', textAlign: 'center', marginY: 4 }}
     >
+      {!redux_dataset && (
+        < Alert severity='error' sx={{ marginY: 2 }}>No dataset selected, please go to upload page.</Alert>
+      )}
       <Typography
         variant='h4'
         style={{ fontFamily: 'Public Sans' }}
@@ -41,8 +68,8 @@ const Profiling = () => {
       >
         Data Profiling
       </Typography>
-      
-      <p style={{fontFamily: "Public Sans"}} >
+
+      <p style={{ fontFamily: "Public Sans" }} >
         Current dataset: {redux_dataset}
       </p>
 
@@ -92,16 +119,17 @@ const Profiling = () => {
           </Grid>
 
           <Grid item xs={12} sm={6} md={4} lg={3}>
-            <Box display='flex' alignItems='center'>
-              <QueryStatsOutlinedIcon
-                style={{ color: '#4285F4' }}
-                fontSize='large'
-              />
+
+            <Button variant="text" display='flex' alignItems='center' onClick={toggleCMPoppover}>
+              <QueryStatsOutlinedIcon style={{ color: '#4285F4' }} fontSize='large' />
               <Typography variant='h6' style={{ marginLeft: 8 }}>
                 Correlations
               </Typography>
-            </Box>
+              {isCMOpen && (<ArrowDropUpIcon style={{ marginLeft: 8 }} />)}
+              {!isCMOpen && (<ArrowDropDownIcon style={{ marginLeft: 8 }} />)}
+            </Button>
             {/*Display correlation matrix here*/}
+            <CorrelationMatrix eda={edaData} isOpen={isCMOpen} onClose={toggleCMPoppover} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={4} lg={3}>
