@@ -8,7 +8,6 @@ from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Request
-import joblib
 from fastapi import HTTPException
 from fastapi.responses import StreamingResponse
 
@@ -222,6 +221,7 @@ async def downloadModel():
         blob.download_to_file(byte_stream)
         byte_stream.seek(0)
         
+        #remove it from the bucket
         blob.delete()
 
         return StreamingResponse(byte_stream, media_type="application/octet-stream")

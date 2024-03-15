@@ -30,7 +30,7 @@ const Automl = () => {
   const handleStartAutoML = () => {
     if (targetColumn.trim() !== '' && selectedTask !== '') {
       setLoading(true);
-      const fileName = redux_dataset.replace(/\.csv$/, ''); // Remove .csv suffix for endpoint
+      const fileName = redux_dataset.replace(/\.csv$/, ''); 
       fetch(`/api/generateModel?fileName=${encodeURIComponent(fileName)}&column=${encodeURIComponent(targetColumn)}&task=${encodeURIComponent(selectedTask)}`)
         .then(response => {
           if (!response.ok) {
@@ -50,7 +50,7 @@ const Automl = () => {
     }
   };
 
-  //update this function
+
   const downloadModel = () => {
     fetch("/api/downloadModel")
       .then(response => {
@@ -68,7 +68,7 @@ const Automl = () => {
         link.setAttribute('download', filename);
         document.body.appendChild(link);
         link.click();
-        document.body.removeChild(link); // Remove the link after downloading
+        document.body.removeChild(link);
       })
       .catch(error => console.error('Error:', error));
   };
@@ -129,7 +129,7 @@ const Automl = () => {
         )}
         </div>
       </div>
-      </div>
+    </div>
   );
   
 };
