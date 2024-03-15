@@ -165,7 +165,7 @@ const DataSetDisplayComponent = ({ selectedDataSet }) => {
         padding: '20px',
       }}
     >
-      <TableContainer component={Paper} style={{ marginBottom: '20px' }}>
+      <TableContainer component={Paper} className="scrollable-table-container" style={{ marginBottom: '20px' }}>
         <Table>
           <TableHead>
             <TableRow>
