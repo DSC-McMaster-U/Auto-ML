@@ -1,45 +1,76 @@
-// Automl.js
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import {
-  Checkbox,
-  Radio,
-  FormControlLabel,
-  RadioGroup,
   Button,
-  IconButton,
+  Alert, 
+  CircularProgress,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  TextField
 } from '@mui/material';
-import { CheckCircle, PlayArrow } from '@mui/icons-material';
-import LineChartRecharts from './linechartrecharts';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
+import { PlayArrow, CloudDownload } from '@mui/icons-material';
 
 const Automl = () => {
-  const [chartLoading, setChartLoading] = useState(false);
-  const [checkbox1, setCheckbox1] = useState(false);
-  const [checkbox2, setCheckbox2] = useState(false);
-  const [checkbox3, setCheckbox3] = useState(false);
-  const [radioValue, setRadioValue] = useState('option1');
+  const [modelGenerated, setModelGenerated] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [selectedTask, setSelectedTask] = useState('');
+  const [targetColumn, setTargetColumn] = useState('');
   const redux_dataset = useSelector((state) => state.dataset.value);
 
-  const toggleChartLoading = () => {
-    setChartLoading(!chartLoading);
+  const handleTaskSelection = (event) => {
+    setSelectedTask(event.target.value);
   };
 
-  const handleCheckboxChange = (checkbox) => {
-    if (checkbox === 'checkbox1') {
-      setCheckbox1(!checkbox1);
-    }
-    if (checkbox === 'checkbox2') {
-      setCheckbox2(!checkbox2);
-    }
-    if (checkbox === 'checkbox3') {
-      setCheckbox3(!checkbox3);
+  const handleTargetColumnChange = (event) => {
+    setTargetColumn(event.target.value);
+  };
+  const handleStartAutoML = () => {
+    if (targetColumn.trim() !== '' && selectedTask !== '') {
+      setLoading(true);
+      const fileName = redux_dataset.replace(/\.csv$/, ''); 
+      fetch(`/api/generateModel?fileName=${encodeURIComponent(fileName)}&column=${encodeURIComponent(targetColumn)}&task=${encodeURIComponent(selectedTask)}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error response');
+          }
+          return response.json();
+        })
+        .then(data => {
+          setLoading(false);
+          setModelGenerated(true);
+          console.log("Response from backend:", data);
+        })
+        .catch(error =>{
+          setLoading(false);
+          console.error('Error:', error);
+        });
     }
   };
 
-  const handleRadioChange = (event) => {
-    setRadioValue(event.target.value);
+
+  const downloadModel = () => {
+    fetch("/api/downloadModel")
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error response');
+        }
+        return response.blob();
+      })
+      .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+
+        const filename = redux_dataset.replace(/\.csv$/, ".pkl");
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      })
+      .catch(error => console.error('Error:', error));
   };
 
   return (
@@ -50,142 +81,57 @@ const Automl = () => {
         margin: '20px',
       }}
     >
-      {/* Left Column */}
-      <div style={{ width: '50%', padding: '20px' }}>
-        <Typography
-          variant="h2"
-          sx={{
-            marginBottom: 2,
-            fontFamily: "Public Sans",
-            fontSize: "40px",
-          }}
-        >
-          EDA and AutoML
-        </Typography>
-        
-        <p style={{fontFamily: "Public Sans"}} >
-          Current dataset: <code style={{backgroundColor: '#f8f8f8', borderRadius: '5px', padding: '4px'}}>{redux_dataset}</code>
-        </p>
-        <div
-          style={{
-            marginBottom: '10px',
-            background: '#ddd',
-            padding: '20px',
-            borderRadius: '10px',
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          <FormControlLabel
-            control={
-              <Checkbox
-                style={{ borderRadius: '0' }} // Square Checkbox
-                icon={
-                  <CheckCircle style={{ color: '#34A853', fontSize: 24 }} />
-                }
-                checkedIcon={
-                  <CheckCircle style={{ color: '#288140', fontSize: 24 }} />
-                }
-                checked={checkbox1}
-                onChange={() => handleCheckboxChange('checkbox1')}
-              />
-            }
-            label={
-              <Typography style={{ fontFamily: 'Public Sans, sans-serif' }}>
-                Classification
-              </Typography>
-            }
+      <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px' }}>
+        <div style={{ width: '100%', padding: '20px' }}>
+        {!redux_dataset && (
+        < Alert severity='error' sx={{ marginY: 2 }}>No dataset selected, please go to upload page.</Alert>
+      )}
+        <p style={{ fontFamily: "Public Sans" }} >
+        Current dataset: {redux_dataset}
+      </p>
+          <FormControl component="fieldset">
+            <FormLabel component="legend">Select Task</FormLabel>
+            <RadioGroup aria-label="task" name="task" value={selectedTask} onChange={handleTaskSelection}>
+              <FormControlLabel value="C" control={<Radio />} label="Classification" />
+              <FormControlLabel value="R" control={<Radio />} label="Regression" />
+            </RadioGroup>
+          </FormControl>
+          <TextField
+            id="target-column"
+            label="Target Column"
+            variant="outlined"
+            fullWidth
+            value={targetColumn}
+            onChange={handleTargetColumnChange}
+            disabled={!selectedTask}
+            style={{ marginTop: '20px', marginRight: '10px' }}
           />
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={!targetColumn || loading} // Disable button when loading
+            onClick={handleStartAutoML}
+            style={{ marginTop: '40px' }}
+          >
+            {loading ? <CircularProgress size={24} /> : <PlayArrow />}
+            Start AutoML
+          </Button>
+          {modelGenerated && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={downloadModel}
+            style={{ marginTop: '40px', marginLeft: '10px' }}
+          >
+            <CloudDownload />
+            Download Model
+          </Button>
+        )}
         </div>
-        <div
-          style={{
-            marginBottom: '10px',
-            display: 'flex',
-            alignItems: 'center',
-            background: '#ddd',
-            padding: '20px',
-            borderRadius: '10px',
-          }}
-        >
-          <FormControlLabel
-            control={
-              <Checkbox
-                style={{ borderRadius: '0' }} // Square Checkbox
-                icon={
-                  <CheckCircle style={{ color: '#FBBC05', fontSize: 24 }} />
-                }
-                checkedIcon={
-                  <CheckCircle style={{ color: '#e3aa04', fontSize: 24 }} />
-                }
-                checked={checkbox2}
-                onChange={() => handleCheckboxChange('checkbox2')}
-              />
-            }
-            label={
-              <Typography style={{ fontFamily: 'Public Sans, sans-serif' }}>
-                Regression
-              </Typography>
-            }
-          />
-        </div>
-        <div
-          style={{
-            marginBottom: '10px',
-            display: 'flex',
-            alignItems: 'center',
-            background: '#ddd',
-            padding: '20px',
-            borderRadius: '10px',
-          }}
-        >
-          <FormControlLabel
-            control={
-              <Checkbox
-                style={{ borderRadius: '0' }} // Square Checkbox
-                icon={
-                  <CheckCircle style={{ color: '#EA4335', fontSize: 24 }} />
-                }
-                checkedIcon={
-                  <CheckCircle style={{ color: '#d62516', fontSize: 24 }} />
-                }
-                checked={checkbox3}
-                onChange={() => handleCheckboxChange('checkbox3')}
-              />
-            }
-            label={
-              <Typography style={{ fontFamily: 'Public Sans, sans-serif' }}>
-                Loading
-              </Typography>
-            }
-          />
-        </div>
-
-        <div
-          style={{
-            marginBottom: '10px',
-            display: 'flex',
-            alignItems: 'center',
-            background: '#ddd',
-            padding: '20px',
-            borderRadius: '10px',
-            fontFamily: 'Public Sans',
-          }}
-        >
-          <IconButton color='primary'>
-            <PlayArrow style={{ fontSize: 24, color: '#4285F4' }} />
-          </IconButton>{' '}
-          Start AutoML
-        </div>
-      </div>
-
-      {/* Right Column */}
-      <div
-        style={{ width: '50%', backgroundColor: '#e0e0e0', padding: '20px' }}
-      >
-        <LineChartRecharts />
       </div>
     </div>
   );
+  
 };
 
 export default Automl;
