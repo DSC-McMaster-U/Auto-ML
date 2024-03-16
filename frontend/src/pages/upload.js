@@ -5,12 +5,14 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
         Paper, Button, ListItemText, ListItemButton, Box, Container, Typography
       } from "@mui/material"
 
+import CircularProgress from '@mui/material/CircularProgress';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
 const DataSetListComponent = ({ uploadTrigger }) => 
 {
   const [dataSets, setDataSets] = useState([]);
+  const [isLoading, setLoading] = useState(false);
   
   const redux_dataset = useSelector(state => state.dataset.value);
   const dispatch = useDispatch();
@@ -18,6 +20,7 @@ const DataSetListComponent = ({ uploadTrigger }) =>
   useEffect(() => {
     // Fetch datasets from /api/datasets and update state
     const fetchData = async () => {
+        setLoading(true);
         try {
           const res = await fetch("/api/datasets");
           const data = await res.json();
@@ -25,6 +28,7 @@ const DataSetListComponent = ({ uploadTrigger }) =>
         } catch {
           console.error("API Endpoint Not Working");
         }
+        setLoading(false);
       };
       fetchData();
   }, [uploadTrigger]);
@@ -34,20 +38,26 @@ const DataSetListComponent = ({ uploadTrigger }) =>
     dispatch(setDataset(dataSet));
   };
 
-  return ( //render the list of selectable datasets
-  <Paper elevation={3} style={{ padding: '10px', margin: '10px' }}>
-    <Box>
-        {dataSets.map((dataSet, idx) => (
+  // list of selectable datasets
+  return (
+    <Paper elevation={3} style={{ padding: '10px', margin: '10px' }}>
+      <Typography variant="h6" >Existing Datasets:</Typography>
+      <Box mt={2}>
+        {isLoading ? (
+         <CircularProgress size={24} color='inherit' style={{ margin: '16px' }} />
+        ) : (
+          dataSets.map((dataSet, idx) => (
             <ListItemButton 
-                key={idx} 
-                selected={dataSet === redux_dataset} 
-                onClick={() => handleSelectDataSet(dataSet)}
+              key={idx} 
+              selected={dataSet === redux_dataset} 
+              onClick={() => handleSelectDataSet(dataSet)}
             >
-                <ListItemText primary={dataSet} />
+              <ListItemText primary={dataSet} />
             </ListItemButton>
-        ))}
-    </Box>
-  </Paper>
+          ))
+        )}
+      </Box>
+    </Paper>
   );
 };
 
@@ -55,13 +65,15 @@ const DataSetDisplayComponent = () =>
 {
   const [data, setData] = useState([{}]);
   const [csvString, setCsvString] = useState("");
+  const [isLoading, setLoading] = useState(false);
   
   const redux_dataset = useSelector(state => state.dataset.value);
 
+  // Simulate fetching data
   useEffect(() => {
-    // Simulate fetching data
     console.log("Fetching data for", redux_dataset)
     const fetchData = async () => {
+      setLoading(true);
       try {
         const res = await fetch(`/api/data?fileName=${encodeURIComponent(redux_dataset)}`)
         if (!res.ok) {
@@ -78,6 +90,7 @@ const DataSetDisplayComponent = () =>
         console.error('Failed to fetch data:', error);
         return null;
       }
+      setLoading(false);
     };
     fetchData();
 }, [redux_dataset]);
@@ -87,7 +100,7 @@ const DataSetDisplayComponent = () =>
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${redux_dataset}`;
+    link.download = `$<code style={{backgroundColor: '#f8f8f8', borderRadius: '5px', padding: '4px'}}>{redux_dataset}</code>`;
     link.style.display = 'none'; // Hide the link
     document.body.appendChild(link); // Append to the document
     link.click(); // Programmatically click the link to trigger the download
@@ -98,30 +111,35 @@ const DataSetDisplayComponent = () =>
   const headers = (data && data.length > 0) ? Object.keys(data[0]) : [];
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
-       
-        <TableContainer component={Paper} style={{ marginBottom: '20px' }}>
+      {isLoading ? (
+        <CircularProgress size={24} color='inherit' style={{ margin: '16px' }} />
+      ) : (       
+        <>
+          <TableContainer component={Paper} style={{ marginBottom: '20px' }}>
             <Table>
-                <TableHead>
-                    <TableRow>
-                        {headers.map((header, index) => (
-                            <TableCell key={index}>{header}</TableCell>
-                        ))}
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {data.slice(0, 10).map((item, rowIndex) => (
-                        <TableRow key={rowIndex}>
-                            {Object.values(item).map((value, colIndex) => (
-                                <TableCell key={colIndex}>{value}</TableCell>
-                            ))}
-                        </TableRow>
+              <TableHead>
+                <TableRow>
+                  {headers.map((header, index) => (
+                    <TableCell key={index}>{header}</TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {data.slice(0, 10).map((item, rowIndex) => (
+                  <TableRow key={rowIndex}>
+                    {Object.values(item).map((value, colIndex) => (
+                      <TableCell key={colIndex}>{value}</TableCell>
                     ))}
-                </TableBody>
+                  </TableRow>
+                ))}
+              </TableBody>
             </Table>
-        </TableContainer>
-        <Button variant="contained" color="primary" onClick={handleDownload} startIcon={<CloudDownloadIcon />}>
-            Download
-        </Button>
+          </TableContainer>
+          <Button variant="contained" color="primary" onClick={handleDownload} startIcon={<CloudDownloadIcon />}>
+              Download
+          </Button>
+        </>
+      )}
     </div>
   );
 };
@@ -192,8 +210,9 @@ const MainComponent = () =>
       
       { redux_dataset &&     
       <p style={{fontFamily: "Public Sans"}} >
-        Current dataset: {redux_dataset}
-      </p>}
+        Current dataset: <code style={{backgroundColor: '#f8f8f8', borderRadius: '5px', padding: '4px'}}><code style={{backgroundColor: '#f8f8f8', borderRadius: '5px', padding: '4px'}}>{redux_dataset}</code></code>
+      </p>
+      }
       
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div style={{ flex: 1, textAlign: 'center', margin: '10px' }}>

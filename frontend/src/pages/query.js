@@ -29,10 +29,12 @@ const DataSetListComponent = ({ onSelectDataSet, uploadTrigger }) => {
   // hooks to store the datasets and the selected dataset
   const [dataSets, setDataSets] = useState([]);
   const [selectedDataSet, setSelectedDataSet] = useState(null);
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
     // Fetch datasets from /api/datasets and update state
     const fetchData = async () => {
+      setLoading(true);
       try {
         const res = await fetch('/api/datasets');
         const data = await res.json();
@@ -40,6 +42,7 @@ const DataSetListComponent = ({ onSelectDataSet, uploadTrigger }) => {
       } catch {
         console.error('API Endpoint Not Working');
       }
+      setLoading(false);
     };
     fetchData();
   }, [uploadTrigger]);
@@ -49,19 +52,24 @@ const DataSetListComponent = ({ onSelectDataSet, uploadTrigger }) => {
     onSelectDataSet(dataSet); // This will pass the selected dataset to the parent component
   };
 
+  // list of selectable datasets
   return (
-    //render the list of selectable datasets
     <Paper elevation={3} style={{ padding: '10px', margin: '10px' }}>
-      <Box>
-        {dataSets.map((dataSet, idx) => (
-          <ListItemButton
-            key={idx}
-            selected={dataSet === selectedDataSet}
-            onClick={() => handleSelectDataSet(dataSet)}
-          >
-            <ListItemText primary={dataSet} />
-          </ListItemButton>
-        ))}
+      <Typography variant="h6" >Existing Datasets:</Typography>
+      <Box mt={2}>
+        {isLoading ? (
+         <CircularProgress size={24} color='inherit' style={{ margin: '16px' }} />
+        ) : (
+          dataSets.map((dataSet, idx) => (
+            <ListItemButton 
+              key={idx} 
+              selected={dataSet === selectedDataSet} 
+              onClick={() => handleSelectDataSet(dataSet)}
+            >
+              <ListItemText primary={dataSet} />
+            </ListItemButton>
+          ))
+        )}
       </Box>
     </Paper>
   );
@@ -71,11 +79,13 @@ const DataSetListComponent = ({ onSelectDataSet, uploadTrigger }) => {
 const DataSetDisplayComponent = ({ selectedDataSet }) => {
   const [data, setData] = useState([{}]);
   const [csvString, setCsvString] = useState('');
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
     // Simulate fetching data
     console.log('FETCHING DATA FOR', selectedDataSet);
     const fetchData = async () => {
+      setLoading(true);
       try {
         const res = await fetch(
           `/api/data?fileName=${encodeURIComponent(selectedDataSet)}`
@@ -93,6 +103,7 @@ const DataSetDisplayComponent = ({ selectedDataSet }) => {
         console.error('Failed to fetch data:', error);
         return null;
       }
+      setLoading(false);
     };
     fetchData();
   }, [selectedDataSet]);
@@ -113,12 +124,13 @@ const DataSetDisplayComponent = ({ selectedDataSet }) => {
   const [query, setQuery] = useState(
     '-- use `table` for table name, eg:\nSELECT * FROM table LIMIT 2'
   );
-  const [loading, setLoading] = useState(false);
+  
+  const [isQueryLoading, setQueryLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // calls the `/api/bq` endpoint with the `fileName` and `query` parameters
   const runQuery = async (query) => {
-    setLoading(true); // for the loading spinner
+    setQueryLoading(true); // for the loading spinner
     setError(null); // clear any previous errors
 
     // List of potentially harmful operations
@@ -127,7 +139,7 @@ const DataSetDisplayComponent = ({ selectedDataSet }) => {
     // Check if the query contains any harmful operations
     if (harmfulOps.some((op) => query.toUpperCase().includes(op))) {
       setError('Harmful operations detected');
-      setLoading(false);
+      setQueryLoading(false);
       return;
     }
 
@@ -151,7 +163,7 @@ const DataSetDisplayComponent = ({ selectedDataSet }) => {
       console.error('Failed to fetch data:', error);
       setError('something went wrong, make sure your query is valid'); // inform the user of the error
     } finally {
-      setLoading(false); // remove the loading spinner
+      setQueryLoading(false); // remove the loading spinner
     }
   };
 
@@ -165,67 +177,77 @@ const DataSetDisplayComponent = ({ selectedDataSet }) => {
         padding: '20px',
       }}
     >
-      <TableContainer component={Paper} style={{ marginBottom: '20px' }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              {headers.map((header, index) => (
-                <TableCell key={index}>{header}</TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data.slice(0, 10).map((item, rowIndex) => (
-              <TableRow key={rowIndex}>
-                {Object.values(item).map((value, colIndex) => (
-                  <TableCell key={colIndex}>{value}</TableCell>
+    {isLoading ? (
+      <CircularProgress size={24} color='inherit' style={{ margin: '16px' }} />
+    ) : (
+      <div style={{ width: '100%' }}>
+        <TableContainer component={Paper} style={{ marginBottom: '20px'}}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                {headers.map((header, index) => (
+                  <TableCell key={index}>{header}</TableCell>
                 ))}
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Typography
-        variant='h6'
-        sx={{
-          fontFamily: 'Public Sans',
-        }}
-      >
-        Run Queries on the Dataset:
-      </Typography>
-      <div
-        style={{
-          border: '1px solid black',
-          borderRadius: '8px',
-          width: '100%',
-          padding: '1%',
-        }}
-      >
-        <Editor
-          height='20vh'
-          theme='vs'
-          options={{
-            fontSize: 15,
-            minimap: { enabled: false, scale: 1 },
+            </TableHead>
+            <TableBody>
+              {data.slice(0, 10).map((item, rowIndex) => (
+                <TableRow key={rowIndex}>
+                  {Object.values(item).map((value, colIndex) => (
+                    <TableCell key={colIndex}>{value}</TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        
+        <Typography
+          variant='h6'
+          sx={{
+            fontFamily: 'Public Sans',
           }}
-          defaultLanguage='sql'
-          value={query}
-          onChange={(value) => setQuery(value)}
-        />
+        >
+          Run Queries on the Dataset:
+        </Typography>
+        
+        <div
+          style={{
+            border: '1px solid black',
+            borderRadius: '8px',
+            width: '100%',
+            padding: '1%',
+          }}
+        >
+          <Editor
+            height='20vh'
+            theme='vs'
+            options={{
+              fontSize: 15,
+              minimap: { enabled: false, scale: 1 },
+            }}
+            defaultLanguage='sql'
+            value={query}
+            onChange={(value) => setQuery(value)}
+          />
+        </div>
+        
+        {error && <div style={{ color: 'red' }}>{error}</div>}
+      
+        <Button
+          variant='contained'
+          onClick={() => runQuery(query)}
+          style={{ margin: '10px 5px' }}
+        >
+          {isQueryLoading ? (
+            <CircularProgress size={24} color='inherit' />
+          ) : (
+            <PlayCircleOutline style={{ marginRight: '5px' }} />
+          )}
+          {isQueryLoading ? '' : 'Run'}
+        </Button>
       </div>
-      {error && <div style={{ color: 'red' }}>{error}</div>}
-      <Button
-        variant='contained'
-        onClick={() => runQuery(query)}
-        style={{ margin: '10px 5px' }}
-      >
-        {loading ? (
-          <CircularProgress size={24} color='inherit' />
-        ) : (
-          <PlayCircleOutline style={{ marginRight: '5px' }} />
-        )}
-        {loading ? '' : 'Run'}
-      </Button>
+    )}
     </div>
   );
 };
