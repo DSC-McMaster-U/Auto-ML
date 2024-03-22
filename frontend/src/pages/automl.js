@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   Button,
-  Alert, 
+  Alert,
   CircularProgress,
   FormControl,
   FormControlLabel,
@@ -18,6 +18,8 @@ const Automl = () => {
   const [loading, setLoading] = useState(false);
   const [selectedTask, setSelectedTask] = useState('');
   const [targetColumn, setTargetColumn] = useState('');
+  const [scoringGrid, setScoringGrid] = useState('');
+  const [plotUrl, setPlotUrl] = useState(''); 
   const redux_dataset = useSelector((state) => state.dataset.value);
 
   const handleTaskSelection = (event) => {
@@ -27,10 +29,11 @@ const Automl = () => {
   const handleTargetColumnChange = (event) => {
     setTargetColumn(event.target.value);
   };
+
   const handleStartAutoML = () => {
     if (targetColumn.trim() !== '' && selectedTask !== '') {
       setLoading(true);
-      const fileName = redux_dataset.replace(/\.csv$/, ''); 
+      const fileName = redux_dataset.replace(/\.csv$/, '');
       fetch(`/api/generateModel?fileName=${encodeURIComponent(fileName)}&column=${encodeURIComponent(targetColumn)}&task=${encodeURIComponent(selectedTask)}`)
         .then(response => {
           if (!response.ok) {
@@ -42,14 +45,15 @@ const Automl = () => {
           setLoading(false);
           setModelGenerated(true);
           console.log("Response from backend:", data);
+          setScoringGrid(data.scoring_grid);
+          setPlotUrl(data.plot_model_url); 
         })
-        .catch(error =>{
+        .catch(error => {
           setLoading(false);
           console.error('Error:', error);
         });
     }
   };
-
 
   const downloadModel = () => {
     fetch("/api/downloadModel")
@@ -73,6 +77,7 @@ const Automl = () => {
       .catch(error => console.error('Error:', error));
   };
 
+
   return (
     <div
       style={{
@@ -83,12 +88,12 @@ const Automl = () => {
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px' }}>
         <div style={{ width: '100%', padding: '20px' }}>
-        {!redux_dataset && (
-        < Alert severity='error' sx={{ marginY: 2 }}>No dataset selected, please go to upload page.</Alert>
-      )}
-        <p style={{ fontFamily: "Public Sans" }} >
-        Current dataset: {redux_dataset}
-      </p>
+          {!redux_dataset && (
+            <Alert severity='error' sx={{ marginY: 2 }}>No dataset selected, please go to upload page.</Alert>
+          )}
+          <p style={{ fontFamily: "Public Sans" }} >
+            Current dataset: {redux_dataset}
+          </p>
           <FormControl component="fieldset">
             <FormLabel component="legend">Select Task</FormLabel>
             <RadioGroup aria-label="task" name="task" value={selectedTask} onChange={handleTaskSelection}>
@@ -109,7 +114,7 @@ const Automl = () => {
           <Button
             variant="contained"
             color="primary"
-            disabled={!targetColumn || loading} // Disable button when loading
+            disabled={!targetColumn || loading} 
             onClick={handleStartAutoML}
             style={{ marginTop: '40px' }}
           >
@@ -117,21 +122,33 @@ const Automl = () => {
             Start AutoML
           </Button>
           {modelGenerated && (
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={downloadModel}
-            style={{ marginTop: '40px', marginLeft: '10px' }}
-          >
-            <CloudDownload />
-            Download Model
-          </Button>
-        )}
+            <div>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={downloadModel}
+                style={{ marginTop: '40px', marginLeft: '10px' }}
+              >
+                <CloudDownload />
+                Download Model
+              </Button>
+              <div style={{ marginTop: '20px' }}>
+                <h3>Scoring Grid:</h3>
+                <pre>{scoringGrid}</pre>
+              </div>
+              {plotUrl && ( 
+                <div style={{ marginTop: '20px' }}>
+                  <h3>Plot:</h3>
+                  <h2>{plotUrl}</h2>
+                  <img src={plotUrl} alt="Plot" style={{ maxWidth: '100%' }} />
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
-  
 };
 
 export default Automl;
