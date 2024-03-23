@@ -51,9 +51,22 @@ def generate_eda(file_path):
     return corr_matrix, unique_filename
 
 
+
 # # Example: Provide the path to your CSV file
-# csv_file_path = r"C:/Users/Rawan Alamily/Downloads/GDSC/Auto-ML/machine-learning/fish_data.csv"
+csv_file_path = r"C:/Users/Rawan Alamily/Downloads/GDSC/Auto-ML/backend/data/electric_cars1.csv"
 
 # analyze_csv_and_plot(csv_file_path)
 
 # generate_eda(r"/Users/abedm/Documents/repos/Auto-ML/backend/compute/data.csv")
+    
+def get_nulls(file_path):
+    df = pd.read_csv(file_path)
+    return df.isnull().sum(axis = 1).sum()
+
+def get_distributions(file_path):
+    df = pd.read_csv(file_path)
+    return df.hist()
+
+def get_types(file_path):
+    df = pd.read_csv(file_path)
+    return df.dtypes
