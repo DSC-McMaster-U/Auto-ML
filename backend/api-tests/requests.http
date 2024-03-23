@@ -16,6 +16,9 @@ GET http://127.0.0.1:8000/api/bq?fileName=sample_contacts
 #### Get Data
 GET http://127.0.0.1:8000/api/data?fileName=data.csv
 
+#### Get Profile
+GET http://127.0.0.1:8000/api/eda-profile?fileName=data.csv
+
 #### Get AutoML
 GET http://127.0.0.1:8000/api/automl
 

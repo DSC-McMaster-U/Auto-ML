@@ -2,6 +2,7 @@ import json
 import uuid
 import pandas as pd
 import matplotlib.pyplot as plt
+
 from ydata_profiling import ProfileReport
 
 
@@ -86,7 +87,9 @@ def get_types(file_path):
 def profile(file_path):
     df = pd.read_csv(file_path)
     profile = ProfileReport(df, title="Profiling Report")
-    return profile
+    unique_filename = f"your_report_{uuid.uuid4()}.html"
+    profile.to_file(f"tempHTML/{unique_filename}")
+    return unique_filename
 
 
 # print(get_nulls("/Users/abedm/Documents/repos/Auto-ML/backend/compute/data.csv"))

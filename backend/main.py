@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Request
 from fastapi import HTTPException
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, HTMLResponse
 
 
 # custom functions for EDA and AutoML
@@ -176,22 +176,35 @@ async def getData(fileName):
 #     return {"data": corrMatrix, "graph_url": public_url}
 
 
-# # EDA Nulls
-# @app.get("/api/eda-profile")
-# async def getProfile(fileName):
-#     htmlPage = ""
-#     try:
-#         storage_client = storage.Client.from_service_account_json("./credentials.json")
+# EDA profile
+@app.get("/api/eda-profile")
+async def getProfile(fileName):
+    uniqueFilename = ""
+    html_content = ""
+    try:
+        storage_client = storage.Client.from_service_account_json("./credentials.json")
 
-#         bucket = storage_client.get_bucket(DATA_BUCKET)
-#         blob = bucket.blob(fileName)
+        bucket = storage_client.get_bucket(DATA_BUCKET)
+        blob = bucket.blob(f"{fileName}")
 
-#         htmlPage = profile(blob)
+        byte_stream = BytesIO()
+        blob.download_to_file(byte_stream)
+        byte_stream.seek(0)
 
-#     except Exception as e:
-#         return {"error": f"An error occurred: {str(e)}"}
+        uniqueFilename = profile(byte_stream)
 
-#     return htmlPage
+        with open(f"tempHTML/{uniqueFilename}", "r") as file:
+            html_content = file.read()
+
+    except Exception as e:
+        return {"error": f"An error occurred: {str(e)}"}
+
+    finally:
+        # Delete the temporary file
+        if os.path.exists(f"tempHTML/{uniqueFilename}"):
+            os.remove(f"tempHTML/{uniqueFilename}")
+
+    return HTMLResponse(content=html_content, status_code=200)
 
 
 # EDA Nulls
