@@ -182,10 +182,16 @@ async def getProfile(fileName):
     uniqueFilename = ""
     html_content = ""
     try:
+        if fileName == "":
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid file name.",
+            )
+
         storage_client = storage.Client.from_service_account_json("./credentials.json")
 
         bucket = storage_client.get_bucket(DATA_BUCKET)
-        blob = bucket.blob(f"{fileName}")
+        blob = bucket.blob(f"{fileName}.csv")
 
         byte_stream = BytesIO()
         blob.download_to_file(byte_stream)
@@ -201,7 +207,8 @@ async def getProfile(fileName):
 
     finally:
         # Delete the temporary file
-        if os.path.exists(f"tempHTML/{uniqueFilename}"):
+        print(f"file name is: {uniqueFilename}")
+        if uniqueFilename != "" and os.path.exists(f"tempHTML/{uniqueFilename}"):
             os.remove(f"tempHTML/{uniqueFilename}")
 
     return HTMLResponse(content=html_content, status_code=200)

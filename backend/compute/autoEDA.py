@@ -2,7 +2,6 @@ import json
 import uuid
 import pandas as pd
 import matplotlib.pyplot as plt
-
 from ydata_profiling import ProfileReport
 
 
