@@ -70,7 +70,7 @@ const Profiling = () => {
       </Typography>
 
       <p style={{ fontFamily: "Public Sans" }} >
-        Current dataset: {redux_dataset}
+        Current dataset: <code style={{backgroundColor: '#f8f8f8', borderRadius: '5px', padding: '4px'}}>{redux_dataset}</code>
       </p>
 
       <Box
