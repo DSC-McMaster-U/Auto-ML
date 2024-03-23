@@ -15,8 +15,7 @@ from fastapi.responses import StreamingResponse, HTMLResponse
 # custom functions for EDA and AutoML
 from compute.autoEDA import profile
 from compute.autoML import generate_model
-
-# from big_query import bq_ops
+from big_query import bq_ops
 
 
 import csv
@@ -37,7 +36,7 @@ app.add_middleware(
 )
 
 
-""" state variable that stores all the current dataSets in bucket
+""" state variable that stores all the selected datasets in bucket
     - this should reduce the number of gcp api calls for getting data
     - data is preloaded, so speeds up data retrieval as it doesn't have to wait for gcp
 """
@@ -336,7 +335,6 @@ async def downloadModel():
 
 
 # big query operations
-"""
 @app.get("/api/bq")
 async def bq(fileName, query=None):
     try:
@@ -344,4 +342,3 @@ async def bq(fileName, query=None):
         return result
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
-"""

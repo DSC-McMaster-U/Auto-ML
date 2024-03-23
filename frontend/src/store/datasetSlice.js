@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-export const datasetSlice = createSlice({
+const datasetSlice = createSlice({
   name: 'dataset',
   initialState: {
     value: '',

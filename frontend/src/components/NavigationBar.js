@@ -13,7 +13,7 @@ import Image from "next/image";
 import Link from "next/link";
 import "@fontsource/public-sans";
 
-const pages = ["upload", "profiling", "automl", "query"];
+const pages = ["GitHub", "About Us", "GDSC"];
 
 const NavigationBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);

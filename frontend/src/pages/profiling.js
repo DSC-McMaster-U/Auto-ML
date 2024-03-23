@@ -38,6 +38,22 @@ const Profiling = () => {
     };
   }, [redux_dataset]);
 
+  // Define columns for the DataGrid
+  const columns = [
+    { field: 'property', headerName: 'Property', flex: 1 },
+    { field: 'value', headerName: 'Value', flex: 1 },
+  ];
+
+  if (!redux_dataset) {
+    return (
+      <div style={{ width: '100%', padding: '20px' }}>
+        <Alert severity='error' sx={{ marginY: 2 }}>
+          No dataset selected, please go back to upload page.
+        </Alert>
+      </div>
+    );
+  }
+
   return (
     <Container
       maxWidth='xl'
@@ -62,16 +78,7 @@ const Profiling = () => {
       </Typography>
 
       <p style={{ fontFamily: 'Public Sans' }}>
-        Current dataset:{' '}
-        <code
-          style={{
-            backgroundColor: '#f8f8f8',
-            borderRadius: '5px',
-            padding: '4px',
-          }}
-        >
-          {redux_dataset}
-        </code>
+        selected dataset: <code style={{ backgroundColor: '#f8f8f8', borderRadius: '5px', padding: '4px' }}>{redux_dataset}</code>
       </p>
 
       <Box
