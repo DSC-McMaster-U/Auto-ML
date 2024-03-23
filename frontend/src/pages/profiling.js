@@ -30,12 +30,14 @@ const Profiling = () => {
     const fetchEda = async () => {
       try {
         // Encode fileName to ensure the URL is correctly formed
-        const response = await fetch(`/api/eda?fileName=${encodeURIComponent(fileName)}`);
+        const response = await fetch(
+          `/api/eda?fileName=${encodeURIComponent(fileName)}`
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("eda:", data)
+        console.log('eda:', data);
         setEda(data); // Set the EDA data to state
       } catch (error) {
         console.error('Fetching EDA data failed:', error);
@@ -44,7 +46,6 @@ const Profiling = () => {
     };
 
     fetchEda(); // Execute the fetch operation
-
   }, [redux_dataset]);
 
   // Define columns for the DataGrid
@@ -53,24 +54,32 @@ const Profiling = () => {
     { field: 'value', headerName: 'Value', flex: 1 },
   ];
 
+  if (!redux_dataset) {
+    return (
+      <div style={{ width: '100%', padding: '20px' }}>
+        <Alert severity='error' sx={{ marginY: 2 }}>
+          No dataset selected, please go back to upload page.
+        </Alert>
+      </div>
+    );
+  }
+
   return (
     <Container
       maxWidth='xl'
       sx={{ fontFamily: 'Public Sans', textAlign: 'center', marginY: 4 }}
     >
-      {!redux_dataset && (
-        < Alert severity='error' sx={{ marginY: 2 }}>No dataset selected, please go to upload page.</Alert>
-      )}
-      <Typography
-        variant='h4'
-        style={{ fontFamily: 'Public Sans' }}
-        gutterBottom
-      >
-        Explore Your Dataset!
+      {
+        !redux_dataset && (
+          < Alert severity='error' sx={{ marginY: 2 }}>No dataset selected, please go to upload page.</Alert>
+        )
+      }
+      <Typography variant='h4' sx={{ marginBottom: 2, fontFamily: 'Public Sans' }}>
+        Explore your Dataset!
       </Typography>
 
-      <p style={{ fontFamily: "Public Sans" }} >
-        Current dataset: <code style={{backgroundColor: '#f8f8f8', borderRadius: '5px', padding: '4px'}}>{redux_dataset}</code>
+      <p style={{ fontFamily: 'Public Sans' }}>
+        selected dataset: <code style={{ backgroundColor: '#f8f8f8', borderRadius: '5px', padding: '4px' }}>{redux_dataset}</code>
       </p>
 
       <Box
@@ -119,17 +128,28 @@ const Profiling = () => {
           </Grid>
 
           <Grid item xs={12} sm={6} md={4} lg={3}>
-
-            <Button variant="text" display='flex' alignItems='center' onClick={toggleCMPoppover}>
-              <QueryStatsOutlinedIcon style={{ color: '#4285F4' }} fontSize='large' />
+            <Button
+              variant='text'
+              display='flex'
+              alignItems='center'
+              onClick={toggleCMPoppover}
+            >
+              <QueryStatsOutlinedIcon
+                style={{ color: '#4285F4' }}
+                fontSize='large'
+              />
               <Typography variant='h6' style={{ marginLeft: 8 }}>
                 Correlations
               </Typography>
-              {isCMOpen && (<ArrowDropUpIcon style={{ marginLeft: 8 }} />)}
-              {!isCMOpen && (<ArrowDropDownIcon style={{ marginLeft: 8 }} />)}
+              {isCMOpen && <ArrowDropUpIcon style={{ marginLeft: 8 }} />}
+              {!isCMOpen && <ArrowDropDownIcon style={{ marginLeft: 8 }} />}
             </Button>
             {/*Display correlation matrix here*/}
-            <CorrelationMatrix eda={edaData} isOpen={isCMOpen} onClose={toggleCMPoppover} />
+            <CorrelationMatrix
+              eda={edaData}
+              isOpen={isCMOpen}
+              onClose={toggleCMPoppover}
+            />
           </Grid>
 
           <Grid item xs={12} sm={6} md={4} lg={3}>

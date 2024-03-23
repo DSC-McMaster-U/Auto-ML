@@ -1,95 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Button,
-  ListItemText,
-  ListItemButton,
-  Box,
-  Container,
-  Typography,
-} from '@mui/material';
-
-import {
-  PlayCircleOutline,
-  CloudUpload,
-  CloudDownload,
-} from '@mui/icons-material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, ListItemText, ListItemButton, Box, Container, Typography, Alert } from '@mui/material';
+import { PlayCircleOutline } from '@mui/icons-material';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useSelector } from 'react-redux';
 import theme from '@/themes/theme';
-
-// Component to display the list of all datasets
-const DataSetListComponent = ({ onSelectDataSet, uploadTrigger }) => {
-  // hooks to store the datasets and the selected dataset
-  const [dataSets, setDataSets] = useState([]);
-  const [selectedDataSet, setSelectedDataSet] = useState(null);
-  const [isLoading, setLoading] = useState(false);
-
-  useEffect(() => {
-    // Fetch datasets from /api/datasets and update state
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch('/api/datasets');
-        const data = await res.json();
-        setDataSets(data.names);
-      } catch {
-        console.error('API Endpoint Not Working');
-      }
-      setLoading(false);
-    };
-    fetchData();
-  }, [uploadTrigger]);
-
-  const handleSelectDataSet = (dataSet) => {
-    setSelectedDataSet(dataSet);
-    onSelectDataSet(dataSet); // This will pass the selected dataset to the parent component
-  };
-
-  // list of selectable datasets
-  return (
-    <Paper elevation={3} style={{ padding: '10px', margin: '10px' }}>
-      <Typography variant="h6" >Existing Datasets:</Typography>
-      <Box mt={2}>
-        {isLoading ? (
-         <CircularProgress size={24} color='inherit' style={{ margin: '16px' }} />
-        ) : (
-          dataSets.map((dataSet, idx) => (
-            <ListItemButton 
-              key={idx} 
-              selected={dataSet === selectedDataSet} 
-              onClick={() => handleSelectDataSet(dataSet)}
-            >
-              <ListItemText primary={dataSet} />
-            </ListItemButton>
-          ))
-        )}
-      </Box>
-    </Paper>
-  );
-};
+import { YAxis } from 'recharts';
 
 // Component to display the selected dataset
-const DataSetDisplayComponent = ({ selectedDataSet }) => {
+const BigQuery = () => {
   const [data, setData] = useState([{}]);
+  const redux_dataset = useSelector((state) => state.dataset.value);
   const [csvString, setCsvString] = useState('');
   const [isLoading, setLoading] = useState(false);
 
+  // Simulate fetching data
   useEffect(() => {
-    // Simulate fetching data
-    console.log('FETCHING DATA FOR', selectedDataSet);
+    console.log('FETCHING DATA FOR', redux_dataset);
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await fetch(
-          `/api/data?fileName=${encodeURIComponent(selectedDataSet)}`
-        );
+        const res = await fetch(`/api/data?fileName=${encodeURIComponent(redux_dataset)}`);
         if (!res.ok) {
           throw new Error(`Error: ${res.status}`);
         }
@@ -106,25 +37,10 @@ const DataSetDisplayComponent = ({ selectedDataSet }) => {
       setLoading(false);
     };
     fetchData();
-  }, [selectedDataSet]);
+  }, [redux_dataset]);
 
-  const handleDownload = () => {
-    const blob = new Blob([csvString], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${selectedDataSet}`;
-    link.style.display = 'none'; // Hide the link
-    document.body.appendChild(link); // Append to the document
-    link.click(); // Programmatically click the link to trigger the download
-    URL.revokeObjectURL(url); // Free up memory by releasing the object URL
-    link.remove(); // Remove the link from the document
-  };
+  const [query, setQuery] = useState('-- use `table` for table name, eg:\nSELECT * FROM table LIMIT 2');
 
-  const [query, setQuery] = useState(
-    '-- use `table` for table name, eg:\nSELECT * FROM table LIMIT 2'
-  );
-  
   const [isQueryLoading, setQueryLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -144,17 +60,15 @@ const DataSetDisplayComponent = ({ selectedDataSet }) => {
     }
 
     try {
-      const res = await fetch(
-        `/api/bq?fileName=${encodeURIComponent(selectedDataSet)}&query=${query}`
-      );
+      const res = await fetch(`/api/bq?fileName=${encodeURIComponent(redux_dataset)}&query=${query}`);
       if (!res.ok) {
         throw new Error(`Error: ${res.status}`);
       }
-
       const response = await res.json();
+
       // if response contains error key:
       if (response.error) {
-        setError("invalid query");
+        setError('invalid query');
         return;
       }
       const data = response.data;
@@ -167,197 +81,80 @@ const DataSetDisplayComponent = ({ selectedDataSet }) => {
     }
   };
 
-  const headers = data[0] ? Object.keys(data[0]) : [];
+  const headers = data && data.length > 0 ? Object.keys(data[0]) : [];
+
+  if (!redux_dataset) {
+    return (
+      <div style={{ width: '100%', padding: '20px' }}>
+        <Alert severity='error' sx={{ marginY: 2 }}>
+          No dataset selected, please go back to upload page.
+        </Alert>
+      </div>
+    );
+  }
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        padding: '20px',
-      }}
+    <Container
+      maxWidth='xl'
+      sx={{ fontFamily: 'Public Sans', textAlign: 'center', marginY: 4 }}
     >
-    {isLoading ? (
-      <CircularProgress size={24} color='inherit' style={{ margin: '16px' }} />
-    ) : (
-      <div style={{ width: '100%' }}>
-        <TableContainer component={Paper} style={{ marginBottom: '20px'}}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                {headers.map((header, index) => (
-                  <TableCell key={index}>{header}</TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.slice(0, 10).map((item, rowIndex) => (
-                <TableRow key={rowIndex}>
-                  {Object.values(item).map((value, colIndex) => (
-                    <TableCell key={colIndex}>{value}</TableCell>
+      <Typography variant='h4' sx={{ marginBottom: 2, fontFamily: 'Public Sans' }}>
+        Run Queries on your Dataset:
+      </Typography>
+
+      <p style={{ fontFamily: 'Public Sans' }}>
+        selected dataset: <code style={{ backgroundColor: '#f8f8f8', borderRadius: '5px', padding: '4px' }}>{redux_dataset}</code>
+      </p>
+
+      {isLoading ? (
+        <CircularProgress size={24} color='inherit' style={{ margin: '16px' }} />
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', gap: '2%', width: '100%' }}>
+
+          <TableContainer component={Paper} style={{ flex: 60, marginBottom: '20px' }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  {headers.map((header, index) => (
+                    <TableCell key={index}>{header}</TableCell>
                   ))}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        
-        <Typography
-          variant='h6'
-          sx={{
-            fontFamily: 'Public Sans',
-          }}
-        >
-          Run Queries on the Dataset:
-        </Typography>
-        
-        <div
-          style={{
-            border: '1px solid black',
-            borderRadius: '8px',
-            width: '100%',
-            padding: '1%',
-          }}
-        >
-          <Editor
-            height='20vh'
-            theme='vs'
-            options={{
-              fontSize: 15,
-              minimap: { enabled: false, scale: 1 },
-            }}
-            defaultLanguage='sql'
-            value={query}
-            onChange={(value) => setQuery(value)}
-          />
-        </div>
-        
-        {error && <div style={{ color: 'red' }}>{error}</div>}
-      
-        <Button
-          variant='contained'
-          onClick={() => runQuery(query)}
-          style={{ margin: '10px 5px' }}
-        >
-          {isQueryLoading ? (
-            <CircularProgress size={24} color='inherit' />
-          ) : (
-            <PlayCircleOutline style={{ marginRight: '5px' }} />
-          )}
-          {isQueryLoading ? '' : 'Run'}
-        </Button>
-      </div>
-    )}
-    </div>
-  );
-};
+              </TableHead>
+              <TableBody>
+                {data.slice(0, 10).map((item, rowIndex) => (
+                  <TableRow key={rowIndex}>
+                    {Object.values(item).map((value, colIndex) => (
+                      <TableCell key={colIndex}>{value}</TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-// Main component to display previous components
-const MainComponent = () => {
-  const [selectedDataSet, setSelectedDataSet] = useState(null);
-  const [uploadTrigger, setUploadTrigger] = useState(0);
+          <div style={{ flex: 40 }}>
+            <div style={{ border: '1px solid black', borderRadius: '8px', width: '100%', padding: '1%' }}>
+              <Editor height='20vh' theme='vs' defaultLanguage='sql'
+                options={{
+                  fontSize: 15,
+                  minimap: { enabled: false, scale: 1 },
+                }}
+                value={query}
+                onChange={(value) => setQuery(value)}
+              />
+            </div>
 
-  const handleUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) {
-      console.error('No file selected.');
-      return;
-    }
+            {error && <div style={{ color: 'red' }}>{error}</div>}
 
-    // Prepare FormData
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('fileName', file.name); // Adjust according to how you want to name files on the backend
-
-    // Log FormData contents for debugging
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
-    }
-
-    try {
-      // Make an asynchronous PUT request to your backend
-      const response = await fetch('/api/upload', {
-        method: 'PUT',
-        body: formData, // FormData will be correctly interpreted by your backend
-      });
-
-      // Assuming your backend responds with JSON
-      const data = await response.json();
-
-      // Handle response
-      if (response.ok) {
-        console.log('Upload successful:', data.message);
-        setUploadTrigger((trigger) => trigger + 1);
-      } else {
-        console.error('Upload failed:', data.error);
-      }
-    } catch (error) {
-      console.error('Error during upload:', error);
-    }
-  };
-
-  const handleSelectDataSet = (dataSet) => {
-    setSelectedDataSet(dataSet);
-  };
-
-  const triggerFileInput = () => {
-    // Trigger the hidden file input click event
-    document.getElementById('file-upload-input').click();
-  };
-
-  return (
-    <Container maxWidth='xl' sx={{ textAlign: 'center', marginY: 4 }}>
-      <Typography
-        variant='h2'
-        sx={{
-          marginBottom: 2,
-          fontFamily: 'Public Sans',
-          fontSize: '40px',
-        }}
-      >
-        Query Datasets
-      </Typography>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-        }}
-      >
-        <div style={{ flex: 1, textAlign: 'center', margin: '10px' }}>
-          <DataSetListComponent
-            onSelectDataSet={handleSelectDataSet}
-            uploadTrigger={uploadTrigger}
-          />
-          <div style={{ marginTop: '20px' }}>
-            <Button
-              variant='contained'
-              color='primary'
-              onClick={triggerFileInput}
-            >
-              {' '}
-              <CloudUpload style={{ marginRight: '5px' }} />
-              Upload
+            <Button variant='contained' onClick={() => runQuery(query)} style={{ margin: '10px 5px' }}>
+              {isQueryLoading ? <CircularProgress size={24} color='inherit' /> : <PlayCircleOutline style={{ marginRight: '5px' }} />}
+              {isQueryLoading ? '' : 'Run'}
             </Button>
-            <input
-              id='file-upload-input'
-              type='file'
-              accept='.csv'
-              style={{ display: 'none' }}
-              onChange={handleUpload}
-            />
           </div>
         </div>
-
-        {selectedDataSet && (
-          <div style={{ flex: 2, margin: '10px' }}>
-            <DataSetDisplayComponent selectedDataSet={selectedDataSet} />
-          </div>
-        )}
-      </div>
+      )}
     </Container>
   );
 };
 
-export default MainComponent;
+export default BigQuery;
