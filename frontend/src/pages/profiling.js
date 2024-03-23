@@ -66,7 +66,7 @@ const Profiling = () => {
         style={{ fontFamily: 'Public Sans' }}
         gutterBottom
       >
-        Data Profiling
+        Explore Your Dataset!
       </Typography>
 
       <p style={{ fontFamily: "Public Sans" }} >

@@ -87,7 +87,7 @@ export default function Home() {
               letterSpacing: ".05rem",
             }}
           >
-            An intuitive platform to streamline your data exploration.
+            An intuitive platform to explore your data and generate predictive machine learning models with ease.
           </Typography>
           <Element style={{ marginTop: 10 }}>
 

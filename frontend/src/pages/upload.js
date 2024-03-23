@@ -205,7 +205,7 @@ const MainComponent = () =>
           fontSize: "40px",
         }}
       >
-        Upload Your Datasets Here!
+        Upload or Select a Dataset!
       </Typography>
       
       { redux_dataset &&     
