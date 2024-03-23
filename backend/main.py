@@ -13,9 +13,10 @@ from fastapi.responses import StreamingResponse
 
 
 # custom functions for EDA and AutoML
-from compute.autoEDA import generate_eda
+from compute.autoEDA import profile
 from compute.autoML import generate_model
-#from big_query import bq_ops
+
+# from big_query import bq_ops
 
 
 import csv
@@ -141,46 +142,128 @@ async def getData(fileName):
 
 
 # Exploratory Data Analysis
-@app.get("/api/eda")
-async def eda(fileName):
-    corrMatrix = ""
-    try:
-        storage_client = storage.Client.from_service_account_json("./credentials.json")
+# @app.get("/api/eda")
+# async def eda(fileName):
+#     corrMatrix = ""
+#     try:
+#         storage_client = storage.Client.from_service_account_json("./credentials.json")
 
-        bucket = storage_client.get_bucket(DATA_BUCKET)
-        blob = bucket.blob(f"{fileName}.csv")
+#         bucket = storage_client.get_bucket(DATA_BUCKET)
+#         blob = bucket.blob(f"{fileName}.csv")
 
-        byte_stream = BytesIO()
-        blob.download_to_file(byte_stream)
-        byte_stream.seek(0)
+#         byte_stream = BytesIO()
+#         blob.download_to_file(byte_stream)
+#         byte_stream.seek(0)
 
-        corrMatrix, uniqueFilename = generate_eda(byte_stream)
+#         corrMatrix, uniqueFilename = generate_eda(byte_stream)
 
-        # Upload the PNG file to GCS
-        bucket = storage_client.get_bucket(GRAPH_BUCKET)
-        graph_blob = bucket.blob(uniqueFilename)
-        graph_blob.upload_from_filename(f"tempImages/{uniqueFilename}")
+#         # Upload the PNG file to GCS
+#         bucket = storage_client.get_bucket(GRAPH_BUCKET)
+#         graph_blob = bucket.blob(uniqueFilename)
+#         graph_blob.upload_from_filename(f"tempImages/{uniqueFilename}")
 
-        # Get the public URL
-        public_url = graph_blob.public_url
+#         # Get the public URL
+#         public_url = graph_blob.public_url
 
-    except Exception as e:
-        return {"error": f"An error occurred: {str(e)}"}
+#     except Exception as e:
+#         return {"error": f"An error occurred: {str(e)}"}
 
-    finally:
-        # Delete the temporary file
-        if os.path.exists(f"tempImages/{uniqueFilename}"):
-            os.remove(f"tempImages/{uniqueFilename}")
+#     finally:
+#         # Delete the temporary file
+#         if os.path.exists(f"tempImages/{uniqueFilename}"):
+#             os.remove(f"tempImages/{uniqueFilename}")
 
-    return {"data": corrMatrix, "graph_url": public_url}
+#     return {"data": corrMatrix, "graph_url": public_url}
 
 
+# # EDA Nulls
+# @app.get("/api/eda-profile")
+# async def getProfile(fileName):
+#     htmlPage = ""
+#     try:
+#         storage_client = storage.Client.from_service_account_json("./credentials.json")
 
-#start the automl process
+#         bucket = storage_client.get_bucket(DATA_BUCKET)
+#         blob = bucket.blob(fileName)
+
+#         htmlPage = profile(blob)
+
+#     except Exception as e:
+#         return {"error": f"An error occurred: {str(e)}"}
+
+#     return htmlPage
+
+
+# EDA Nulls
+# @app.get("/api/get-nulls")
+# async def nulls(fileName):
+#     nulls = 0
+#     try:
+#         storage_client = storage.Client.from_service_account_json("./credentials.json")
+
+#         bucket = storage_client.get_bucket(DATA_BUCKET)
+#         blob = bucket.blob(fileName)
+
+#         nulls = get_nulls(blob)
+
+#     except Exception as e:
+#         return {"error": f"An error occurred: {str(e)}"}
+
+#     return {"nulls": nulls}
+
+
+# EDA Distribution Plot
+# @app.get("/api/get-dist")
+# async def edaDistributions(fileName):
+#     corrMatrix = ""
+#     try:
+#         storage_client = storage.Client.from_service_account_json("./credentials.json")
+
+#         bucket = storage_client.get_bucket(DATA_BUCKET)
+#         blob = bucket.blob(f"{fileName}.csv")
+
+#         byte_stream = BytesIO()
+#         blob.download_to_file(byte_stream)
+#         byte_stream.seek(0)
+
+#         uniqueFilename = get_distributions(byte_stream)
+
+#         # Upload the PNG file to GCS
+#         bucket = storage_client.get_bucket(GRAPH_BUCKET)
+#         graph_blob = bucket.blob(uniqueFilename)
+#         graph_blob.upload_from_filename(f"tempImages/{uniqueFilename}")
+
+#         # Get the public URL
+#         public_url = graph_blob.public_url
+
+#     except Exception as e:
+#         return {"error": f"An error occurred: {str(e)}"}
+
+#     finally:
+#         # Delete the temporary file
+#         if os.path.exists(f"tempImages/{uniqueFilename}"):
+#             os.remove(f"tempImages/{uniqueFilename}")
+
+#     return {"graph_url": public_url}
+
+
+# # EDA Types
+# @app.get("/api/get-types")
+# async def eda(fileName):
+#     try:
+#         # TODO
+
+#     except Exception as e:
+#         return {"error": f"An error occurred: {str(e)}"}
+
+#     return {}
+
+
+# start the automl process
 @app.get("/api/generateModel")
 async def getModel(fileName, column, task):
     try:
-        
+
         storage_client = storage.Client.from_service_account_json("./credentials.json")
 
         data_bucket = storage_client.get_bucket(DATA_BUCKET)
@@ -190,29 +273,31 @@ async def getModel(fileName, column, task):
         blob.download_to_file(byte_stream)
         byte_stream.seek(0)
 
-        #producing model
+        # producing model
         model, model_file_path = generate_model(byte_stream, column, task)
 
-        #upload model to model bucket
+        # upload model to model bucket
         model_bucket = storage_client.get_bucket(MODEL_BUCKET)
         model_blob = model_bucket.blob(f"{fileName}.pkl")
         with open(model_file_path, "rb") as model_file:
-            model_blob.upload_from_file(model_file, content_type="application/octet-stream")
+            model_blob.upload_from_file(
+                model_file, content_type="application/octet-stream"
+            )
 
         return fileName, column, task
 
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
-    
 
-#retreive the model and download it
+
+# retreive the model and download it
 @app.get("/api/downloadModel")
 async def downloadModel():
     try:
-        #action
+        # action
         storage_client = storage.Client.from_service_account_json("./credentials.json")
 
-        #retreiving the data from bucket
+        # retreiving the data from bucket
         bucket = storage_client.get_bucket(MODEL_BUCKET)
         blobs = list(bucket.list_blobs())
         blob = blobs[0]
@@ -220,20 +305,18 @@ async def downloadModel():
         byte_stream = BytesIO()
         blob.download_to_file(byte_stream)
         byte_stream.seek(0)
-        
-        #remove it from the bucket
+
+        # remove it from the bucket
         blob.delete()
 
         return StreamingResponse(byte_stream, media_type="application/octet-stream")
-
 
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
 
 
-
 # big query operations
-'''
+"""
 @app.get("/api/bq")
 async def bq(fileName, query=None):
     try:
@@ -241,4 +324,4 @@ async def bq(fileName, query=None):
         return result
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
-'''
+"""
