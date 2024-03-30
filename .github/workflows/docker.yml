@@ -26,6 +26,9 @@ jobs:
         - name: Install GCloud CLI
           uses: google-github-actions/setup-gcloud@v1
         
+        - name: List files in current directory
+          run: ls -la
+          
         - name: Build and Push Backend Docker Image
           env:
             GOOGLE_PROJECT: ${{ secrets.PROJECT_ID }}
