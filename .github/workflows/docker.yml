@@ -32,7 +32,7 @@ jobs:
             CREDENTIALS_JSON: ${{ secrets.B64_ENCODED_KEY }}
           run: |
             gcloud auth configure-docker us-central1-docker.pkg.dev
-            docker build --build-arg CREDENTIALS_JSON=./docker_credentials.json -t us-central1-docker.pkg.dev/automate-gdsc/backend-images/backend:latest ./backend
+            docker build --build-arg CREDENTIALS_JSON=../docker_credentials.json -t us-central1-docker.pkg.dev/automate-gdsc/backend-images/backend:latest ./backend
             docker push us-central1-docker.pkg.dev/automate-gdsc/backend-images/backend:latest 
 
         - name: Build and Push Frontend Docker Image
