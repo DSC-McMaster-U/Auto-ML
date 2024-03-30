@@ -2,7 +2,7 @@ import json
 import uuid
 import pandas as pd
 import matplotlib.pyplot as plt
-from ydata_profiling import ProfileReport
+#from ydata_profiling import ProfileReport
 
 
 def generate_eda_plots(df):
