@@ -26,12 +26,12 @@ To deploy the application on the cloud using GKE, follow these steps:
    2. `docker.yml` which builds the frontend & backend Docker image for the application and pushes it to the artifact registry on gcp.
    3. `kubernetes.yml` which creates a kubernetes deployment and service for the application on GKE using the files in `/cloud-infra/k8s` dir.
 
-3. The application will be deployed on GKE and accessible through the external IP provided by the Load Balancer service.
+3. The application will be deployed **(might take same time for the status to turn green)** on GKE and accessible through the external IP provided by the Load Balancer service.
 
-4. Go to [link](https://console.cloud.google.com/kubernetes/deployment/us-east1-b/automl-cluster/default/backend-deployment/overview?project=automateml&supportedpurview=project) and scroll down to view the external IP of the Load Balancer service.
+4. Go to [link](https://console.cloud.google.com/kubernetes/deployment/us-east1-b/automl-cluster/default/backend-deployment/overview?project=automateml&supportedpurview=project) and scroll down to view the external IP of the Load Balancer service. (see image below 👇)
+
+![alt text](image.png)
 
 >Please note that it will take some time for the application to be fully functional.
 >If you see any errors, try refreshing the page after some time.
-
->[!NOTE]
 > you might have to setup some gcloud configurations to get this to work.

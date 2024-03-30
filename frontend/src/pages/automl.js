@@ -51,7 +51,7 @@ const Automl = () => {
   const [selectedTask, setSelectedTask] = useState('');
   const [targetColumn, setTargetColumn] = useState('');
   const [scoringGrid, setScoringGrid] = useState('');
-  const [plotUrl, setPlotUrl] = useState(''); 
+  const [plotUrl, setPlotUrl] = useState('');
   const redux_dataset = useSelector((state) => state.dataset.value);
 
   const handleTaskSelection = (event) => {
@@ -78,7 +78,7 @@ const Automl = () => {
           setModelGenerated(true);
           console.log("Response from backend:", data);
           setScoringGrid(data.scoring_grid);
-          setPlotUrl(data.plot_model_url); 
+          setPlotUrl(data.plot_model_url);
         })
         .catch(error => {
           setLoading(false);
@@ -109,64 +109,71 @@ const Automl = () => {
       .catch(error => console.error('Error:', error));
   };
 
+  if (!redux_dataset) {
+    return (
+      <div style={{ width: '100%', padding: '20px' }}>
+        <Alert severity='error' sx={{ marginY: 2 }}>
+          No dataset selected, please go back to upload page.
+        </Alert>
+      </div>
+    );
+  }
+
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       {/* Selection and Buttons */}
       <div style={{ width: '100%', padding: '50px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      {!redux_dataset && (
-        <Alert severity='error' sx={{ marginY: 2 }}>No dataset selected, please go to upload page.</Alert>
-      )}
-      <p style={{ fontFamily: "Public Sans" }}>Current dataset: {redux_dataset}</p>
-      <FormControl component="fieldset">
-        <FormLabel component="legend">Select Task</FormLabel>
-        <RadioGroup aria-label="task" name="task" value={selectedTask} onChange={handleTaskSelection}>
-          <FormControlLabel value="C" control={<Radio />} label="Classification" />
-          <FormControlLabel value="R" control={<Radio />} label="Regression" />
-        </RadioGroup>
-      </FormControl>
-      <TextField
-        id="target-column"
-        label="Target Column"
-        variant="outlined"
-        fullWidth
-        value={targetColumn}
-        onChange={handleTargetColumnChange}
-        disabled={!selectedTask}
-        style={{ marginTop: '20px', width: '300px' }}
-      />
-      <div>
-      <Button
-        variant="contained"
-        color="primary"
-        disabled={!targetColumn || loading}
-        onClick={handleStartAutoML}
-        style={{ marginTop: '20px', marginRight: '10px', padding: '6px' }}
-      >
-        {loading ? <CircularProgress size={24} /> : <PlayArrow />}
-        Start AutoML
-      </Button>
-      {modelGenerated && (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={downloadModel}
-          style={{ marginTop: '20px', marginLeft: '10px', padding: '6px'}}
-        >
-          <CloudDownload style={{marginRight: '6px'}}/>
-          Download Model
-        </Button>
-       
-      )}
-       </div>
-    </div>
-  
+        <p style={{ fontFamily: "Public Sans" }}>Current dataset: {redux_dataset}</p>
+        <FormControl component="fieldset">
+          <FormLabel component="legend">Select Task</FormLabel>
+          <RadioGroup aria-label="task" name="task" value={selectedTask} onChange={handleTaskSelection}>
+            <FormControlLabel value="C" control={<Radio />} label="Classification" />
+            <FormControlLabel value="R" control={<Radio />} label="Regression" />
+          </RadioGroup>
+        </FormControl>
+        <TextField
+          id="target-column"
+          label="Target Column"
+          variant="outlined"
+          fullWidth
+          value={targetColumn}
+          onChange={handleTargetColumnChange}
+          disabled={!selectedTask}
+          style={{ marginTop: '20px', width: '300px' }}
+        />
+        <div>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={!targetColumn || loading}
+            onClick={handleStartAutoML}
+            style={{ marginTop: '20px', marginRight: '10px', padding: '6px' }}
+          >
+            {loading ? <CircularProgress size={24} /> : <PlayArrow />}
+            Start AutoML
+          </Button>
+          {modelGenerated && (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={downloadModel}
+              style={{ marginTop: '20px', marginLeft: '10px', padding: '6px' }}
+            >
+              <CloudDownload style={{ marginRight: '6px' }} />
+              Download Model
+            </Button>
+
+          )}
+        </div>
+      </div>
+
       {/* Scoring Grid and Plot */}
       {modelGenerated && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' , paddingLeft: '40px', paddingRight: '35px'}}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', paddingLeft: '40px', paddingRight: '35px' }}>
           {/* Scoring Grid */}
           {scoringGrid && <ScoringGrid scoringGrid={scoringGrid} />}
-          
+
           {/* Plot */}
           {plotUrl && (
             <div style={{ margin: '20px', flex: '1 1 auto' }}>
@@ -176,10 +183,10 @@ const Automl = () => {
           )}
         </div>
       )}
-      
+
     </div>
   );
-  
+
 };
 
 export default Automl;
