@@ -41,7 +41,7 @@ RUN pip install uvicorn[standard]==0.23.2
 # Copy the required files & dir into the container
 COPY compute ./compute
 COPY big_query.py ./
-COPY ${CREDENTIALS_JSON} ./
+COPY ${CREDENTIALS_JSON} ./credentials.json
 
 # create dir for the HTML files created during profiling
 RUN mkdir tempHTML
