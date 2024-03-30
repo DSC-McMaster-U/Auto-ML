@@ -114,8 +114,8 @@ export default function Home() {
         
         <Picture>
           <Image
-            width={500}
-            height={500}
+            width={1000}
+            height={1000}
             alt='AutoMate Logo'
             src='/AutoMate_logo.png'
           />

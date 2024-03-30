@@ -13,7 +13,7 @@ import Image from "next/image";
 import Link from "next/link";
 import "@fontsource/public-sans";
 
-const pages = ["GitHub", "About Us", "GDSC"];
+const pages = ["GitHub", "About Us", "How to Use Your Model"];
 
 const NavigationBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -125,7 +125,7 @@ const NavigationBar = () => {
                 key={page}
                 style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 16 }}
                 LinkComponent={Link}
-                href={page.replace(" ", "-")}
+                href={page.replaceAll(" ", "-")}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
                 {page}
