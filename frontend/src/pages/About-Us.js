@@ -48,7 +48,7 @@ const AboutUs = () => {
             width={200}
             height={200}
             alt='AutoMate Logo'
-            src='/AutoMate_logo.png'
+            src='/autoMate-logo.png'
           />
         </Picture>
         <Typography
