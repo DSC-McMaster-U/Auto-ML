@@ -112,12 +112,12 @@ export default function Home() {
           </Button>
         </Element>
         
-        <Picture>
+          <Picture>
           <Image
-            width={1000}
-            height={1000}
+            width={470}
+            height={450}
             alt='AutoMate Logo'
-            src='/AutoMate_logo.png'
+            src='/autoMate-logo.png'
           />
         </Picture>
       </BoxContainer>
