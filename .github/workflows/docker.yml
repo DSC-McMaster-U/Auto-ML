@@ -16,16 +16,19 @@ jobs:
 
         - id: 'auth'
           name: Authenticate to Google Cloud
-          uses: google-github-actions/auth@v0
+          uses: google-github-actions/auth@v1
           with: 
             credentials_json: ${{ secrets.OWNER_SA_KEY }}
 
         - name: Decode credentials.json
-          run: echo "${{ secrets.B64_ENCODED_KEY }}" | base64 --decode > credentials.json
+          run: echo "${{ secrets.B64_ENCODED_KEY }}" | base64 --decode > ./backend/credentials.json
     
         - name: Install GCloud CLI
-          uses: google-github-actions/setup-gcloud@v0
+          uses: google-github-actions/setup-gcloud@v1
         
+        - name: List files in the backend directory
+          run: ls -l ./backend
+          
         - name: Build and Push Backend Docker Image
           env:
             GOOGLE_PROJECT: ${{ secrets.PROJECT_ID }}
