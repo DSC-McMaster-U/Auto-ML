@@ -1,3 +1,12 @@
+# The Developers
+
+The Open Source Team at McMaster University's Google Developer Club takes a hands-on approach to student learning by leading full-stack open-source projects. Comprised of passionate individuals, the team believes in learning by doing.
+
+Google DSC McMasterU is McMaster University's chapter of the Google Developer Student Clubs, supported by Google and Google Developers. 
+
+Visit our website to learn more: https://gdscmcmasteru.ca/
+
+
 # The AutoMate-ML Techstack
 
 
