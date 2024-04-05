@@ -48,7 +48,7 @@ const DataSetListComponent = ({ uploadTrigger }) => {
   // list of selectable datasets
   return (
     <Paper elevation={3} style={{ padding: '10px', margin: '10px' }}>
-      <Typography variant='h7'>(or) Choose from Existing Datasets:</Typography>
+      <Typography style={{ fontWeight: 500 }}>(or) Choose from Existing Datasets:</Typography>
       <Box mt={2}>
         {isLoading ? (
           <CircularProgress
@@ -224,7 +224,7 @@ const MainComponent = () => {
   return (
     <Layout showStepper={true}>
     <Container maxWidth='xl' sx={{ textAlign: 'center', marginY: 4 }}>
-      <Typography variant='h4' sx={{ marginBottom: 2, fontFamily: 'Public Sans' }}>
+      <Typography variant='h4' sx={{ marginBottom: 2 }}>
         Upload your Datasets
       </Typography>
 

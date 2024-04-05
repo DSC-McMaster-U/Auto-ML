@@ -73,7 +73,6 @@ const Profiling = () => {
       )}
       <Typography
         variant='h4'
-        style={{ fontFamily: 'Public Sans' }}
         gutterBottom
       >
         Explore Your Dataset!

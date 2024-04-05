@@ -98,7 +98,7 @@ const Automl = () => {
       maxWidth='xl'
       sx={{ fontFamily: 'Public Sans', textAlign: 'center', marginY: 4 }}
     >
-      <Typography variant='h4' sx={{ marginBottom: 2, fontFamily: 'Public Sans' }}>
+      <Typography variant='h4' sx={{ marginBottom: 2 }}>
         AutoML
       </Typography>
 

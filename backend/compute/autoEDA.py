@@ -1,4 +1,4 @@
-import json
+import os
 import uuid
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -87,6 +87,12 @@ def profile(file_path):
     df = pd.read_csv(file_path)
     profile = ProfileReport(df, title="Profiling Report")
     unique_filename = f"your_report_{uuid.uuid4()}.html"
+    
+    # Create the directory if it doesn't exist
+    if not os.path.exists("tempHTML"):
+        print("Creating tempHTML directory")
+        os.makedirs("tempHTML")
+    
     profile.to_file(f"tempHTML/{unique_filename}")
     return unique_filename
 

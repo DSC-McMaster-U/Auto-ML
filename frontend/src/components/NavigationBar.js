@@ -44,12 +44,10 @@ const NavigationBar = () => {
             component="a"
             href="/"
             sx={{
-              ml: 2,
               mr: 2,
               display: { xs: "none", md: "flex" },
-              fontFamily: "Public Sans, sans-serif",
               fontWeight: 700,
-              letterSpacing: ".3rem",
+              letterSpacing: ".1rem",
               color: "inherit",
               textDecoration: "none",
             }}
@@ -89,7 +87,7 @@ const NavigationBar = () => {
               {pages.map((page) => (
                 <MenuItem
                   key={page}
-                  style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 16 }}
+                  style={{ fontSize: 16 }}
                   onClick={handleCloseNavMenu}
                   component={Link}
                   href={page.replace(" ", "-")}
