@@ -10,6 +10,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import InsightsIcon from '@mui/icons-material/Insights';
 import { setActiveStep } from '../store/activeStepSlice';
+import Layout from '../components/Layout'
 
 const Container = styled.div`
   display: flex;
@@ -60,6 +61,7 @@ export default function Home() {
   }, []);
 
   return (
+    <Layout showStepper={false}> {/* Pass showStepper prop as true */}
     <Container>
       <BoxContainer>
         <Element>
@@ -112,15 +114,16 @@ export default function Home() {
           </Button>
         </Element>
         
-        <Picture>
+          <Picture>
           <Image
-            width={500}
-            height={500}
+            width={470}
+            height={450}
             alt='AutoMate Logo'
-            src='/AutoMate_logo.png'
+            src='/autoMate-logo.png'
           />
         </Picture>
       </BoxContainer>
     </Container>
+    </Layout>
   );
 }

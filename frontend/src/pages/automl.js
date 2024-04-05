@@ -13,6 +13,7 @@ import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 } from '@mui/material';
 import { PlayArrow, CloudDownload } from '@mui/icons-material';
+import Layout from '../components/Layout'
 
 const ScoringGrid = ({ scoringGrid }) => {
   //parsing the scoring grid csv into rows and columns so it can be displayed
@@ -111,16 +112,19 @@ const Automl = () => {
 
   if (!redux_dataset) {
     return (
+        <Layout showStepper={true}>
       <div style={{ width: '100%', padding: '20px' }}>
         <Alert severity='error' sx={{ marginY: 2 }}>
           No dataset selected, please go back to upload page.
         </Alert>
       </div>
+      </Layout>
     );
   }
 
 
   return (
+    <Layout showStepper={true}>
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       {/* Selection and Buttons */}
       <div style={{ width: '100%', padding: '50px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -185,6 +189,7 @@ const Automl = () => {
       )}
 
     </div>
+    </Layout>
   );
 
 };

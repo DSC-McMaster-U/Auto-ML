@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import Container from '@mui/material/Container';
 import { Alert, Typography, Box } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
+import Layout from '../components/Layout'
 
 const Profiling = () => {
   const redux_dataset = useSelector((state) => state.dataset.value);
@@ -55,6 +56,7 @@ const Profiling = () => {
   }
 
   return (
+    <Layout showStepper={true}> 
     <Container
       maxWidth='xl'
       sx={{
@@ -71,7 +73,6 @@ const Profiling = () => {
       )}
       <Typography
         variant='h4'
-        style={{ fontFamily: 'Public Sans' }}
         gutterBottom
       >
         Explore Your Dataset!
@@ -118,6 +119,7 @@ const Profiling = () => {
         )}
       </Box>
     </Container>
+    </Layout>
   );
 };
 
@@ -167,6 +169,7 @@ const GridItem = ({ icon, color, title }) => (
         {title}
       </Typography>
     </Box>
+
     {/* Display content related to the grid item here }
     </Grid>
     );

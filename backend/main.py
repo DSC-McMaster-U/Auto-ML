@@ -204,11 +204,12 @@ async def getProfile(fileName):
             html_content = file.read()
 
     except Exception as e:
+        print(f"An error occurred: {str(e)}")
         return {"error": f"An error occurred: {str(e)}"}
 
     finally:
         # Delete the temporary file
-        print(f"file name is: {uniqueFilename}")
+        print(f"(delete) file name is: {uniqueFilename}")
         if uniqueFilename != "" and os.path.exists(f"tempHTML/{uniqueFilename}"):
             os.remove(f"tempHTML/{uniqueFilename}")
 
