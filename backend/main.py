@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Request
 from fastapi import HTTPException
 from fastapi.responses import StreamingResponse, HTMLResponse
+import shutil
 
 
 # custom functions for EDA and AutoML
@@ -25,6 +26,7 @@ app = FastAPI()
 DATA_BUCKET = "automate-ml-datasets"
 GRAPH_BUCKET = "automate_ml_graphs"
 MODEL_BUCKET = "automl_gdsc_models"
+ML_PLOT_BUCKET = "automl_gdsc_mlplot"
 origins = ["*"]
 
 app.add_middleware(
@@ -279,45 +281,87 @@ async def getProfile(fileName):
 #     return {}
 
 
-# start the automl process
+#start the automl process
 @app.get("/api/generateModel")
-async def getModel(fileName, column, task):
+async def getModel(fileName, column, 
+task):
+    plot_filename = ""
+    scoreGridLines = ""
     try:
-
+        temp_dir = 'tempData'
+        if not os.path.exists(temp_dir):
+            os.makedirs(temp_dir)
+        
         storage_client = storage.Client.from_service_account_json("./credentials.json")
 
+        #retreive data
         data_bucket = storage_client.get_bucket(DATA_BUCKET)
         blob = data_bucket.blob(f"{fileName}.csv")
-
         byte_stream = BytesIO()
         blob.download_to_file(byte_stream)
         byte_stream.seek(0)
 
-        # producing model
-        model, model_file_path = generate_model(byte_stream, column, task)
+        #producing model
+        model, model_file_path, scoring_grid_filename, plot_filename = generate_model(byte_stream, column, task)
 
-        # upload model to model bucket
+        #upload model to model bucket
         model_bucket = storage_client.get_bucket(MODEL_BUCKET)
         model_blob = model_bucket.blob(f"{fileName}.pkl")
         with open(model_file_path, "rb") as model_file:
-            model_blob.upload_from_file(
-                model_file, content_type="application/octet-stream"
-            )
+            model_blob.upload_from_file(model_file, content_type="application/octet-stream")
 
-        return fileName, column, task
+        #put model into model bucket
+        bucket = storage_client.get_bucket(MODEL_BUCKET)
+        blob = bucket.blob(fileName)
+
+        #put score grid into plot bucket
+        scoring_grid_bucket = storage_client.get_bucket(ML_PLOT_BUCKET)
+        scoring_grid_blob = scoring_grid_bucket.blob(scoring_grid_filename)
+        with open(scoring_grid_filename, "rb") as scoring_grid_file:
+            scoring_grid_blob.upload_from_file(scoring_grid_file, content_type="text/csv")
+
+        #store scoring/accuracy grid
+        bucket = storage_client.get_bucket(ML_PLOT_BUCKET)
+        blob = bucket.blob(scoring_grid_filename)
+
+        #convert it to csv and json
+        with blob.open("r") as f :
+            scoreGridLines = f.read()
+        scoreGridLines = str(scoreGridLines) if scoreGridLines else None
+        csv_reader = csv.DictReader(StringIO(scoreGridLines))
+        json_data = [row for row in csv_reader]
+
+        #put plot into plot bucket
+        plot_bucket = storage_client.get_bucket(ML_PLOT_BUCKET)
+        plot_blob = plot_bucket.blob(plot_filename)
+        blob.content_type = 'image/png'
+        plot_blob.upload_from_filename("tempData/AUC.png")
+
+        #get the url of the plot
+        public_url = plot_blob.public_url
+
+        return {"scoring_grid": scoreGridLines, "json": json_data, "plot_model_url": public_url}
 
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
+    
+    finally:
+        #Delete the temporary file
+        #if os.path.exists("tempImages/AUC.png"):
+         #   os.remove("tempImages/AUC.png")
+        if os.path.exists(temp_dir):
+            shutil.rmtree(temp_dir)
 
+    
 
-# retreive the model and download it
+#retreive the model and download it
 @app.get("/api/downloadModel")
 async def downloadModel():
     try:
-        # action
+        #action
         storage_client = storage.Client.from_service_account_json("./credentials.json")
 
-        # retreiving the data from bucket
+        #retreiving the data from bucket
         bucket = storage_client.get_bucket(MODEL_BUCKET)
         blobs = list(bucket.list_blobs())
         blob = blobs[0]
@@ -325,16 +369,15 @@ async def downloadModel():
         byte_stream = BytesIO()
         blob.download_to_file(byte_stream)
         byte_stream.seek(0)
-
-        # remove it from the bucket
+        
+        #remove it from the bucket
         blob.delete()
 
         return StreamingResponse(byte_stream, media_type="application/octet-stream")
 
+
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
-
-
 # big query operations
 @app.get("/api/bq")
 async def bq(fileName, query=None):
