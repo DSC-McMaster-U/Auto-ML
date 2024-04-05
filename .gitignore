@@ -18,5 +18,6 @@ __pycache__/
 *.pkl
 backend/bash.exe.stackdump
 backend/.python-version
+backend/tempHTML/*.html
 *.log
 fish_data.csv
