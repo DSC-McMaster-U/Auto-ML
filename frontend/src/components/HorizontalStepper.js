@@ -18,7 +18,7 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { setActiveStep, clearActiveStep } from '../store/activeStepSlice';
 import '@fontsource/public-sans';
 
-const steps = ['Upload', 'Profiling', 'Query', 'AutoML'];
+const steps = ['upload', 'profiling', 'query', 'automl'];
 
 const HorizontalStepper = () => {
   const router = useRouter();

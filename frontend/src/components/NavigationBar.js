@@ -13,7 +13,11 @@ import Image from "next/image";
 import Link from "next/link";
 import "@fontsource/public-sans";
 
-const pages = ["GitHub", "About Us", "How to Use Your Model"];
+const pages = [
+  { name: "How to Use Your Model", url: "/how-to-use" }, 
+  { name: "About Us", url: "/about" }, 
+  { name: "GitHub", url: "https://github.com/DSC-McMaster-U/Auto-ML" },
+];
 
 const NavigationBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -28,7 +32,7 @@ const NavigationBar = () => {
 
   return (
     <AppBar position="static">
-      <Container maxWidth="xl" >
+      <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Box sx={{ display: { xs: "none", md: "flex" }, mr: 2, p: 1 }}>
             <Image
@@ -86,13 +90,15 @@ const NavigationBar = () => {
             >
               {pages.map((page) => (
                 <MenuItem
-                  key={page}
+                  key={page.name}
                   style={{ fontSize: 16 }}
                   onClick={handleCloseNavMenu}
-                  component={Link}
-                  href={page.replace(" ", "-")}
+                  component={page.url.startsWith("http") ? "a" : Link}
+                  href={page.url}
+                  target={page.url.startsWith("http") ? "_blank" : undefined}
+                  rel={page.url.startsWith("http") ? "noopener noreferrer" : undefined}
                 >
-                  <Typography textAlign="center">{page}</Typography>
+                  <Typography textAlign="center">{page.name}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -120,13 +126,15 @@ const NavigationBar = () => {
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
-                key={page}
+                key={page.name}
                 style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 16 }}
-                LinkComponent={Link}
-                href={page.replaceAll(" ", "-")}
+                component={page.url.startsWith("http") ? "a" : Link}
+                href={page.url}
+                target={page.url.startsWith("http") ? "_blank" : undefined}
+                rel={page.url.startsWith("http") ? "noopener noreferrer" : undefined}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
-                {page}
+                {page.name}
               </Button>
             ))}
           </Box>
@@ -134,5 +142,6 @@ const NavigationBar = () => {
       </Container>
     </AppBar>
   );
-}
+};
+
 export default NavigationBar;
