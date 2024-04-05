@@ -4,8 +4,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import { PlayCircleOutline } from '@mui/icons-material';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useSelector } from 'react-redux';
-import theme from '@/themes/theme';
-import { YAxis } from 'recharts';
+import Layout from '../components/Layout'
 
 // Component to display the selected dataset
 const BigQuery = () => {
@@ -94,6 +93,7 @@ const BigQuery = () => {
   }
 
   return (
+    <Layout showStepper={true}>
     <Container
       maxWidth='xl'
       sx={{ fontFamily: 'Public Sans', textAlign: 'center', marginY: 4 }}
@@ -154,6 +154,7 @@ const BigQuery = () => {
         </div>
       )}
     </Container>
+    </Layout>
   );
 };
 

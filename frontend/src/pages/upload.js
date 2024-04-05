@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setDataset } from '../store/datasetSlice';
+import Layout from '../components/Layout'
 import {
   Table,
   TableBody,
@@ -221,6 +222,7 @@ const MainComponent = () => {
   const redux_dataset = useSelector((state) => state.dataset.value);
 
   return (
+    <Layout showStepper={true}>
     <Container maxWidth='xl' sx={{ textAlign: 'center', marginY: 4 }}>
       <Typography variant='h4' sx={{ marginBottom: 2, fontFamily: 'Public Sans' }}>
         Upload your Datasets
@@ -268,6 +270,7 @@ const MainComponent = () => {
         )}
       </div>
     </Container>
+    </Layout>
   );
 };
 

@@ -2,11 +2,11 @@ import React from "react";
 import NavigationBar from "./NavigationBar";
 import HorizontalStepper from "./HorizontalStepper";
 
-const Layout = ({ children }) => {
+const Layout = ({ children, showStepper }) => {
   return (
     <>
       <NavigationBar />
-      <HorizontalStepper />
+      {showStepper && <HorizontalStepper />}
       {children}
     </>
   );

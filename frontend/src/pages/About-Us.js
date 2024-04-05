@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// import Typography from '@mui/material/Typography';
 import '@fontsource/public-sans';
 import Image from 'next/image';
 import styled from '@emotion/styled';
@@ -7,6 +6,7 @@ import { Typography, Box } from '@mui/material';
 import Container from '@mui/material/Container';
 import {createRoot} from 'react-dom/client'
 import ReactMarkdown from 'react-markdown'
+import Layout from '../components/Layout'
 
 const AboutMD = () => {
   const [content, setContent] = useState("");
@@ -34,6 +34,7 @@ const Picture = styled.div`
 
 const AboutUs = () => {
   return (
+    <Layout showStepper={false}>
     <Container
       maxWidth='xl'
       sx={{
@@ -84,10 +85,11 @@ const AboutUs = () => {
             width={1000}
             height={500}
             alt='AutoMate Architecture'
-            src='/excal_architecture.png'
+            src='/excal_architechture_light.png'
           />
         </Picture>
     </Container>
+    </Layout>
   );
 }
 

@@ -14,6 +14,7 @@ import {
   Typography
 } from '@mui/material';
 import { PlayArrow, CloudDownload } from '@mui/icons-material';
+import Layout from '../components/Layout'
 
 const Automl = () => {
   const [modelGenerated, setModelGenerated] = useState(false);
@@ -92,6 +93,7 @@ const Automl = () => {
   }
 
   return (
+    <Layout showStepper={true}> 
     <Container
       maxWidth='xl'
       sx={{ fontFamily: 'Public Sans', textAlign: 'center', marginY: 4 }}
@@ -157,6 +159,7 @@ const Automl = () => {
         )}
       </div>
     </Container>
+    </Layout>
   );
 };
 

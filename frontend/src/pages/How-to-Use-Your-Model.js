@@ -2,10 +2,12 @@
 import '@fontsource/public-sans';
 import { Typography, Box } from '@mui/material';
 import Container from '@mui/material/Container';
+import Layout from '../components/Layout'
 
 
 const HowToUseYourModel = () => {
   return (
+    <Layout showStepper={false}>
     <Container
       maxWidth='xl'
       sx={{
@@ -59,6 +61,7 @@ const HowToUseYourModel = () => {
         />
       </Box>
     </Container>
+    </Layout>
     
   );
 }

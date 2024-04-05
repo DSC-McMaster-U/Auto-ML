@@ -15,10 +15,10 @@ export default function App({ Component, pageProps }) {
       </Head>
       {/* <ThemeProvider theme={theme}> */}
       <Provider store={store}>
-        <Layout>
+        {/* <Layout> */}
           <CssBaseline />
           <Component {...pageProps} />
-        </Layout>
+        {/* </Layout> */}
       </Provider>
       {/* </ThemeProvider> */}
     </>
